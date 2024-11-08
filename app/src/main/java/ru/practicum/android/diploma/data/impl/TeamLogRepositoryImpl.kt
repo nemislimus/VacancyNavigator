@@ -7,11 +7,24 @@ import com.google.firebase.analytics.logEvent
 import ru.practicum.android.diploma.domain.repository.TeamLogRepository
 import kotlin.math.min
 
+
 class TeamLogRepositoryImpl(private val analytics: FirebaseAnalytics) : TeamLogRepository {
 
     private val fireBaseEnabled = true
     private val notValidChars = Regex("""[^a-z0-9_]""", RegexOption.IGNORE_CASE)
     private val notValidStartChars = Regex("""^[^a-z]+""", RegexOption.IGNORE_CASE)
+
+    /*
+    log.d(tag: String, value: String)
+    tag - Название события. Должно содержать от 1 до 40 символов [a-z0-9] или знаков подчеркивания.
+    Название должно начинаться с буквенного символа. Короче те же правила, что для названия переменных
+
+    value - может содержать до 100 абсолютно любых символов
+
+    Например:
+    log.d("viewScreen", "Экран поиска вакансий")
+    log.d("viewScreen", "Экран избранных вакансий")
+    */
 
     override fun d(tag: String, value: String) {
 
@@ -37,10 +50,24 @@ class TeamLogRepositoryImpl(private val analytics: FirebaseAnalytics) : TeamLogR
                 }
             } else {
 
-                throw IllegalArgumentException("Ключ не подходит $tag для Firebase")
+                Log.d(tag, "Ключ не подходит $tag для Firebase")
             }
         }
     }
+
+    /*
+    log.d(eventName: String, eventParams: Map<String, String>)
+    eventName - Название события. Должно содержать от 1 до 40 символов [a-z0-9] или знаков подчеркивания.
+    Название должно начинаться с буквенного символа. Короче те же правила, что для названия переменных
+
+    eventParams - можно передать до 25 параментров в виде ключ - значение
+    Например:
+    log.d("addVacancyToFav", mapOf(
+        "city" to "Moscow",
+        "rubles" to "280_000",
+        "company" to "Yandex"
+    ))
+    */
 
     override fun d(eventName: String, eventParams: Map<String, String>) {
 
@@ -60,7 +87,7 @@ class TeamLogRepositoryImpl(private val analytics: FirebaseAnalytics) : TeamLogR
                     validEventParams.putString(validKey, validValue)
 
                 } else {
-                    throw IllegalArgumentException("$eventName: $key -> $value не подходит для Firebase")
+                    Log.d(eventName, "$key -> $value не подходит для Firebase")
                 }
             }
 
