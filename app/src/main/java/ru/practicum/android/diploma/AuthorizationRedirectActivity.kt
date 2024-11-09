@@ -12,11 +12,9 @@ class AuthorizationRedirectActivity : AppCompatActivity() {
         setContentView(R.layout.activity_authorization_redirect)
 
         if (Intent.ACTION_VIEW == intent.action) {
-
             val uri = intent.data
 
             uri?.let {
-
                 findViewById<TextView>(R.id.tvKey).text = it.getQueryParameter("key")
             }
         }
