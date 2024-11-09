@@ -56,7 +56,7 @@ dependencies {
     androidTestImplementation(libs.uiTests.espressoCore)
     // endregion
 
-    //Koin
+    // Koin
     implementation(libs.koin.android)
-    //endKoin
+    // endKoin
 }
