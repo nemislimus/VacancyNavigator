@@ -3,20 +3,17 @@
 
     <item
         android:id="@id/searchFragment"
-        android:title="@string/menu_main"
         android:icon="@drawable/main"
-        />
+        android:title="@string/menu_main" />
 
     <item
         android:id="@id/favoritesFragment"
-        android:title="@string/menu_favorites"
         android:icon="@drawable/favorites_on"
-        />
+        android:title="@string/menu_favorites" />
 
     <item
         android:id="@id/teamFragment"
-        android:title="@string/menu_team"
         android:icon="@drawable/team"
-        />
+        android:title="@string/menu_team" />
 
 </menu>
