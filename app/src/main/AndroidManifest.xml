@@ -17,7 +17,7 @@
         android:theme="@style/Theme.PracticumAndroidDiploma"
         tools:targetApi="31">
         <activity
-            android:name=".AuthorizationRedirectActivity"
+            android:name=".ui.auth.AuthorizationRedirectActivity"
             android:exported="true"
             android:launchMode="singleTask">
 
