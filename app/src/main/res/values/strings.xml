@@ -7,4 +7,8 @@
     <string name="igor">Игорь Ячменёв</string>
     <string name="andrey">Андрей Киреенко</string>
     <string name="ivan">Иван Мизяков</string>
+
+    <string name="menu_main">Главная</string>
+    <string name="menu_favorites">Избранное</string>
+    <string name="menu_team">Команда</string>
 </resources>
