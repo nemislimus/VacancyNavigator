@@ -21,12 +21,12 @@ class XxxLiveData<T : Any> : MutableLiveData<T>() {
                 getAll = false
 
             } else {
-                if(classMap.contains(t::class.java)){
+                if (classMap.contains(t::class.java)) {
                     observer.onChanged(t)
                 }
             }
 
-            if(pending.compareAndSet(true, false)){
+            if (pending.compareAndSet(true, false)) {
                 observer.onChanged(t)
             }
         }
@@ -48,7 +48,7 @@ class XxxLiveData<T : Any> : MutableLiveData<T>() {
     }
 
     // событие будет отправлено только один раз
-    fun setSingleEventValue(value: T){
+    fun setSingleEventValue(value: T) {
         pending.set(true)
         super.setValue(value)
     }
