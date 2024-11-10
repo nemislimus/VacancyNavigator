@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Practicum-Android-Diploma</string>
+    <string name="team">Команда</string>
+    <string name="title_team_fragment">Над приложением работали</string>
+    <string name="vitaly">Виталий Черепаха</string>
+    <string name="artyom">Артём Шевердяев </string>
+    <string name="igor">Игорь Ячменёв</string>
+    <string name="andrey">Андрей Киреенко</string>
+    <string name="ivan">Иван Мизяков</string>
 </resources>
