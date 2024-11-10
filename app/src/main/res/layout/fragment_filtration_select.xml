@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:text="Верстка для экранов 12,14,20"
         android:textAlignment="center"
-        android:textColor="@color/black"
+        android:textColor="?attr/elementColor_black_white"
         android:textSize="46sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
