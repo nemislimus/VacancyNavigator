@@ -3,14 +3,12 @@ package ru.practicum.android.diploma.util
 import java.util.Locale
 
 interface NumDeclension {
-
     fun declension(num: Int, str: String): String {
         val result: String
         var count: Int = num % 100
         val expressions = str.split(" ")
 
         if (Locale.getDefault().language.lowercase() == "ru") {
-
             if (count in 5..20) {
                 result = expressions[2]
             } else {
@@ -22,7 +20,6 @@ interface NumDeclension {
                 }
             }
         } else {
-
             result = if (num == 1) {
                 expressions[0]
             } else {
