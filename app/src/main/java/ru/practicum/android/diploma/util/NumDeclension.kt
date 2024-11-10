@@ -6,8 +6,8 @@ interface NumDeclension {
     fun declension(
         num: Int,
         str: String,
-        n100: Int = 100,// эта херня ниже для detekt
-        n5: Int = 5,// ее указывать не нужно
+        n100: Int = 100, // эта херня ниже для detekt
+        n5: Int = 5, // ее указывать не нужно
         n20: Int = 20,
         n10: Int = 10,
         n4: Int = 4
