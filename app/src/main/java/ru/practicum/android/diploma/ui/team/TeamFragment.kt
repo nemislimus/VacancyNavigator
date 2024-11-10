@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.team.ui
+package ru.practicum.android.diploma.ui.team
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
