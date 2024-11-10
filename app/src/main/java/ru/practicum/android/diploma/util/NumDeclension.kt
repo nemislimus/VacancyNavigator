@@ -5,12 +5,7 @@ import java.util.Locale
 interface NumDeclension {
     fun declension(
         num: Int,
-        str: String,
-        n100: Int = 100, // эта херня ниже для detekt
-        n5: Int = 5, // ее указывать не нужно
-        n20: Int = 20,
-        n10: Int = 10,
-        n4: Int = 4
+        str: String
     ): String {
         val result: String
         var count: Int = num % n100
@@ -36,6 +31,14 @@ interface NumDeclension {
         }
 
         return "$num $result"
+    }
+
+    companion object {
+        const val n100: Int = 100
+        const val n5: Int = 5
+        const val n20: Int = 20
+        const val n10: Int = 10
+        const val n4: Int = 4
     }
 }
 
