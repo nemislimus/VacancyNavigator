@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:text="Избранное"
         android:textAlignment="center"
-        android:textColor="@color/black"
+        android:textColor="?attr/elementColor_black_white"
         android:textSize="46sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
