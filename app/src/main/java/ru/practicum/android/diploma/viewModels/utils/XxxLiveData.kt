@@ -6,18 +6,14 @@ import androidx.lifecycle.Observer
 import java.util.concurrent.atomic.AtomicBoolean
 
 class XxxLiveData<T : Any> : MutableLiveData<T>() {
-
     private val classMap = mutableMapOf<Class<out T>, T>()
     private val pending = AtomicBoolean(false)
 
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
-
         var getAll = true
 
         super.observe(owner) { t ->
-
             if (getAll) {
-
                 for ((_, value) in classMap) {
                     observer.onChanged(value)
                 }
@@ -25,7 +21,6 @@ class XxxLiveData<T : Any> : MutableLiveData<T>() {
                 getAll = false
 
             } else {
-
                 if(classMap.contains(t::class.java)){
                     observer.onChanged(t)
                 }
