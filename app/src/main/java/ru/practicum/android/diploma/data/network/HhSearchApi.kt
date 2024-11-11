@@ -3,11 +3,11 @@ package ru.practicum.android.diploma.data.network
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.QueryMap
-import ru.practicum.android.diploma.data.dto.AreaDto
-import ru.practicum.android.diploma.data.dto.CountryDto
-import ru.practicum.android.diploma.data.dto.IndustryDto
-import ru.practicum.android.diploma.data.dto.VacancyDetailedDto
-import ru.practicum.android.diploma.data.dto.VacancyDto
+import ru.practicum.android.diploma.data.search.dto.AreaDto
+import ru.practicum.android.diploma.data.search.dto.CountryDto
+import ru.practicum.android.diploma.data.search.dto.IndustryDto
+import ru.practicum.android.diploma.data.search.dto.VacancyDetailedDto
+import ru.practicum.android.diploma.data.search.dto.VacancyDto
 
 interface HhSearchApi {
 

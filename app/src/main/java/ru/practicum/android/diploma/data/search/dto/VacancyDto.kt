@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.data.dto
+package ru.practicum.android.diploma.data.search.dto
 
 data class VacancyDto(
     val id: String,
