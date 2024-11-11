@@ -1,32 +1,28 @@
 package ru.practicum.android.diploma.util
 
-import java.util.Locale
-
 interface NumDeclension {
     fun declension(
         num: Int,
         str: String
     ): String {
         val result: String
-        var count: Int = num % n100
+        var count: Int = num % N100
         val expressions = str.split(" ")
 
-        if (Locale.getDefault().language.lowercase() == "ru") {
-            if (count in n5..n20) {
-                result = expressions[2]
-            } else {
-                count %= n10
-                result = when (count) {
-                    1 -> expressions[0]
-                    in 2..n4 -> expressions[1]
-                    else -> expressions[2]
-                }
-            }
+        require(
+            expressions.size == N3
+        ) {
+            return "Укажите все возможные словоформы. Например \"кот кота котов\" -> \"1 кот, 2 кота, 5 котов\""
+        }
+
+        if (count in N5..N20) {
+            result = expressions[2]
         } else {
-            result = if (num == 1) {
-                expressions[0]
-            } else {
-                expressions[1]
+            count %= N10
+            result = when (count) {
+                1 -> expressions[0]
+                in 2..N4 -> expressions[1]
+                else -> expressions[2]
             }
         }
 
@@ -34,11 +30,12 @@ interface NumDeclension {
     }
 
     companion object {
-        const val n100: Int = 100
-        const val n5: Int = 5
-        const val n20: Int = 20
-        const val n10: Int = 10
-        const val n4: Int = 4
+        const val N100: Int = 100
+        const val N5: Int = 5
+        const val N20: Int = 20
+        const val N10: Int = 10
+        const val N4: Int = 4
+        const val N3: Int = 3
     }
 }
 
