@@ -34,7 +34,7 @@ class RetrofitNetworkClient(
 
     companion object {
         const val NO_CONNECTION_CODE = -1
-        const val NOT_FOUND_CODE = -1
+        const val NOT_FOUND_CODE = 404
     }
 
 }
