@@ -2,8 +2,10 @@ package ru.practicum.android.diploma.data.network
 
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
@@ -61,7 +63,8 @@ class RetrofitNetworkClient(
                     )
                 }
                 response.apply { resultCode = GOOD_CODE }
-            } catch (e: Throwable) {
+            } catch (e: HttpException) {
+                Log.d("HTTP_ERROR", e.message())
                 badResponse()
             }
 
