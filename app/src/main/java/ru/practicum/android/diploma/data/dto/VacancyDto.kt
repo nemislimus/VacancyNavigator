@@ -5,6 +5,5 @@ data class VacancyDto(
     val name: String,
     val salary: SalaryDto? = null,
     val employer: EmployerDto? = null,
-    val experience: ExperienceDto? = null,
-
-    )
+    val area: AreaDto? = null,
+)
