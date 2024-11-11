@@ -1,14 +1,13 @@
 package ru.practicum.android.diploma.ui.search
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
@@ -16,8 +15,6 @@ import ru.practicum.android.diploma.util.emptyString
 import ru.practicum.android.diploma.viewmodels.utils.MenuBindingFragment
 
 class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
-
-    private var searchTextWatcher: TextWatcher? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -46,26 +43,10 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             clearQuery()
         }
 
-        searchTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                setSearchIcon(s.isNullOrBlank())
-                showIntro(s.isNullOrBlank())
-            }
+        binding.llSearchFieldContainer.etSearchQueryText.addTextChangedListener { s ->
+            setSearchIcon(s.isNullOrBlank())
+            showIntro(s.isNullOrBlank())
         }
-
-        binding.llSearchFieldContainer.etSearchQueryText.addTextChangedListener(searchTextWatcher)
-    }
-
-    override fun onDestroy() {
-        binding.llSearchFieldContainer.etSearchQueryText.removeTextChangedListener(searchTextWatcher)
-        searchTextWatcher = null
-        super.onDestroy()
     }
 
     private fun setSearchIcon(queryIsEmpty: Boolean) {
@@ -80,7 +61,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
     }
 
     private fun clearQuery() {
-        binding.llSearchFieldContainer.etSearchQueryText.setText(emptyString())
+        binding.llSearchFieldContainer.etSearchQueryText.setText(emptyString)
     }
 
     private fun goToFilter() {
@@ -88,5 +69,4 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             R.id.action_searchFragment_to_filtrationFragment
         )
     }
-
 }
