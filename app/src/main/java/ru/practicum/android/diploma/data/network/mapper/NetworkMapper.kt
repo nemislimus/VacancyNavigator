@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.data.search.mapper
+package ru.practicum.android.diploma.data.network.mapper
 
 import ru.practicum.android.diploma.domain.search.model.SearchVacancyOptions
 

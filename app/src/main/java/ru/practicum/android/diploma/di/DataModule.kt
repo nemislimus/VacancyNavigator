@@ -14,6 +14,7 @@ import ru.practicum.android.diploma.data.db.XxxDataBase
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.RetrofitNetworkClient
+import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
 
 val dataModule = module {
 
@@ -23,8 +24,15 @@ val dataModule = module {
     single<ConnectivityManager> {
         androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
+    single<NetworkMapper> {
+        NetworkMapper()
+    }
     single<NetworkClient> {
-        RetrofitNetworkClient(hhSearchApi = get(), connectivityManager = get())
+        RetrofitNetworkClient(
+            hhSearchApi = get(),
+            connectivityManager = get(),
+            mapper = get()
+        )
     }
     single<HhSearchApi> {
 
