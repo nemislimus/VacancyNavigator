@@ -16,4 +16,5 @@
     <string name="enter_the_query">Введите запрос</string>
     <string name="search_icon_description">иконка поиска</string>
     <string name="clear_icon_description">иконка очистки</string>
+    <string name="intro_search_picture">картинка поиска</string>
 </resources>

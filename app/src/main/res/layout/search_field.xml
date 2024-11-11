@@ -10,7 +10,7 @@
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/etSearchQueryText"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="start|center_vertical"
         android:layout_weight="1"
         android:background="@android:color/transparent"
@@ -22,6 +22,7 @@
         android:ellipsize="end"
         android:textCursorDrawable="@drawable/text_cursor"
         android:textAppearance="@style/TextRegular_16size_400weight"
+        android:layout_marginVertical="@dimen/margin_18"
         android:layout_marginStart="@dimen/margin_16" />
 
     <ImageView

@@ -44,17 +44,46 @@
         app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"/>
 
     <!--    Удалить при реализации-->
-    <TextView
+    <ProgressBar
+        android:id="@+id/pbSearchProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Поиск вакансий"
-        android:textAlignment="center"
-        android:textColor="?attr/elementColor_black_white"
-        android:textSize="46sp"
-        android:textStyle="bold"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/llSearchFieldContainer"/>
+
+    <ImageView
+        android:id="@+id/ivIntroPicture"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/intro_search_picture"
+        android:scaleType="centerCrop"
+        android:src="@drawable/looking_man"
+        app:layout_constrainedWidth="true"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
+        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/llSearchFieldContainer"/>
+
+    <TextView
+        android:id="@+id/tvResultInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/search_container_background"
+        android:backgroundTint="@color/blue"
+        android:textColor="@color/white"
+        tools:text="Найдено 286 вакансий"
+        android:layout_marginTop="@dimen/margin_8"
+        android:paddingVertical="@dimen/margin_4"
+        android:paddingHorizontal="@dimen/margin_12"
+        android:textAppearance="@style/TextRegular_16size_400weight"
+        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
+        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/llSearchFieldContainer"
+        android:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

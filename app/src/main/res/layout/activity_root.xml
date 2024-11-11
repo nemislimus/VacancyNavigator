@@ -20,6 +20,7 @@
         app:navGraph="@navigation/main_navigation_graph" />
 
     <FrameLayout
+        android:id="@+id/flDivider"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:background="@color/light_gray"

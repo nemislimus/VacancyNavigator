@@ -4,14 +4,18 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
-import ru.practicum.android.diploma.viewmodels.utils.BindingFragment
 import ru.practicum.android.diploma.util.emptyString
+import ru.practicum.android.diploma.viewmodels.utils.MenuBindingFragment
 
-class SearchFragment : BindingFragment<FragmentSearchBinding>() {
+class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
     private var searchTextWatcher: TextWatcher? = null
 
@@ -20,6 +24,19 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         container: ViewGroup?
     ): FragmentSearchBinding {
         return FragmentSearchBinding.inflate(inflater, container, false)
+    }
+
+    override fun getToolbarPanel(): Toolbar {
+        return binding.tbSearchToolBar
+    }
+
+    override fun getMenuRes(): Int {
+        return R.menu.search_toolbar_menu
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        goToFilter()
+        return true
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,7 +54,8 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                showClearIcon(s.isNullOrBlank())
+                setSearchIcon(s.isNullOrBlank())
+                showIntro(s.isNullOrBlank())
             }
         }
 
@@ -50,14 +68,24 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         super.onDestroy()
     }
 
-    private fun showClearIcon(emptyQuery: Boolean) {
+    private fun setSearchIcon(queryIsEmpty: Boolean) {
         with(binding.llSearchFieldContainer) {
-            ivSearchIcon.isVisible = emptyQuery
-            ivClearIcon.isVisible = !emptyQuery
+            ivSearchIcon.isVisible = queryIsEmpty
+            ivClearIcon.isVisible = !queryIsEmpty
         }
+    }
+
+    private fun showIntro(queryIsEmpty: Boolean) {
+        binding.ivIntroPicture.isVisible = queryIsEmpty
     }
 
     private fun clearQuery() {
         binding.llSearchFieldContainer.etSearchQueryText.setText(emptyString())
+    }
+
+    private fun goToFilter() {
+        findNavController().navigate(
+            R.id.action_searchFragment_to_filtrationFragment
+        )
     }
 }
