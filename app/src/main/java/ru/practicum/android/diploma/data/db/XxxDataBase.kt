@@ -6,7 +6,8 @@ import ru.practicum.android.diploma.data.db.dao.SomeTableDao
 import ru.practicum.android.diploma.data.db.models.SomeItem
 
 @Database(
-    version = 1, entities = [
+    version = 1,
+    entities = [
         SomeItem::class
     ]
 )
