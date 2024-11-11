@@ -5,9 +5,12 @@ interface NumDeclension {
         num: Int,
         str: String
     ): String {
-        val result: String
+        var result: String
         var count: Int = num % N100
-        val expressions = str.split(" ")
+        val expressions = str.split("|") as MutableList<String>
+        expressions.forEachIndexed { i, value ->
+            expressions[i] = value.trim()
+        }
 
         require(
             expressions.size == N3
@@ -26,7 +29,11 @@ interface NumDeclension {
             }
         }
 
-        return "$num $result"
+        if (!result.contains("%d")) {
+            result = "%d $result"
+        }
+
+        return result.replace("%d", num.toString())
     }
 
     companion object {
@@ -44,18 +51,18 @@ interface NumDeclension {
 class SomeClass(....) : SomeParentClass(), NumDeclension
 После этого внутри класса можем вызывать
 for(i in 0..10){
-    Log.d("WWW", declension(i, "пирожок пирожка пирожков"))
+    println(declension(i, "Найдена %d вакансия | Найдены %d вакансии | Найдено %d вакансий"))
 }
 Вывод будет такой:
-0 пирожков
-1 пирожок
-2 пирожка
-3 пирожка
-4 пирожка
-5 пирожков
-6 пирожков
-7 пирожков
-8 пирожков
-9 пирожков
-10 пирожков
+Найдено 0 вакансий
+Найдена 1 вакансия
+Найдены 2 вакансии
+Найдены 3 вакансии
+Найдены 4 вакансии
+Найдено 5 вакансий
+Найдено 6 вакансий
+Найдено 7 вакансий
+Найдено 8 вакансий
+Найдено 9 вакансий
+Найдено 10 вакансий
 */
