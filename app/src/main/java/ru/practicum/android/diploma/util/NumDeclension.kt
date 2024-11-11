@@ -9,8 +9,10 @@ interface NumDeclension {
         var count: Int = num % N100
         val expressions = str.split(" ")
 
-        if (expressions.size != N3) {
-            throw IllegalArgumentException("""Укажите все возможные словоформы. Например "кот кота котов" -> "1 кот, 2 кота, 5 котов" """)
+        require(
+            expressions.size == N3
+        ) {
+            return "Укажите все возможные словоформы. Например \"кот кота котов\" -> \"1 кот, 2 кота, 5 котов\""
         }
 
         if (count in N5..N20) {
