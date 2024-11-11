@@ -11,7 +11,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
-import ru.practicum.android.diploma.util.emptyString
+import ru.practicum.android.diploma.util.EMPTY_STRING
 import ru.practicum.android.diploma.viewmodels.utils.MenuBindingFragment
 
 class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
@@ -61,7 +61,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
     }
 
     private fun clearQuery() {
-        binding.llSearchFieldContainer.etSearchQueryText.setText(emptyString)
+        binding.llSearchFieldContainer.etSearchQueryText.setText(EMPTY_STRING)
     }
 
     private fun goToFilter() {

@@ -1,3 +1,3 @@
 package ru.practicum.android.diploma.util
 
-const val emptyString = ""
+const val EMPTY_STRING = ""
