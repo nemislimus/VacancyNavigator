@@ -4,6 +4,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
@@ -17,6 +18,7 @@ import ru.practicum.android.diploma.data.search.dto.response.CountryResponse
 import ru.practicum.android.diploma.data.search.dto.response.IndustryResponse
 import ru.practicum.android.diploma.data.search.dto.response.VacancyDetailedResponse
 import ru.practicum.android.diploma.data.search.dto.response.VacancyResponse
+import java.io.IOException
 
 class RetrofitNetworkClient(
     private val hhSearchApi: HhSearchApi,
@@ -65,12 +67,18 @@ class RetrofitNetworkClient(
                     )
                 }
                 response.apply { resultCode = GOOD_CODE }
+            } catch (e: HttpException) {
+                badResponse()
+            } catch (e: IOException) {
+                badResponse()
             } catch (e: Throwable) {
-                Response().apply { resultCode = INNER_ERROR_CODE }
+                badResponse()
             }
 
         }
     }
+
+    private fun badResponse() = Response().apply { resultCode = INNER_ERROR_CODE }
 
     private fun isConnected(): Boolean {
         var result = false
