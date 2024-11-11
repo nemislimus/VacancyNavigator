@@ -2,6 +2,7 @@ package ru.practicum.android.diploma.data.network
 
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -31,7 +32,7 @@ class RetrofitNetworkClient(
                 && dto !is CountryRequest
                 && dto !is IndustryRequest
                 && dto !is VacancyDetailedRequest
-                && dto !is VacancyRequest -> return Response().apply { resultCode = NO_CONNECTION_CODE }
+                && dto !is VacancyRequest -> return Response().apply { resultCode = BAD_REQUEST_CODE }
         }
 
         return withContext(Dispatchers.IO) {
@@ -62,7 +63,8 @@ class RetrofitNetworkClient(
                     )
                 }
                 response.apply { resultCode = GOOD_CODE }
-            } catch (e: HttpException) {
+            } catch (e: Throwable) {
+                Log.d("REQUEST_EXCEPTION", e.message ?: "UNKNOWN")
                 badResponse()
             }
 
