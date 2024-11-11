@@ -5,6 +5,7 @@ import retrofit2.http.Path
 import retrofit2.http.QueryMap
 import ru.practicum.android.diploma.data.dto.AreaDto
 import ru.practicum.android.diploma.data.dto.CountryDto
+import ru.practicum.android.diploma.data.dto.IndustryDto
 import ru.practicum.android.diploma.data.dto.VacancyDetailedDto
 import ru.practicum.android.diploma.data.dto.VacancyDto
 
@@ -21,5 +22,8 @@ interface HhSearchApi {
 
     @GET("areas/{id}")
     suspend fun getAreasByCountry(@Path("id") countryId: String): AreaDto
+
+    @GET("industries")
+    suspend fun getIndustries(): List<IndustryDto>
 
 }
