@@ -1,4 +1,8 @@
 package ru.practicum.android.diploma.data.dto
 
-class VacancyDto {
-}
+data class VacancyDto (
+    val id:String,
+    val name:String,
+    val salary:SalaryDto? = null
+
+)
