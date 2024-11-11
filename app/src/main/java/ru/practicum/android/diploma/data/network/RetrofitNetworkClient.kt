@@ -67,7 +67,7 @@ class RetrofitNetworkClient(
                     )
                 }
                 response.apply { resultCode = GOOD_CODE }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 badResponse()
             }
 
