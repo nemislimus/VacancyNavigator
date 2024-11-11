@@ -9,13 +9,13 @@ import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
 class RetrofitNetworkClient(
     private val hhSearchApi: HhSearchApi,
     private val connectivityManager: ConnectivityManager,
-    private val mapper: NetworkMapper
+    private val mapper: NetworkMapper,
 ) : NetworkClient {
     override suspend fun doRequest(dto: Any): Response {
         if (!isConnected()) {
-            return Response().apply { resultCode = -1 }
+            return Response().apply { resultCode = NO_CONNECTION_CODE }
         }
-        return Response().apply { resultCode = 404 }
+        return Response().apply { resultCode = NOT_FOUND_CODE }
     }
 
     private fun isConnected(): Boolean {
@@ -30,6 +30,11 @@ class RetrofitNetworkClient(
             }
 
         return result
+    }
+
+    companion object {
+        const val NO_CONNECTION_CODE = -1
+        const val NOT_FOUND_CODE = -1
     }
 
 }
