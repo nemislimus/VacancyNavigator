@@ -4,7 +4,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.HttpException
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
@@ -18,7 +17,6 @@ import ru.practicum.android.diploma.data.search.dto.response.CountryResponse
 import ru.practicum.android.diploma.data.search.dto.response.IndustryResponse
 import ru.practicum.android.diploma.data.search.dto.response.VacancyDetailedResponse
 import ru.practicum.android.diploma.data.search.dto.response.VacancyResponse
-import java.io.IOException
 
 class RetrofitNetworkClient(
     private val hhSearchApi: HhSearchApi,
@@ -26,17 +24,13 @@ class RetrofitNetworkClient(
     private val mapper: NetworkMapper,
 ) : NetworkClient {
     override suspend fun doRequest(dto: Any): Response {
-        if (!isConnected()) {
-            return Response().apply { resultCode = NO_CONNECTION_CODE }
-        }
-
-        if (dto !is AreaRequest
-            && dto !is CountryRequest
-            && dto !is IndustryRequest
-            && dto !is VacancyDetailedRequest
-            && dto !is VacancyRequest
-        ) {
-            return Response().apply { resultCode = BAD_REQUEST_CODE }
+        when {
+            !isConnected() -> return Response().apply { resultCode = NO_CONNECTION_CODE }
+            dto !is AreaRequest
+                && dto !is CountryRequest
+                && dto !is IndustryRequest
+                && dto !is VacancyDetailedRequest
+                && dto !is VacancyRequest -> return Response().apply { resultCode = NO_CONNECTION_CODE }
         }
 
         return withContext(Dispatchers.IO) {
