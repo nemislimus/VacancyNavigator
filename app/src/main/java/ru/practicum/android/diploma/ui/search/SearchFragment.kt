@@ -88,4 +88,5 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             R.id.action_searchFragment_to_filtrationFragment
         )
     }
+
 }
