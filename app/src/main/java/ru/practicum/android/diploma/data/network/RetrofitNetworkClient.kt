@@ -66,9 +66,6 @@ class RetrofitNetworkClient(
             } catch (e: HttpException) {
                 Log.d("REQUEST_EXCEPTION", e.message())
                 badResponse()
-            } catch (e: Throwable) {
-                Log.d("REQUEST_EXCEPTION", e.message ?: "Unknown throwable")
-                badResponse()
             }
 
         }
