@@ -1,11 +1,14 @@
 package ru.practicum.android.diploma.di
 
+import androidx.room.Room
+import org.koin.android.ext.koin.androidContext
 import android.content.Context
 import android.net.ConnectivityManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
+import ru.practicum.android.diploma.data.db.XxxDataBase
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.practicum.android.diploma.BuildConfig
@@ -15,6 +18,9 @@ import ru.practicum.android.diploma.data.network.RetrofitNetworkClient
 
 val dataModule = module {
 
+    single<XxxDataBase> {
+        Room.databaseBuilder(androidContext(), XxxDataBase::class.java, "xxx-team.db").build()
+    }
     single<ConnectivityManager> { androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     single<NetworkClient> {
         RetrofitNetworkClient(hhSearchApi = get(), connectivityManager = get())
