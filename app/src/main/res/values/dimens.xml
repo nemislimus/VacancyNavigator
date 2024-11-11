@@ -8,4 +8,10 @@
     <dimen name="margin_24">24dp</dimen>
     <dimen name="margin_32">32dp</dimen>
     <dimen name="margin_64">64dp</dimen>
+    <dimen name="size_12dp">12dp</dimen>
+    <dimen name="size_16dp">16dp</dimen>
+    <dimen name="size_24dp">24dp</dimen>
+    <dimen name="size_32dp">32dp</dimen>
+    <dimen name="size_64dp">64dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
 </resources>

@@ -11,4 +11,9 @@
     <string name="menu_main">Главная</string>
     <string name="menu_favorites">Избранное</string>
     <string name="menu_team">Команда</string>
+    <string name="vacancy_search">Поиск вакансий</string>
+    <string name="search_filter">фильтр поиска</string>
+    <string name="enter_the_query">Введите запрос</string>
+    <string name="search_icon_description">иконка поиска</string>
+    <string name="clear_icon_description">иконка очистки</string>
 </resources>
