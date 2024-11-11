@@ -6,18 +6,110 @@
     android:layout_height="match_parent"
     tools:context="ru.practicum.android.diploma.ui.search.SearchFragment">
 
-    <!--    Удалить при реализации-->
-    <TextView
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glLeftBorder_16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Поиск вакансий"
-        android:textAlignment="center"
-        android:textColor="?attr/elementColor_black_white"
-        android:textSize="46sp"
-        android:textStyle="bold"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/margin_16" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glRightBorder_16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/margin_16" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tbSearchToolBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_64dp"
+        app:buttonGravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/search_toolbar_menu"
+        app:title="@string/vacancy_search"
+        app:titleTextAppearance="@style/TextMedium_22size_500weight"
+        app:titleTextColor="?attr/elementColor_black_white" />
+
+    <include
+        android:id="@+id/llSearchFieldContainer"
+        layout="@layout/search_field"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_8"
+        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
+        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/tbSearchToolBar" />
+
+    <ProgressBar
+        android:id="@+id/pbSearchProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/llSearchFieldContainer" />
+
+    <ImageView
+        android:id="@+id/ivIntroPicture"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/intro_search_picture"
+        android:scaleType="fitCenter"
+        android:src="@drawable/intro_picture"
+        android:visibility="visible"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="@string/pictures_ratio"
+        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
+        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/llSearchFieldContainer" />
+
+    <include
+        android:id="@+id/clPlaceholder"
+        layout="@layout/placeholder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
+        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/llSearchFieldContainer" />
+
+    <TextView
+        android:id="@+id/tvResultInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_8"
+        android:background="@drawable/search_container_background"
+        android:backgroundTint="@color/blue"
+        android:paddingHorizontal="@dimen/margin_12"
+        android:paddingVertical="@dimen/margin_4"
+        android:textAppearance="@style/TextRegular_16size_400weight"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
+        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/llSearchFieldContainer"
+        tools:text="result info" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvVacancyList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_12"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
+        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/tvResultInfo"
+        app:spanCount="20" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

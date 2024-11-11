@@ -2,6 +2,7 @@ package ru.practicum.android.diploma.ui.root
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import ru.practicum.android.diploma.BuildConfig
@@ -22,6 +23,20 @@ class RootActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavigationPanel.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.filtrationFragment -> {
+                    binding.bottomNavigationPanel.isVisible = false
+                    binding.flDivider.isVisible = false
+                }
+
+                else -> {
+                    binding.bottomNavigationPanel.isVisible = true
+                    binding.flDivider.isVisible = true
+                }
+            }
+        }
 
 
         // Пример использования access token для HeadHunter API

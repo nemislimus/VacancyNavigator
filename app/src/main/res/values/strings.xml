@@ -11,4 +11,15 @@
     <string name="menu_main">Главная</string>
     <string name="menu_favorites">Избранное</string>
     <string name="menu_team">Команда</string>
+    <string name="vacancy_search">Поиск вакансий</string>
+    <string name="search_filter">фильтр поиска</string>
+    <string name="enter_the_query">Введите запрос</string>
+    <string name="search_icon_description">иконка поиска</string>
+    <string name="clear_icon_description">иконка очистки</string>
+    <string name="intro_search_picture">картинка поиска</string>
+    <string name="placeholder_picture">изображение плейсхолдера</string>
+    <string name="pictures_ratio">328:223</string>
+    <string name="not_found_vacancies">Не удалось получить список вакансий</string>
+    <string name="no_internet">Нет интернета</string>
+    <string name="no_query_vacancies">Таких вакансий нет</string>
 </resources>
