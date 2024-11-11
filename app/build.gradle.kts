@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.ui.constraintLayout)
     implementation(libs.activity.ktx)
     implementation(libs.glide)
+    implementation(libs.viewbinding)
     annotationProcessor(libs.compilerGlide)
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)

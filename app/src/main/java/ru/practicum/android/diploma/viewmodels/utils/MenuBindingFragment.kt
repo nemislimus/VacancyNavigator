@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.presentation.utils
+package ru.practicum.android.diploma.viewmodels.utils
 
 import android.os.Bundle
 import android.view.Menu

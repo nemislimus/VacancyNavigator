@@ -2,29 +2,22 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.auth.AuthorizationRedirectActivity">
+    tools:context="ru.practicum.android.diploma.ui.favorites.FavoritesFragment">
 
+    <!--    Удалить при реализации-->
     <TextView
-        android:id="@+id/tvInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Просмотр ссылки в нашем приложении"
+        android:text="Избранное"
+        android:textAlignment="center"
+        android:textColor="?attr/elementColor_black_white"
+        android:textSize="46sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvKey"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="ключ доступа к hh.ru"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvInfo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
