@@ -2,7 +2,6 @@ package ru.practicum.android.diploma.data.network
 
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.widget.TableRow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
@@ -25,7 +24,6 @@ class RetrofitNetworkClient(
     private val mapper: NetworkMapper,
 ) : NetworkClient {
     override suspend fun doRequest(dto: Any): Response {
-
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTION_CODE }
         }
@@ -40,14 +38,31 @@ class RetrofitNetworkClient(
         }
 
         return withContext(Dispatchers.IO) {
-
             try {
                 val response = when (dto) {
-                    is CountryRequest -> CountryResponse(hhSearchApi.getCountries())
-                    is AreaRequest -> AreaResponse(hhSearchApi.getAreasByCountry(dto.countryId))
-                    is IndustryRequest -> IndustryResponse(hhSearchApi.getIndustries())
-                    is VacancyRequest -> VacancyResponse(hhSearchApi.searchVacancies(mapper.map(dto.options)))
-                    else -> VacancyDetailedResponse(hhSearchApi.getVacancyDetails((dto as VacancyDetailedRequest).vacancyId))
+                    is CountryRequest -> CountryResponse(
+                        hhSearchApi.getCountries()
+                    )
+
+                    is AreaRequest -> AreaResponse(
+                        hhSearchApi.getAreasByCountry(dto.countryId)
+                    )
+
+                    is IndustryRequest -> IndustryResponse(
+                        hhSearchApi.getIndustries()
+                    )
+
+                    is VacancyRequest -> VacancyResponse(
+                        hhSearchApi.searchVacancies(
+                            mapper.map(dto.options)
+                        )
+                    )
+
+                    else -> VacancyDetailedResponse(
+                        hhSearchApi.getVacancyDetails(
+                            (dto as VacancyDetailedRequest).vacancyId
+                        )
+                    )
                 }
                 response.apply { resultCode = GOOD_CODE }
             } catch (e: Throwable) {
