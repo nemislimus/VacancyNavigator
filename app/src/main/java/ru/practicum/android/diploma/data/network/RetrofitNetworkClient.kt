@@ -120,11 +120,7 @@ class RetrofitNetworkClient(
     }
 
     private fun isValidRequest(dto: Any): Boolean {
-        return dto is AreaRequest
-                || dto is CountryRequest
-                || dto is IndustryRequest
-                || dto is VacancyDetailedRequest
-                || dto is VacancyRequest
+        return dto is AreaRequest || dto is CountryRequest || dto is IndustryRequest || dto is VacancyDetailedRequest || dto is VacancyRequest
     }
 
     private fun incorrectParamResponse() = Response().apply {
@@ -141,9 +137,9 @@ class RetrofitNetworkClient(
         connectivityManager
             .getNetworkCapabilities(connectivityManager.activeNetwork)
             ?.let {
-                result = it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                        || it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                        || it.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                result = it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || it.hasTransport(
+                    NetworkCapabilities.TRANSPORT_WIFI
+                ) || it.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
             }
 
         return result
