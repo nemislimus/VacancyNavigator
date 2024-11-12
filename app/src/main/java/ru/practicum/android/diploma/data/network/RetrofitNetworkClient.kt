@@ -121,7 +121,7 @@ class RetrofitNetworkClient(
 
     private fun isValidRequest(dto: Any): Boolean {
         return dto is AreaRequest || dto is CountryRequest || dto is IndustryRequest
-                || dto is VacancyDetailedRequest || dto is VacancyRequest
+             || dto is VacancyDetailedRequest || dto is VacancyRequest
     }
 
     private fun incorrectParamResponse() = Response().apply {
