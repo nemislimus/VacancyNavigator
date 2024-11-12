@@ -23,6 +23,7 @@ import ru.practicum.android.diploma.data.search.dto.request.VacancyDetailedReque
 import ru.practicum.android.diploma.data.search.dto.request.VacancyRequest
 import ru.practicum.android.diploma.data.search.dto.response.CountryResponse
 import ru.practicum.android.diploma.data.search.dto.response.IndustryResponse
+import java.io.IOException
 
 class RetrofitNetworkClient(
     private val hhSearchApi: HhSearchApi,
@@ -114,8 +115,9 @@ class RetrofitNetworkClient(
                     }
                 }
                 response
+            } catch (@Suppress("SwallowedException") e: IOException) {
+                badResponse()
             }
-
         }
     }
 
