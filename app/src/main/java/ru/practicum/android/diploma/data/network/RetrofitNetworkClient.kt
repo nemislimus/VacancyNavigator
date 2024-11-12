@@ -20,6 +20,7 @@ import ru.practicum.android.diploma.data.search.dto.response.IndustryResponse
 import ru.practicum.android.diploma.data.search.dto.response.VacancyDetailedResponse
 import ru.practicum.android.diploma.data.search.dto.response.VacancyResponse
 import ru.practicum.android.diploma.util.СustomIOException
+import java.io.IOException
 
 class RetrofitNetworkClient(
     private val hhSearchApi: HhSearchApi,
@@ -67,7 +68,7 @@ class RetrofitNetworkClient(
             } catch (e: HttpException) {
                 Log.d("REQUEST_EXCEPTION", e.message())
                 badResponse()
-            } catch (e: СustomIOException) {
+            } catch (e: IOException) {
                 badResponse()
             }
 
