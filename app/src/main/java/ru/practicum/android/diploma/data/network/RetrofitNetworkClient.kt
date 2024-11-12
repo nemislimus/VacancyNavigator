@@ -14,7 +14,6 @@ import ru.practicum.android.diploma.data.search.dto.request.CountryRequest
 import ru.practicum.android.diploma.data.search.dto.request.IndustryRequest
 import ru.practicum.android.diploma.data.search.dto.request.VacancyDetailedRequest
 import ru.practicum.android.diploma.data.search.dto.request.VacancyRequest
-import ru.practicum.android.diploma.data.search.dto.response.AreaResponse
 import ru.practicum.android.diploma.data.search.dto.response.CountryResponse
 import ru.practicum.android.diploma.data.search.dto.response.IndustryResponse
 import ru.practicum.android.diploma.data.search.dto.response.VacancyDetailedResponse
@@ -49,15 +48,13 @@ class RetrofitNetworkClient(
             try {
                 val response = when (dto) {
                     is CountryRequest -> CountryResponse(
-                        hhSearchApi.getCountries()
+                        result = hhSearchApi.getCountries()
                     )
 
-                    is AreaRequest -> AreaResponse(
-                        hhSearchApi.getAreasByCountry(dto.countryId)
-                    )
+                    is AreaRequest -> hhSearchApi.getAreasByCountry(dto.countryId)
 
                     is IndustryRequest -> IndustryResponse(
-                        hhSearchApi.getIndustries()
+                        result = hhSearchApi.getIndustries()
                     )
 
                     is VacancyRequest -> VacancyResponse(
@@ -66,11 +63,11 @@ class RetrofitNetworkClient(
                         )
                     )
 
-                    else -> VacancyDetailedResponse(
+                    else ->
                         hhSearchApi.getVacancyDetails(
                             (dto as VacancyDetailedRequest).vacancyId
                         )
-                    )
+
                 }
                 response.apply { resultCode = SUCCESSFUL_RESPONSE_CODE }
             } catch (e: HttpException) {
