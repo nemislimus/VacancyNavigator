@@ -23,4 +23,13 @@
     <string name="no_internet">Нет интернета</string>
     <string name="no_query_vacancies">Таких вакансий нет</string>
     <string name="vacancy_logo">логотип вакансии</string>
+
+    <string name="SettingFilters">Настройки фильтрации</string>
+    <string name="place_of_work">Место работы</string>
+    <string name="industry">Отрасль</string>
+    <string name="enter_salary">Введите сумму</string>
+    <string name="expected_salary">Ожидаемая ЗП</string>
+    <string name="not_show_without_sallary">Не показывать без ЗП</string>
+    <string name="apply">Применить</string>
+    <string name="reset">Сбросить</string>
 </resources>
