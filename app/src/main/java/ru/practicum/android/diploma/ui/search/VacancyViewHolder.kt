@@ -6,7 +6,7 @@ import ru.practicum.android.diploma.domain.search.model.Vacancy
 
 class VacancyViewHolder(
     private val binding: VacancyListItemBinding
-): RecyclerView.ViewHolder(binding.root) {
+) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: Vacancy) {
         with(binding) {

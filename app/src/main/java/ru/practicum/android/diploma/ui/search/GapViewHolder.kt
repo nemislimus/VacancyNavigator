@@ -5,4 +5,4 @@ import ru.practicum.android.diploma.databinding.VacancyListGapBinding
 
 class GapViewHolder(
     private val binding: VacancyListGapBinding
-): RecyclerView.ViewHolder(binding.root)
+) : RecyclerView.ViewHolder(binding.root)
