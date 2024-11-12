@@ -27,13 +27,21 @@ class RetrofitNetworkClient(
 ) : NetworkClient {
     override suspend fun doRequest(dto: Any): Response {
         when {
-            !isConnected() -> return Response().apply { resultCode = NO_CONNECTION_CODE }
+            !isConnected() -> {
+                Log.d(REQUEST_EXCEPTION_TAG, "[$NO_CONNECTION_CODE] - no connection")
+                return Response().apply { resultCode = NO_CONNECTION_CODE }
+            }
+
             dto !is AreaRequest
                     && dto !is CountryRequest
                     && dto !is IndustryRequest
                     && dto !is VacancyDetailedRequest
-                    && dto !is VacancyRequest -> return Response().apply {
-                resultCode = INCORRECT_PARAM_ERROR_CODE
+                    && dto !is VacancyRequest -> {
+                Log.d(
+                    REQUEST_EXCEPTION_TAG,
+                    "[$INCORRECT_PARAM_ERROR_CODE] - incorrect params exception"
+                )
+                return incorrectParamResponse()
             }
         }
 
@@ -66,15 +74,61 @@ class RetrofitNetworkClient(
                 }
                 response.apply { resultCode = SUCCESSFUL_RESPONSE_CODE }
             } catch (e: HttpException) {
-                Log.d("REQUEST_EXCEPTION", e.message())
-                e.code()
-                badResponse()
+                val message = e.message()
+                val response = when (val errorCode = e.code()) {
+                    INCORRECT_PARAM_ERROR_CODE -> {
+                        Log.d(
+                            REQUEST_EXCEPTION_TAG,
+                            "[$INCORRECT_PARAM_ERROR_CODE] - incorrect params exception\n$message"
+                        )
+                        incorrectParamResponse()
+                    }
+
+                    CAPTCHA_REQUIRED_ERROR -> {
+                        Log.d(
+                            REQUEST_EXCEPTION_TAG,
+                            "[$CAPTCHA_REQUIRED_ERROR] - captcha required error\n$message"
+                        )
+                        Response().apply { resultCode = CAPTCHA_REQUIRED_ERROR }
+                    }
+
+                    NOT_FOUND_CODE -> {
+                        Log.d(
+                            REQUEST_EXCEPTION_TAG,
+                            "[$NOT_FOUND_CODE] - page not found\n$message"
+                        )
+                        Response().apply { resultCode = NOT_FOUND_CODE }
+                    }
+
+                    BAD_GATEWAY_CODE -> {
+                        Log.d(
+                            REQUEST_EXCEPTION_TAG,
+                            "[$BAD_GATEWAY_CODE] - bad gateway\n$message"
+                        )
+                        Response().apply { resultCode = BAD_GATEWAY_CODE }
+                    }
+
+                    else -> {
+                        Log.d(
+                            REQUEST_EXCEPTION_TAG,
+                            "[$errorCode] - bad response\n$message"
+                        )
+                        badResponse()
+                    }
+                }
+                response
             }
 
         }
     }
 
-    private fun badResponse() = Response().apply { resultCode = INTERNAL_SERV_ERROR_CODE }
+    private fun incorrectParamResponse() = Response().apply {
+        resultCode = INCORRECT_PARAM_ERROR_CODE
+    }
+
+    private fun badResponse() = Response().apply {
+        resultCode = INTERNAL_SERV_ERROR_CODE
+    }
 
     private fun isConnected(): Boolean {
         var result = false
@@ -98,6 +152,8 @@ class RetrofitNetworkClient(
         const val NOT_FOUND_CODE = 404
         const val INTERNAL_SERV_ERROR_CODE = 500
         const val BAD_GATEWAY_CODE = 502
+
+        private const val REQUEST_EXCEPTION_TAG = "RETROFIT_EXCEPTION"
     }
 
 }
