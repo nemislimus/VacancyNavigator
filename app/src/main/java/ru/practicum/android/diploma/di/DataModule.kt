@@ -16,7 +16,6 @@ import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
 import java.net.URLEncoder
-import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
 val dataModule = module {
@@ -38,7 +37,6 @@ val dataModule = module {
         )
     }
     single<HhSearchApi> {
-
         val interceptor = Interceptor { chain ->
 
             val token = BuildConfig.HH_ACCESS_TOKEN
