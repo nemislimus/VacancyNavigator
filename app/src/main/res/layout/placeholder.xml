@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
@@ -19,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTag="phPicture"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/placeholder_not_found_picture" />
+        android:src="@drawable/placeholder_not_found_picture" />
 
     <TextView
         android:id="@+id/tvPlaceholderText"
@@ -35,6 +34,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTag="phText"
         app:layout_constraintTop_toBottomOf="@id/ivPlaceholderPicture"
-        tools:text="Не удалось получить список вакансий" />
+        android:text="@string/not_found_vacancies" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

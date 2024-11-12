@@ -11,7 +11,7 @@
         android:layout_width="@dimen/size_48dp"
         android:layout_height="@dimen/size_48dp"
         android:layout_marginEnd="@dimen/margin_12"
-        android:background="@android:color/transparent"
+        app:cardBackgroundColor="@android:color/transparent"
         app:cardCornerRadius="@dimen/size_12dp"
         app:cardElevation="0dp">
 
@@ -21,7 +21,8 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/vacancy_logo"
             android:scaleType="centerCrop"
-            tools:src="@drawable/ic_droid" />
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_droid" />
 
         <View
             android:layout_width="wrap_content"
