@@ -6,6 +6,13 @@ import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
+import ru.practicum.android.diploma.data.network.Response.Companion.BAD_GATEWAY_CODE
+import ru.practicum.android.diploma.data.network.Response.Companion.CAPTCHA_REQUIRED_ERROR
+import ru.practicum.android.diploma.data.network.Response.Companion.INCORRECT_PARAM_ERROR_CODE
+import ru.practicum.android.diploma.data.network.Response.Companion.INTERNAL_SERV_ERROR_CODE
+import ru.practicum.android.diploma.data.network.Response.Companion.NOT_FOUND_CODE
+import ru.practicum.android.diploma.data.network.Response.Companion.NO_CONNECTION_CODE
+import ru.practicum.android.diploma.data.network.Response.Companion.SUCCESSFUL_RESPONSE_CODE
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
@@ -16,8 +23,6 @@ import ru.practicum.android.diploma.data.search.dto.request.VacancyDetailedReque
 import ru.practicum.android.diploma.data.search.dto.request.VacancyRequest
 import ru.practicum.android.diploma.data.search.dto.response.CountryResponse
 import ru.practicum.android.diploma.data.search.dto.response.IndustryResponse
-import ru.practicum.android.diploma.data.search.dto.response.VacancyDetailedResponse
-import ru.practicum.android.diploma.data.search.dto.response.VacancyResponse
 
 class RetrofitNetworkClient(
     private val hhSearchApi: HhSearchApi,
@@ -57,10 +62,9 @@ class RetrofitNetworkClient(
                         result = hhSearchApi.getIndustries()
                     )
 
-                    is VacancyRequest -> VacancyResponse(
-                        hhSearchApi.searchVacancies(
-                            mapper.map(dto.options)
-                        )
+                    is VacancyRequest -> hhSearchApi.searchVacancies(
+                        mapper.map(dto.options)
+
                     )
 
                     else ->
@@ -142,14 +146,6 @@ class RetrofitNetworkClient(
     }
 
     companion object {
-        const val NO_CONNECTION_CODE = -1
-        const val SUCCESSFUL_RESPONSE_CODE = 200
-        const val INCORRECT_PARAM_ERROR_CODE = 400
-        const val CAPTCHA_REQUIRED_ERROR = 403
-        const val NOT_FOUND_CODE = 404
-        const val INTERNAL_SERV_ERROR_CODE = 500
-        const val BAD_GATEWAY_CODE = 502
-
         private const val REQUEST_EXCEPTION_TAG = "RETROFIT_EXCEPTION"
     }
 
