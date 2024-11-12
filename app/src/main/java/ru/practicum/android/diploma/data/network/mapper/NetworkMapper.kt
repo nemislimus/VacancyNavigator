@@ -23,8 +23,6 @@ class NetworkMapper {
         searchVacancyOptions.onlyWithSalary?.let {
             map["area"] = it.toString()
         }
-
         return map
-
     }
 }
