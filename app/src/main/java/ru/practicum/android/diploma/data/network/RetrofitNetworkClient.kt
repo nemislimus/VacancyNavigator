@@ -25,129 +25,129 @@ import ru.practicum.android.diploma.data.search.dto.response.CountryResponse
 import ru.practicum.android.diploma.data.search.dto.response.IndustryResponse
 
 class RetrofitNetworkClient(
-   private val hhSearchApi: HhSearchApi,
-   private val connectivityManager: ConnectivityManager,
-   private val mapper: NetworkMapper,
+    private val hhSearchApi: HhSearchApi,
+    private val connectivityManager: ConnectivityManager,
+    private val mapper: NetworkMapper,
 ) : NetworkClient {
-   override suspend fun doRequest(dto: Any): Response {
-      when {
-         !isConnected() -> {
-            Log.d(REQUEST_EXCEPTION_TAG, "[$NO_CONNECTION_CODE] - no connection")
-            return Response().apply { resultCode = NO_CONNECTION_CODE }
-         }
-
-         !isValidRequest(dto) -> {
-            Log.d(
-               REQUEST_EXCEPTION_TAG,
-               "[$INCORRECT_PARAM_ERROR_CODE] - incorrect params exception"
-            )
-            return incorrectParamResponse()
-         }
-      }
-
-      return withContext(Dispatchers.IO) {
-         try {
-            val response = when (dto) {
-               is CountryRequest -> CountryResponse(
-                  result = hhSearchApi.getCountries()
-               )
-
-               is AreaRequest -> hhSearchApi.getAreasByCountry(dto.parrentAreaId)
-
-               is IndustryRequest -> IndustryResponse(
-                  result = hhSearchApi.getIndustries()
-               )
-
-               is VacancyRequest -> hhSearchApi.searchVacancies(
-                  mapper.map(dto.options)
-
-               )
-
-               else ->
-                  hhSearchApi.getVacancyDetails(
-                     (dto as VacancyDetailedRequest).vacancyId
-                  )
-
+    override suspend fun doRequest(dto: Any): Response {
+        when {
+            !isConnected() -> {
+                Log.d(REQUEST_EXCEPTION_TAG, "[$NO_CONNECTION_CODE] - no connection")
+                return Response().apply { resultCode = NO_CONNECTION_CODE }
             }
-            response.apply { resultCode = SUCCESSFUL_RESPONSE_CODE }
-         } catch (e: HttpException) {
-            val message = e.message()
-            val response = when (val errorCode = e.code()) {
-               INCORRECT_PARAM_ERROR_CODE -> {
-                  Log.d(
-                     REQUEST_EXCEPTION_TAG,
-                     "[$INCORRECT_PARAM_ERROR_CODE] - incorrect params exception\n$message"
-                  )
-                  incorrectParamResponse()
-               }
 
-               CAPTCHA_REQUIRED_ERROR -> {
-                  Log.d(
-                     REQUEST_EXCEPTION_TAG,
-                     "[$CAPTCHA_REQUIRED_ERROR] - captcha required error\n$message"
-                  )
-                  Response().apply { resultCode = CAPTCHA_REQUIRED_ERROR }
-               }
-
-               NOT_FOUND_CODE -> {
-                  Log.d(
-                     REQUEST_EXCEPTION_TAG,
-                     "[$NOT_FOUND_CODE] - page not found\n$message"
-                  )
-                  Response().apply { resultCode = NOT_FOUND_CODE }
-               }
-
-               BAD_GATEWAY_CODE -> {
-                  Log.d(
-                     REQUEST_EXCEPTION_TAG,
-                     "[$BAD_GATEWAY_CODE] - bad gateway\n$message"
-                  )
-                  Response().apply { resultCode = BAD_GATEWAY_CODE }
-               }
-
-               else -> {
-                  Log.d(
-                     REQUEST_EXCEPTION_TAG,
-                     "[$errorCode] - bad response\n$message"
-                  )
-                  badResponse()
-               }
+            !isValidRequest(dto) -> {
+                Log.d(
+                    REQUEST_EXCEPTION_TAG,
+                    "[$INCORRECT_PARAM_ERROR_CODE] - incorrect params exception"
+                )
+                return incorrectParamResponse()
             }
-            response
-         }
+        }
 
-      }
-   }
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = when (dto) {
+                    is CountryRequest -> CountryResponse(
+                        result = hhSearchApi.getCountries()
+                    )
 
-   private fun isValidRequest(dto: Any): Boolean {
-      return dto is AreaRequest || dto is CountryRequest || dto is IndustryRequest
-            || dto is VacancyDetailedRequest || dto is VacancyRequest
-   }
+                    is AreaRequest -> hhSearchApi.getAreasByCountry(dto.parrentAreaId)
 
-   private fun incorrectParamResponse() = Response().apply {
-      resultCode = INCORRECT_PARAM_ERROR_CODE
-   }
+                    is IndustryRequest -> IndustryResponse(
+                        result = hhSearchApi.getIndustries()
+                    )
 
-   private fun badResponse() = Response().apply {
-      resultCode = INTERNAL_SERV_ERROR_CODE
-   }
+                    is VacancyRequest -> hhSearchApi.searchVacancies(
+                        mapper.map(dto.options)
 
-   private fun isConnected(): Boolean {
-      var result = false
+                    )
 
-      connectivityManager
-         .getNetworkCapabilities(connectivityManager.activeNetwork)
-         ?.let {
-            result = it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || it.hasTransport(
-               NetworkCapabilities.TRANSPORT_WIFI
-            ) || it.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-         }
+                    else ->
+                        hhSearchApi.getVacancyDetails(
+                            (dto as VacancyDetailedRequest).vacancyId
+                        )
 
-      return result
-   }
+                }
+                response.apply { resultCode = SUCCESSFUL_RESPONSE_CODE }
+            } catch (e: HttpException) {
+                val message = e.message()
+                val response = when (val errorCode = e.code()) {
+                    INCORRECT_PARAM_ERROR_CODE -> {
+                        Log.d(
+                            REQUEST_EXCEPTION_TAG,
+                            "[$INCORRECT_PARAM_ERROR_CODE] - incorrect params exception\n$message"
+                        )
+                        incorrectParamResponse()
+                    }
 
-   companion object {
-      private const val REQUEST_EXCEPTION_TAG = "RETROFIT_EXCEPTION"
-   }
+                    CAPTCHA_REQUIRED_ERROR -> {
+                        Log.d(
+                            REQUEST_EXCEPTION_TAG,
+                            "[$CAPTCHA_REQUIRED_ERROR] - captcha required error\n$message"
+                        )
+                        Response().apply { resultCode = CAPTCHA_REQUIRED_ERROR }
+                    }
+
+                    NOT_FOUND_CODE -> {
+                        Log.d(
+                            REQUEST_EXCEPTION_TAG,
+                            "[$NOT_FOUND_CODE] - page not found\n$message"
+                        )
+                        Response().apply { resultCode = NOT_FOUND_CODE }
+                    }
+
+                    BAD_GATEWAY_CODE -> {
+                        Log.d(
+                            REQUEST_EXCEPTION_TAG,
+                            "[$BAD_GATEWAY_CODE] - bad gateway\n$message"
+                        )
+                        Response().apply { resultCode = BAD_GATEWAY_CODE }
+                    }
+
+                    else -> {
+                        Log.d(
+                            REQUEST_EXCEPTION_TAG,
+                            "[$errorCode] - bad response\n$message"
+                        )
+                        badResponse()
+                    }
+                }
+                response
+            }
+
+        }
+    }
+
+    private fun isValidRequest(dto: Any): Boolean {
+        return dto is AreaRequest || dto is CountryRequest || dto is IndustryRequest
+                || dto is VacancyDetailedRequest || dto is VacancyRequest
+    }
+
+    private fun incorrectParamResponse() = Response().apply {
+        resultCode = INCORRECT_PARAM_ERROR_CODE
+    }
+
+    private fun badResponse() = Response().apply {
+        resultCode = INTERNAL_SERV_ERROR_CODE
+    }
+
+    private fun isConnected(): Boolean {
+        var result = false
+
+        connectivityManager
+            .getNetworkCapabilities(connectivityManager.activeNetwork)
+            ?.let {
+                result = it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || it.hasTransport(
+                    NetworkCapabilities.TRANSPORT_WIFI
+                ) || it.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+            }
+
+        return result
+    }
+
+    companion object {
+        private const val REQUEST_EXCEPTION_TAG = "RETROFIT_EXCEPTION"
+    }
 
 }
