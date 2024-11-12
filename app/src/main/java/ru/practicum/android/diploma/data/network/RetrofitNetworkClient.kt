@@ -29,10 +29,12 @@ class RetrofitNetworkClient(
         when {
             !isConnected() -> return Response().apply { resultCode = NO_CONNECTION_CODE }
             dto !is AreaRequest
-                && dto !is CountryRequest
-                && dto !is IndustryRequest
-                && dto !is VacancyDetailedRequest
-                && dto !is VacancyRequest -> return Response().apply { resultCode = BAD_REQUEST_CODE }
+                    && dto !is CountryRequest
+                    && dto !is IndustryRequest
+                    && dto !is VacancyDetailedRequest
+                    && dto !is VacancyRequest -> return Response().apply {
+                resultCode = INCORRECT_PARAM_ERROR_CODE
+            }
         }
 
         return withContext(Dispatchers.IO) {
@@ -62,7 +64,7 @@ class RetrofitNetworkClient(
                         )
                     )
                 }
-                response.apply { resultCode = GOOD_CODE }
+                response.apply { resultCode = SUCCESSFUL_RESPONSE_CODE }
             } catch (e: HttpException) {
                 Log.d("REQUEST_EXCEPTION", e.message())
                 e.code()
@@ -72,7 +74,7 @@ class RetrofitNetworkClient(
         }
     }
 
-    private fun badResponse() = Response().apply { resultCode = INNER_ERROR_CODE }
+    private fun badResponse() = Response().apply { resultCode = INTERNAL_SERV_ERROR_CODE }
 
     private fun isConnected(): Boolean {
         var result = false
@@ -81,8 +83,8 @@ class RetrofitNetworkClient(
             .getNetworkCapabilities(connectivityManager.activeNetwork)
             ?.let {
                 result = it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                    || it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                    || it.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                        || it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                        || it.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
             }
 
         return result
@@ -90,9 +92,12 @@ class RetrofitNetworkClient(
 
     companion object {
         const val NO_CONNECTION_CODE = -1
-        const val BAD_REQUEST_CODE = 400
-        const val GOOD_CODE = 200
-        const val INNER_ERROR_CODE = 500
+        const val SUCCESSFUL_RESPONSE_CODE = 200
+        const val INCORRECT_PARAM_ERROR_CODE = 400
+        const val CAPTCHA_REQUIRED_ERROR = 403
+        const val NOT_FOUND_CODE = 404
+        const val INTERNAL_SERV_ERROR_CODE = 500
+        const val BAD_GATEWAY_CODE = 502
     }
 
 }
