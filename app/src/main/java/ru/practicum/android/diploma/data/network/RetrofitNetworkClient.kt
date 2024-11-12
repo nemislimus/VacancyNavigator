@@ -65,6 +65,7 @@ class RetrofitNetworkClient(
                 response.apply { resultCode = GOOD_CODE }
             } catch (e: HttpException) {
                 Log.d("REQUEST_EXCEPTION", e.message())
+                e.code()
                 badResponse()
             }
 
@@ -90,7 +91,7 @@ class RetrofitNetworkClient(
     companion object {
         const val NO_CONNECTION_CODE = -1
         const val BAD_REQUEST_CODE = 400
-        const val GOOD_CODE = 404
+        const val GOOD_CODE = 200
         const val INNER_ERROR_CODE = 500
     }
 
