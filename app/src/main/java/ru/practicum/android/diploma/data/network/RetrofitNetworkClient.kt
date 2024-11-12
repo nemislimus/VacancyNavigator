@@ -56,7 +56,7 @@ class RetrofitNetworkClient(
                         result = hhSearchApi.getCountries()
                     )
 
-                    is AreaRequest -> hhSearchApi.getAreasByCountry(dto.countryId)
+                    is AreaRequest -> hhSearchApi.getAreasByCountry(dto.parrentAreaId)
 
                     is IndustryRequest -> IndustryResponse(
                         result = hhSearchApi.getIndustries()
