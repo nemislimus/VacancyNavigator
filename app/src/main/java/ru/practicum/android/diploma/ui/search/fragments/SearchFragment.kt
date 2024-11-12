@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.ui.search
+package ru.practicum.android.diploma.ui.search.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,10 +11,14 @@ import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
+import ru.practicum.android.diploma.domain.search.model.Vacancy
+import ru.practicum.android.diploma.ui.search.VacancyListAdapter
 import ru.practicum.android.diploma.util.EMPTY_STRING
 import ru.practicum.android.diploma.viewmodels.utils.MenuBindingFragment
 
 class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
+
+    private val listAdapter = VacancyListAdapter { clickOnVacancy(it) }
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -38,6 +42,8 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.rvVacancyList.adapter = listAdapter
 
         binding.llSearchFieldContainer.ivClearIcon.setOnClickListener {
             clearQuery()
@@ -69,4 +75,11 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             R.id.action_searchFragment_to_filtrationFragment
         )
     }
+
+    private fun clickOnVacancy(vacancy: Vacancy) {
+        findNavController().navigate(
+            R.id.action_searchFragment_to_vacancyFragment
+        )
+    }
+
 }

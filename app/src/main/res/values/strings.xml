@@ -22,4 +22,7 @@
     <string name="not_found_vacancies">Не удалось получить список вакансий</string>
     <string name="no_internet">Нет интернета</string>
     <string name="no_query_vacancies">Таких вакансий нет</string>
+    <string name="vacancy_logo">логотип вакансии</string>
+    <string name="unknown_viewholder_create">Unknown ViewHolder type for create</string>
+    <string name="unknown_viewholder_bind">Unknown ViewHolder type for bind</string>
 </resources>
