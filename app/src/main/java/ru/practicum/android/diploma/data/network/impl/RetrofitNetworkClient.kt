@@ -1,11 +1,10 @@
-package ru.practicum.android.diploma.data.network
+package ru.practicum.android.diploma.data.network.impl
 
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
+import ru.practicum.android.diploma.data.network.Response
 import ru.practicum.android.diploma.data.network.Response.Companion.BAD_GATEWAY_CODE
 import ru.practicum.android.diploma.data.network.Response.Companion.CAPTCHA_REQUIRED_ERROR
 import ru.practicum.android.diploma.data.network.Response.Companion.INCORRECT_PARAM_ERROR_CODE
@@ -15,6 +14,7 @@ import ru.practicum.android.diploma.data.network.Response.Companion.NO_CONNECTIO
 import ru.practicum.android.diploma.data.network.Response.Companion.SUCCESSFUL_RESPONSE_CODE
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
+import ru.practicum.android.diploma.data.network.api.NetworkConnectionChecker
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
 import ru.practicum.android.diploma.data.search.dto.request.AreaRequest
 import ru.practicum.android.diploma.data.search.dto.request.CountryRequest
@@ -26,12 +26,12 @@ import ru.practicum.android.diploma.data.search.dto.response.IndustryResponse
 
 class RetrofitNetworkClient(
     private val hhSearchApi: HhSearchApi,
-    private val connectivityManager: ConnectivityManager,
+    private val connectionChecker: NetworkConnectionChecker,
     private val mapper: NetworkMapper,
 ) : NetworkClient {
     override suspend fun doRequest(dto: Any): Response {
         when {
-            !isConnected() -> {
+            !connectionChecker.isConnected() -> {
                 Log.d(REQUEST_EXCEPTION_TAG, "[$NO_CONNECTION_CODE] - no connection")
                 return Response().apply { resultCode = NO_CONNECTION_CODE }
             }
@@ -130,20 +130,6 @@ class RetrofitNetworkClient(
 
     private fun badResponse() = Response().apply {
         resultCode = INTERNAL_SERV_ERROR_CODE
-    }
-
-    private fun isConnected(): Boolean {
-        var result = false
-
-        connectivityManager
-            .getNetworkCapabilities(connectivityManager.activeNetwork)
-            ?.let {
-                result = it.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || it.hasTransport(
-                    NetworkCapabilities.TRANSPORT_WIFI
-                ) || it.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-            }
-
-        return result
     }
 
     companion object {
