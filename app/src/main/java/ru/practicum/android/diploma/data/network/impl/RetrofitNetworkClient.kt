@@ -9,6 +9,7 @@ import ru.practicum.android.diploma.data.network.Response.Companion.BAD_GATEWAY_
 import ru.practicum.android.diploma.data.network.Response.Companion.CAPTCHA_REQUIRED_ERROR
 import ru.practicum.android.diploma.data.network.Response.Companion.INCORRECT_PARAM_ERROR_CODE
 import ru.practicum.android.diploma.data.network.Response.Companion.INTERNAL_SERV_ERROR_CODE
+import ru.practicum.android.diploma.data.network.Response.Companion.IO_EXCEPTION_CODE
 import ru.practicum.android.diploma.data.network.Response.Companion.NOT_FOUND_CODE
 import ru.practicum.android.diploma.data.network.Response.Companion.NO_CONNECTION_CODE
 import ru.practicum.android.diploma.data.network.Response.Companion.SUCCESSFUL_RESPONSE_CODE
@@ -116,7 +117,7 @@ class RetrofitNetworkClient(
                 }
                 response
             } catch (@Suppress("SwallowedException") e: IOException) {
-                badResponse()
+                Response().apply { resultCode = IO_EXCEPTION_CODE }
             }
         }
     }
