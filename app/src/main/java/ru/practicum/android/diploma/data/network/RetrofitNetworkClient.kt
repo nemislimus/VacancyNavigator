@@ -36,11 +36,7 @@ class RetrofitNetworkClient(
                 return Response().apply { resultCode = NO_CONNECTION_CODE }
             }
 
-            dto !is AreaRequest
-                    && dto !is CountryRequest
-                    && dto !is IndustryRequest
-                    && dto !is VacancyDetailedRequest
-                    && dto !is VacancyRequest -> {
+            !isValidRequest(dto) -> {
                 Log.d(
                     REQUEST_EXCEPTION_TAG,
                     "[$INCORRECT_PARAM_ERROR_CODE] - incorrect params exception"
@@ -121,6 +117,14 @@ class RetrofitNetworkClient(
             }
 
         }
+    }
+
+    private fun isValidRequest(dto: Any): Boolean {
+        return dto is AreaRequest
+                || dto is CountryRequest
+                || dto is IndustryRequest
+                || dto is VacancyDetailedRequest
+                || dto is VacancyRequest
     }
 
     private fun incorrectParamResponse() = Response().apply {
