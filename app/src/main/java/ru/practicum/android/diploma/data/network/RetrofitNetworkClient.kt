@@ -19,7 +19,6 @@ import ru.practicum.android.diploma.data.search.dto.response.CountryResponse
 import ru.practicum.android.diploma.data.search.dto.response.IndustryResponse
 import ru.practicum.android.diploma.data.search.dto.response.VacancyDetailedResponse
 import ru.practicum.android.diploma.data.search.dto.response.VacancyResponse
-import ru.practicum.android.diploma.util.СustomIOException
 import java.io.IOException
 
 class RetrofitNetworkClient(
@@ -69,13 +68,15 @@ class RetrofitNetworkClient(
                 Log.d("REQUEST_EXCEPTION", e.message())
                 badResponse()
             } catch (e: IOException) {
-                badResponse()
+                iOException()
             }
 
         }
     }
 
     private fun badResponse() = Response().apply { resultCode = INNER_ERROR_CODE }
+
+    private fun iOException() = Response().apply { resultCode = IO_EXCEPTION }
 
     private fun isConnected(): Boolean {
         var result = false
@@ -96,6 +97,7 @@ class RetrofitNetworkClient(
         const val BAD_REQUEST_CODE = 400
         const val GOOD_CODE = 404
         const val INNER_ERROR_CODE = 500
+        const val IO_EXCEPTION = -2
     }
 
 }
