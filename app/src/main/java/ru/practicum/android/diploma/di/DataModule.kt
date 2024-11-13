@@ -36,9 +36,7 @@ val dataModule = module {
     }
     single<NetworkClient> {
         RetrofitNetworkClient(
-            hhSearchApi = get(),
-            connectionChecker = get(),
-            mapper = get()
+            hhSearchApi = get(), connectionChecker = get(), mapper = get()
         )
     }
     single<HhSearchApi> {
@@ -51,25 +49,17 @@ val dataModule = module {
             val mail = "amdoit.com@gmail.com"
 
             val originalRequest = chain.request()
-            val builder = originalRequest.newBuilder()
-                .header("Authorization", "Bearer $token")
+            val builder = originalRequest.newBuilder().header("Authorization", "Bearer $token")
                 .header("HH-User-Agent", "$appNameUrl ($mail)")
             val newRequest = builder.build()
             chain.proceed(newRequest)
 
         }
 
-        val okHttpClient = OkHttpClient()
-            .newBuilder()
-            .addInterceptor(interceptor)
-            .build()
+        val okHttpClient = OkHttpClient().newBuilder().addInterceptor(interceptor).build()
 
-        Retrofit.Builder()
-            .baseUrl("https://api.hh.ru/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
-            .build()
-            .create(HhSearchApi::class.java)
+        Retrofit.Builder().baseUrl("https://api.hh.ru/").addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient).build().create(HhSearchApi::class.java)
     }
 
 }
