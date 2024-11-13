@@ -71,7 +71,7 @@ class RetrofitNetworkClient(
                         )
 
                 }
-                return@withContext response.apply { resultCode = SUCCESSFUL_RESPONSE_CODE }
+                response.apply { resultCode = SUCCESSFUL_RESPONSE_CODE }
             } catch (e: HttpException) {
                 val message = e.message()
                 val response = when (val errorCode = e.code()) {
@@ -115,9 +115,13 @@ class RetrofitNetworkClient(
                         badResponse()
                     }
                 }
-                return@withContext response
+                response
             } catch (e: IOException) {
-                return@withContext Response().apply { resultCode = IO_EXCEPTION_CODE }
+                Log.d(
+                    REQUEST_EXCEPTION_TAG,
+                    " - bad response\n"
+                )
+                Response().apply { resultCode = IO_EXCEPTION_CODE }
             }
         }
     }
