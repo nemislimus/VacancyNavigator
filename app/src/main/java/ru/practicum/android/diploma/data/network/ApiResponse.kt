@@ -17,7 +17,7 @@ sealed class ApiResponse {
 
     data class BadResponse(val message: String = "") : ApiResponse()
 
-    class VacancyResponse(
+    data class VacancyResponse(
         val items: ArrayList<VacancyDto>,
         val found: Int? = null,
         val page: Int? = null,
