@@ -1,15 +1,16 @@
 package ru.practicum.android.diploma.data.network.mapper
 
-import ru.practicum.android.diploma.domain.models.SearchFilter
+import ru.practicum.android.diploma.domain.search.model.SearchVacancyOptions
 
 class NetworkMapper {
 
-    fun map(text: String, page: Int = 0, searchFilter: SearchFilter?): Map<String, String> {
+    fun map(searchVacancyOptions: SearchVacancyOptions): Map<String, String> {
         val map = mutableMapOf<String, String>()
-        map["text"] = text
-        map["page"] = page.toString()
 
-        searchFilter?.let { params ->
+        map["text"] = searchVacancyOptions.text
+        map["page"] = searchVacancyOptions.page.toString()
+
+        searchVacancyOptions.filter.let { params ->
             params.salary?.let {
                 map["salary"] = it.toString()
             }
@@ -19,12 +20,8 @@ class NetworkMapper {
             }
 
             // тут порядок важен. Если задан город, то ищем вначале в городе, потом в регионе, потом в стране
-            if (params.city != null) {
-                map["area"] = params.city.id
-            } else if (params.region != null) {
-                map["area"] = params.region.id
-            } else if (params.country != null) {
-                map["area"] = params.country.id
+            params.city?.id ?: params.region?.id ?: params.country?.id?.let {
+                map["area"] = it
             }
 
             params.industry?.let {
