@@ -13,8 +13,8 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
 import ru.practicum.android.diploma.domain.search.model.Vacancy
 import ru.practicum.android.diploma.ui.search.VacancyListAdapter
-import ru.practicum.android.diploma.util.EMPTY_STRING
 import ru.practicum.android.diploma.ui.utils.MenuBindingFragment
+import ru.practicum.android.diploma.util.EMPTY_STRING
 
 class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
