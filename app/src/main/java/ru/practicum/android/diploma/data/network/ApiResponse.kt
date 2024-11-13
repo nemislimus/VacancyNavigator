@@ -12,7 +12,7 @@ import ru.practicum.android.diploma.data.search.dto.model.ScheduleDto
 import ru.practicum.android.diploma.data.search.dto.model.SkillDto
 import ru.practicum.android.diploma.data.search.dto.model.VacancyDto
 
-sealed class ApiResponse() {
+sealed class ApiResponse {
     var resultCode: Int = 0
 
     data class BadResponse(val message: String = "") : ApiResponse()
