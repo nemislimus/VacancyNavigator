@@ -119,7 +119,7 @@ class RetrofitNetworkClient(
             } catch (e: IOException) {
                 Log.d(
                     REQUEST_EXCEPTION_TAG,
-                    " - bad response\n"
+                    e.message + " - bad response\n"
                 )
                 Response().apply { resultCode = IO_EXCEPTION_CODE }
             }
