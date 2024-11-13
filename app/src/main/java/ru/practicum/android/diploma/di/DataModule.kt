@@ -25,15 +25,21 @@ val dataModule = module {
     single<XxxDataBase> {
         Room.databaseBuilder(androidContext(), XxxDataBase::class.java, "xxx-team.db").build()
     }
+
     single<ConnectivityManager> {
         androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
+
     single<NetworkConnectionChecker> {
-        NetworkConnectionCheckerImpl(connectivityManager = get())
+        NetworkConnectionCheckerImpl(
+            connectivityManager = get()
+        )
     }
+
     single<NetworkMapper> {
         NetworkMapper()
     }
+
     single<NetworkClient> {
         RetrofitNetworkClient(
             hhSearchApi = get(),
@@ -41,6 +47,7 @@ val dataModule = module {
             mapper = get()
         )
     }
+
     single<HhSearchApi> {
         val interceptor = Interceptor { chain ->
 
@@ -59,17 +66,14 @@ val dataModule = module {
 
         }
 
-        val okHttpClient = OkHttpClient()
-            .newBuilder()
-            .addInterceptor(interceptor)
-            .build()
+        val okHttpClient = OkHttpClient().newBuilder().addInterceptor(interceptor).build()
 
-        Retrofit.Builder()
+        Retrofit
+            .Builder()
             .baseUrl("https://api.hh.ru/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
             .create(HhSearchApi::class.java)
     }
-
 }
