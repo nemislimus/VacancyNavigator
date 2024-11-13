@@ -83,7 +83,7 @@ class RetrofitNetworkClient(
     }
 
     private suspend fun initResponseByError(errorCode: Int, message: String): Response {
-        val response = when (errorCode) {
+        return when (errorCode) {
             INCORRECT_PARAM_ERROR_CODE -> {
                 Log.d(
                     REQUEST_EXCEPTION_TAG,
@@ -124,8 +124,6 @@ class RetrofitNetworkClient(
                 badResponse()
             }
         }
-
-        return response
     }
 
     private fun isValidRequest(dto: Any): Boolean {
