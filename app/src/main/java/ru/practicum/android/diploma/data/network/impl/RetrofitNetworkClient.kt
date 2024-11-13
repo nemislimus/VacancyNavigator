@@ -71,7 +71,7 @@ class RetrofitNetworkClient(
                         )
 
                 }
-                response.apply { resultCode = SUCCESSFUL_RESPONSE_CODE }
+                return@withContext response.apply { resultCode = SUCCESSFUL_RESPONSE_CODE }
             } catch (e: HttpException) {
                 val message = e.message()
                 val response = when (val errorCode = e.code()) {
@@ -115,9 +115,9 @@ class RetrofitNetworkClient(
                         badResponse()
                     }
                 }
-                response
-            } catch (@Suppress("SwallowedException") e: IOException) {
-                Response().apply { resultCode = IO_EXCEPTION_CODE }
+                return@withContext response
+            } catch (e: IOException) {
+                return@withContext Response().apply { resultCode = IO_EXCEPTION_CODE }
             }
         }
     }
