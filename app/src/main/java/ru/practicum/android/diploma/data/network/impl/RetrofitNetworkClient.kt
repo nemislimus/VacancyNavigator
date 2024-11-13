@@ -46,29 +46,14 @@ class RetrofitNetworkClient(
     }
 
     private suspend fun sendValidRequest(dto: ApiRequest): ApiResponse {
-        val response = when (dto) {
+        return when (dto) {
             is ApiRequest.Area -> hhSearchApi.getAreasByCountry(dto.parentAreaId)
-
             is ApiRequest.AreasAll -> hhSearchApi.getAreas()
-
-            is ApiRequest.Country -> ApiResponse.CountryResponse(
-                result = hhSearchApi.getCountries()
-            )
-
-            is ApiRequest.Industry -> ApiResponse.IndustryResponse(
-                result = hhSearchApi.getIndustries()
-            )
-
-            is ApiRequest.Vacancy -> hhSearchApi.searchVacancies(
-                mapper.map(dto.text, dto.page, dto.options)
-            )
-
-            is ApiRequest.VacancyDetail -> hhSearchApi.getVacancyDetails(
-                dto.vacancyId
-            )
+            is ApiRequest.Country -> ApiResponse.CountryResponse(hhSearchApi.getCountries())
+            is ApiRequest.Industry -> ApiResponse.IndustryResponse(hhSearchApi.getIndustries())
+            is ApiRequest.Vacancy -> hhSearchApi.searchVacancies(mapper.map(dto.searchOptions))
+            is ApiRequest.VacancyDetail -> hhSearchApi.getVacancyDetails(dto.vacancyId)
         }
-
-        return response
     }
 
     private fun initResponseByError(errorCode: Int, message: String): ApiResponse {
