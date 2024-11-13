@@ -11,11 +11,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.data.db.XxxDataBase
-import ru.practicum.android.diploma.data.network.impl.RetrofitNetworkClient
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.api.NetworkConnectionChecker
 import ru.practicum.android.diploma.data.network.impl.NetworkConnectionCheckerImpl
+import ru.practicum.android.diploma.data.network.impl.RetrofitNetworkClient
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
