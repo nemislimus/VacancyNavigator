@@ -1,6 +1,6 @@
 package ru.practicum.android.diploma.domain.models
 
-data class SearchFilter(
+class SearchFilter(
     var country: Area? = null, // страна
     var region: Area? = null, // регион
     var city: Area? = null, // город
