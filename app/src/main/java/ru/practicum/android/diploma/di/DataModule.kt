@@ -31,7 +31,9 @@ val dataModule = module {
     }
 
     single<NetworkConnectionChecker> {
-        NetworkConnectionCheckerImpl(connectivityManager = get())
+        NetworkConnectionCheckerImpl(
+            connectivityManager = get()
+        )
     }
 
     single<NetworkMapper> {
@@ -40,7 +42,9 @@ val dataModule = module {
 
     single<NetworkClient> {
         RetrofitNetworkClient(
-            hhSearchApi = get(), connectionChecker = get(), mapper = get()
+            hhSearchApi = get(),
+            connectionChecker = get(),
+            mapper = get()
         )
     }
 
