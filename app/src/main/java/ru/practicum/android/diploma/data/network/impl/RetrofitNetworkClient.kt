@@ -30,10 +30,12 @@ class RetrofitNetworkClient(
     private val mapper: NetworkMapper,
 ) : NetworkClient {
     override suspend fun doRequest(dto: Any): Response {
+        var resultResponse: Response? = null
+
         when {
             !connectionChecker.isConnected() -> {
                 Log.d(REQUEST_EXCEPTION_TAG, "[$NO_CONNECTION_CODE] - no connection")
-                return Response().apply { resultCode = NO_CONNECTION_CODE }
+                resultResponse = Response().apply { resultCode = NO_CONNECTION_CODE }
             }
 
             !isValidRequest(dto) -> {
@@ -41,11 +43,11 @@ class RetrofitNetworkClient(
                     REQUEST_EXCEPTION_TAG,
                     "[$INCORRECT_PARAM_ERROR_CODE] - incorrect params exception"
                 )
-                return incorrectParamResponse()
+                resultResponse = incorrectParamResponse()
             }
         }
 
-        return withContext(Dispatchers.IO) {
+        return resultResponse ?: withContext(Dispatchers.IO) {
             try {
                 val response = sendValidRequest(dto)
                 response.apply { resultCode = SUCCESSFUL_RESPONSE_CODE }
@@ -53,8 +55,8 @@ class RetrofitNetworkClient(
                 val response = initResponseByError(e.code(), e.message())
                 response
             }
-
         }
+
     }
 
     private suspend fun sendValidRequest(dto: Any): Response {
