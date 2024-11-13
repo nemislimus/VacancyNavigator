@@ -30,10 +30,12 @@ class RetrofitNetworkClient(
     private val mapper: NetworkMapper,
 ) : NetworkClient {
     override suspend fun doRequest(dto: Any): Response {
+        var resultResponse: Response? = null
+
         when {
             !connectionChecker.isConnected() -> {
                 Log.d(REQUEST_EXCEPTION_TAG, "[$NO_CONNECTION_CODE] - no connection")
-                return Response().apply { resultCode = NO_CONNECTION_CODE }
+                resultResponse = Response().apply { resultCode = NO_CONNECTION_CODE }
             }
 
             !isValidRequest(dto) -> {
@@ -41,81 +43,88 @@ class RetrofitNetworkClient(
                     REQUEST_EXCEPTION_TAG,
                     "[$INCORRECT_PARAM_ERROR_CODE] - incorrect params exception"
                 )
-                return incorrectParamResponse()
+                resultResponse = incorrectParamResponse()
             }
         }
 
-        return withContext(Dispatchers.IO) {
+        return resultResponse ?: withContext(Dispatchers.IO) {
             try {
-                val response = when (dto) {
-                    is CountryRequest -> CountryResponse(
-                        result = hhSearchApi.getCountries()
-                    )
-
-                    is AreaRequest -> hhSearchApi.getAreasByCountry(dto.parrentAreaId)
-
-                    is IndustryRequest -> IndustryResponse(
-                        result = hhSearchApi.getIndustries()
-                    )
-
-                    is VacancyRequest -> hhSearchApi.searchVacancies(
-                        mapper.map(dto.options)
-
-                    )
-
-                    else ->
-                        hhSearchApi.getVacancyDetails(
-                            (dto as VacancyDetailedRequest).vacancyId
-                        )
-
-                }
+                val response = sendValidRequest(dto)
                 response.apply { resultCode = SUCCESSFUL_RESPONSE_CODE }
             } catch (e: HttpException) {
-                val message = e.message()
-                val response = when (val errorCode = e.code()) {
-                    INCORRECT_PARAM_ERROR_CODE -> {
-                        Log.d(
-                            REQUEST_EXCEPTION_TAG,
-                            "[$INCORRECT_PARAM_ERROR_CODE] - incorrect params exception\n$message"
-                        )
-                        incorrectParamResponse()
-                    }
-
-                    CAPTCHA_REQUIRED_ERROR -> {
-                        Log.d(
-                            REQUEST_EXCEPTION_TAG,
-                            "[$CAPTCHA_REQUIRED_ERROR] - captcha required error\n$message"
-                        )
-                        Response().apply { resultCode = CAPTCHA_REQUIRED_ERROR }
-                    }
-
-                    NOT_FOUND_CODE -> {
-                        Log.d(
-                            REQUEST_EXCEPTION_TAG,
-                            "[$NOT_FOUND_CODE] - page not found\n$message"
-                        )
-                        Response().apply { resultCode = NOT_FOUND_CODE }
-                    }
-
-                    BAD_GATEWAY_CODE -> {
-                        Log.d(
-                            REQUEST_EXCEPTION_TAG,
-                            "[$BAD_GATEWAY_CODE] - bad gateway\n$message"
-                        )
-                        Response().apply { resultCode = BAD_GATEWAY_CODE }
-                    }
-
-                    else -> {
-                        Log.d(
-                            REQUEST_EXCEPTION_TAG,
-                            "[$errorCode] - bad response\n$message"
-                        )
-                        badResponse()
-                    }
-                }
+                val response = initResponseByError(e.code(), e.message())
                 response
             }
+        }
 
+    }
+
+    private suspend fun sendValidRequest(dto: Any): Response {
+        val response = when (dto) {
+            is CountryRequest -> CountryResponse(
+                result = hhSearchApi.getCountries()
+            )
+
+            is AreaRequest -> hhSearchApi.getAreasByCountry(dto.parrentAreaId)
+
+            is IndustryRequest -> IndustryResponse(
+                result = hhSearchApi.getIndustries()
+            )
+
+            is VacancyRequest -> hhSearchApi.searchVacancies(
+                mapper.map(dto.options)
+
+            )
+
+            else ->
+                hhSearchApi.getVacancyDetails(
+                    (dto as VacancyDetailedRequest).vacancyId
+                )
+        }
+        return response
+    }
+
+    private suspend fun initResponseByError(errorCode: Int, message: String): Response {
+        return when (errorCode) {
+            INCORRECT_PARAM_ERROR_CODE -> {
+                Log.d(
+                    REQUEST_EXCEPTION_TAG,
+                    "[$INCORRECT_PARAM_ERROR_CODE] - incorrect params exception\n$message"
+                )
+                incorrectParamResponse()
+            }
+
+            CAPTCHA_REQUIRED_ERROR -> {
+                Log.d(
+                    REQUEST_EXCEPTION_TAG,
+                    "[$CAPTCHA_REQUIRED_ERROR] - captcha required error\n$message"
+                )
+                Response().apply { resultCode = CAPTCHA_REQUIRED_ERROR }
+            }
+
+            NOT_FOUND_CODE -> {
+                Log.d(
+                    REQUEST_EXCEPTION_TAG,
+                    "[$NOT_FOUND_CODE] - page not found\n$message"
+                )
+                Response().apply { resultCode = NOT_FOUND_CODE }
+            }
+
+            BAD_GATEWAY_CODE -> {
+                Log.d(
+                    REQUEST_EXCEPTION_TAG,
+                    "[$BAD_GATEWAY_CODE] - bad gateway\n$message"
+                )
+                Response().apply { resultCode = BAD_GATEWAY_CODE }
+            }
+
+            else -> {
+                Log.d(
+                    REQUEST_EXCEPTION_TAG,
+                    "[$errorCode] - bad response\n$message"
+                )
+                badResponse()
+            }
         }
     }
 
