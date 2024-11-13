@@ -11,20 +11,14 @@ class NetworkMapper {
         map["page"] = searchVacancyOptions.page.toString()
 
         searchVacancyOptions.filter.let { params ->
-            params.salary?.let {
-                map["salary"] = it.toString()
-            }
+            params.salary?.let { map["salary"] = it.toString() }
 
-            params.onlyWithSalary?.let {
-                map["only_with_salary"] = it.toString()
-            }
+            params.onlyWithSalary?.let { map["only_with_salary"] = it.toString() }
 
             // тут порядок важен. Если задан город, то ищем вначале в городе, потом в регионе, потом в стране
             (params.city?.id ?: params.region?.id ?: params.country?.id)?.let { map["area"] = it }
 
-            params.industry?.let {
-                map["industry"] = it.id
-            }
+            params.industry?.let { map["industry"] = it.id }
 
             params.geolocation?.let {
                 map["order_by"] = "distance"
