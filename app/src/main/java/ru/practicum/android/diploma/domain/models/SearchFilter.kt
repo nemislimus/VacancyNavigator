@@ -6,6 +6,6 @@ data class SearchFilter(
     val city: Area? = null, // город
     val industry: Industry? = null, // Индустрия
     val salary: Int? = null, // ожидаемая зарпала
-    var onlyWithSalary: Boolean? = null, // показывать только с зарплатой
+    val onlyWithSalary: Boolean? = null, // показывать только с зарплатой
     val geolocation: Geolocation? = null // показать вакансии рядом со мной (по геолокации)
 )
