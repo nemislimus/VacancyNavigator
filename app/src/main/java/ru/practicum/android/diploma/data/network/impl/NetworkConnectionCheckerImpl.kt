@@ -17,7 +17,5 @@ class NetworkConnectionCheckerImpl(private val connectivityManager: Connectivity
             }
 
         return result
-
     }
-
 }
