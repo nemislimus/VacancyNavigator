@@ -37,11 +37,11 @@ sealed class ApiResponse {
         @SerializedName("key_skills") val keySkills: List<SkillDto>? = null,
     ) : ApiResponse()
 
-    class IndustryResponse(val result: ArrayList<IndustryDto>) : ApiResponse()
+    data class IndustryResponse(val result: ArrayList<IndustryDto>) : ApiResponse()
 
-    class CountryResponse(val result: ArrayList<CountryDto>) : ApiResponse()
+    data class CountryResponse(val result: ArrayList<CountryDto>) : ApiResponse()
 
-    class AreaResponse(val areas: ArrayList<AreaDto>) : ApiResponse()
+    data class AreaResponse(val areas: ArrayList<AreaDto>) : ApiResponse()
 
     companion object {
         const val NO_CONNECTION_CODE = -1
