@@ -18,6 +18,7 @@ class NetworkMapper {
                 map["only_with_salary"] = it.toString()
             }
 
+            // тут порядок важен. Если задан город, то ищем вначале в городе, потом в регионе, потом в стране
             if (params.city != null) {
                 map["area"] = params.city.id
             } else if (params.region != null) {
