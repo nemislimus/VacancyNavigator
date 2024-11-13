@@ -20,9 +20,7 @@ class NetworkMapper {
             }
 
             // тут порядок важен. Если задан город, то ищем вначале в городе, потом в регионе, потом в стране
-            params.city?.id ?: params.region?.id ?: params.country?.id?.let {
-                map["area"] = it
-            }
+            (params.city?.id ?: params.region?.id ?: params.country?.id)?.let { map["area"] = it }
 
             params.industry?.let {
                 map["industry"] = it.id
