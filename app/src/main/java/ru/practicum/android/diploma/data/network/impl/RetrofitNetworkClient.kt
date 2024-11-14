@@ -86,10 +86,7 @@ class RetrofitNetworkClient(
     }
 
     private fun netLog(message: String) {
-        Log.d(
-            REQUEST_EXCEPTION_TAG,
-            message
-        )
+        Log.d(REQUEST_EXCEPTION_TAG, message)
     }
 
     private fun incorrectParamResponse() = ApiResponse.BadResponse().apply {
