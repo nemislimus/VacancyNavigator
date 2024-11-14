@@ -224,7 +224,6 @@
         android:gravity="center"
         android:text="@string/apply"
         android:textColor="@color/white"
-        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/btn_clr"
         app:layout_constraintEnd_toStartOf="@+id/right_border"
         app:layout_constraintStart_toStartOf="@+id/left_border" />
