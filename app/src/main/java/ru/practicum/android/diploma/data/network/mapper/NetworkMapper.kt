@@ -10,7 +10,7 @@ class NetworkMapper {
         map["text"] = searchVacancyOptions.text
         map["page"] = searchVacancyOptions.page.toString()
 
-        searchVacancyOptions.filter.let { params ->
+        searchVacancyOptions.filter?.let { params ->
             params.salary?.let { map["salary"] = it.toString() }
 
             params.onlyWithSalary?.let { map["only_with_salary"] = it.toString() }
