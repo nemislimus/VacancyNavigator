@@ -45,7 +45,6 @@ dependencies {
     implementation(libs.androidX.core)
     implementation(libs.androidX.appCompat)
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.gson)
 
     // UI layer libraries
     implementation(libs.ui.material)
@@ -59,6 +58,22 @@ dependencies {
     implementation(libs.fragment.ktx)
     implementation(libs.lifecycle.viewmodel.ktx)
 
+    // Koin
+    implementation(libs.koin.android)
+    // endKoin
+
+    // Network
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.gson)
+    // endNetwork
+
+    // Room
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
+    kapt(libs.room.compiler)
+    // endRoom
+
     // region Unit tests
     testImplementation(libs.unitTests.junit)
     // endregion
@@ -67,20 +82,5 @@ dependencies {
     androidTestImplementation(libs.uiTests.junitExt)
     androidTestImplementation(libs.uiTests.espressoCore)
     // endregion
-
-    // Koin
-    implementation(libs.koin.android)
-    // endKoin
-
-    // Network
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    // endNetwork
-
-    // Room
-    implementation(libs.room.ktx)
-    implementation(libs.room.runtime)
-    kapt(libs.room.compiler)
-    // endRoom
 
 }

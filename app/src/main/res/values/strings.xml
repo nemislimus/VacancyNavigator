@@ -7,7 +7,7 @@
     <string name="igor">Игорь Ячменёв</string>
     <string name="andrey">Андрей Киреенко</string>
     <string name="ivan">Иван Мизяков</string>
-
+    
     <string name="menu_main">Главная</string>
     <string name="menu_favorites">Избранное</string>
     <string name="menu_team">Команда</string>
@@ -23,7 +23,7 @@
     <string name="no_internet">Нет интернета</string>
     <string name="no_query_vacancies">Таких вакансий нет</string>
     <string name="vacancy_logo">логотип вакансии</string>
-
+    
     <string name="SettingFilters">Настройки фильтрации</string>
     <string name="place_of_work">Место работы</string>
     <string name="industry">Отрасль</string>
@@ -32,4 +32,7 @@
     <string name="not_show_without_sallary">Не показывать без ЗП</string>
     <string name="apply">Применить</string>
     <string name="reset">Сбросить</string>
+    
+    <string name="unknown_viewholder_create">Unknown ViewHolder type for create</string>
+    <string name="unknown_viewholder_bind">Unknown ViewHolder type for bind</string>
 </resources>

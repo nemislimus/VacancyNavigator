@@ -4,8 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/search_container_background"
     android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:layout_marginVertical="@dimen/margin_8">
+    android:gravity="center_vertical">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/etSearchQueryText"

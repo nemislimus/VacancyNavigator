@@ -6,23 +6,27 @@ class NetworkMapper {
 
     fun map(searchVacancyOptions: SearchVacancyOptions): Map<String, String> {
         val map = mutableMapOf<String, String>()
+
         map["text"] = searchVacancyOptions.text
         map["page"] = searchVacancyOptions.page.toString()
-        searchVacancyOptions.areaId?.let {
-            map["area"] = it
+
+        searchVacancyOptions.filter?.let { params ->
+            params.salary?.let { map["salary"] = it.toString() }
+
+            params.onlyWithSalary?.let { map["only_with_salary"] = it.toString() }
+
+            // тут порядок важен. Если задан город, то ищем вначале в городе, потом в регионе, потом в стране
+            (params.city?.id ?: params.region?.id ?: params.country?.id)?.let { map["area"] = it }
+
+            params.industry?.let { map["industry"] = it.id }
+
+            params.geolocation?.let {
+                map["order_by"] = "distance"
+                map["sort_point_lat"] = it.lat
+                map["sort_point_lng"] = it.lng
+            }
         }
-        searchVacancyOptions.industryId?.let {
-            map["industry"] = it
-        }
-        searchVacancyOptions.salary?.let {
-            map["salary"] = it.toString()
-        }
-        searchVacancyOptions.areaId?.let {
-            map["area"] = it
-        }
-        searchVacancyOptions.onlyWithSalary?.let {
-            map["area"] = it.toString()
-        }
+
         return map
     }
 }

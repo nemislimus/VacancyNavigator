@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ru.practicum.android.diploma.ui.search.SearchFragment">
+    tools:context="ru.practicum.android.diploma.ui.search.fragments.SearchFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glLeftBorder_16"
@@ -61,7 +61,7 @@
         android:contentDescription="@string/intro_search_picture"
         android:scaleType="fitCenter"
         android:src="@drawable/intro_picture"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="@string/pictures_ratio"
@@ -82,6 +82,21 @@
         app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
         app:layout_constraintTop_toBottomOf="@id/llSearchFieldContainer" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvVacancyList"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
+        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
+        app:layout_constraintTop_toTopOf="@id/tvResultInfo"
+        app:layout_constraintVertical_bias="0"
+        tools:listitem="@layout/vacancy_list_item" />
+
     <TextView
         android:id="@+id/tvResultInfo"
         android:layout_width="wrap_content"
@@ -93,27 +108,10 @@
         android:paddingVertical="@dimen/margin_4"
         android:textAppearance="@style/TextRegular_16size_400weight"
         android:textColor="@color/white"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
         app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
         app:layout_constraintTop_toBottomOf="@id/llSearchFieldContainer"
         tools:text="Найдено 100500 вакансий" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvVacancyList"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_12"
-        android:visibility="visible"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constrainedHeight="true"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
-        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
-        app:layout_constraintTop_toBottomOf="@id/tvResultInfo"
-        app:layout_constraintVertical_bias="0"
-        tools:itemCount="6"
-        tools:listitem="@layout/vacancy_list_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
