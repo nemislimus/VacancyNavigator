@@ -11,5 +11,7 @@
         <item name="elementColor_black_white">@color/white</item>
         <item name="elementColor_lightgray_gray">@color/gray</item>
         <item name="elementColor_gray_white">@color/white</item>
+        <item name="elementColor_red_white">@color/white</item>
+        <item name="elementColor_white2_black2">@color/black_2</item>
     </style>
 </resources>
