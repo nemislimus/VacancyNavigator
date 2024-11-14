@@ -2,13 +2,14 @@ package ru.practicum.android.diploma.domain.models
 
 /**
  * Фильтр для поиска вакансий
- * @param country - страна
- * @param region - регион
- * @param city - город
- * @param industry - отрасль
- * @param salary - ожидаемая зарпала
- * @param onlyWithSalary -  показывать только с зарплатой
- * @param geolocation - показать вакансии рядом со мной (по геолокации)
+ * @param country - [Area] страна
+ * @param region - [Area] регион
+ * @param city - [Area] город
+ * @param industry - [Industry] отрасль
+ * @param salary - [Int] ожидаемая зарпала
+ * @param onlyWithSalary - [Boolean] показывать только с зарплатой
+ * @param geolocation - [Geolocation] показать вакансии рядом со мной (по геолокации)
+ * @author Киреенко А.
  * */
 data class SearchFilter(
     val country: Area? = null,
