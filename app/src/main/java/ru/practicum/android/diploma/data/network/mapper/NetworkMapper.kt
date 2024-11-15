@@ -2,6 +2,10 @@ package ru.practicum.android.diploma.data.network.mapper
 
 import ru.practicum.android.diploma.domain.search.model.SearchVacancyOptions
 
+/*
+* Описание всех возможных полей тут https://api.hh.ru/openapi/redoc#tag/Poisk-vakansij/operation/get-vacancies
+* */
+
 class NetworkMapper {
 
     fun map(searchVacancyOptions: SearchVacancyOptions): Map<String, String> {
@@ -9,6 +13,8 @@ class NetworkMapper {
 
         map["text"] = searchVacancyOptions.text
         map["page"] = searchVacancyOptions.page.toString()
+        map["per_page"] = VACANCIES_PER_PAGE
+        map["no_magic"] = "true"
 
         searchVacancyOptions.filter?.let { params ->
             params.salary?.let { map["salary"] = it.toString() }
@@ -28,5 +34,9 @@ class NetworkMapper {
         }
 
         return map
+    }
+
+    companion object {
+        const val VACANCIES_PER_PAGE = "20"
     }
 }
