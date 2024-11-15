@@ -5,7 +5,6 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
@@ -39,6 +38,30 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
             clIndustryValue.tvHint.text = requireContext().getText(R.string.industry)
         }
 
+        manageFilterElementClick()
+
+        binding.etSalaryEditText.addTextChangedListener { s ->
+            showClearSalaryIcon(s.isNullOrBlank())
+        }
+
+        binding.etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
+            manageSalaryHintColor(hasFocus)
+        }
+
+        binding.tbFilterToolBar.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        binding.ivClearSalary.setOnClickListener {
+            clearSalary()
+        }
+
+        binding.ckbSalaryCheckbox.setOnClickListener {
+            binding.etSalaryEditText.clearFocus()
+        }
+    }
+
+    private fun manageFilterElementClick() {
         binding.clCountryValue.ivElementButton.setOnClickListener {
             with(binding.clCountryValue) {
                 tvHint.isVisible = true
@@ -73,26 +96,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
                 ivClearElementButton.isVisible = false
                 tvValue.setTextColor(requireContext().getColor(R.color.gray))
             }
-        }
-
-        binding.etSalaryEditText.addTextChangedListener { s ->
-            showClearSalaryIcon(s.isNullOrBlank())
-        }
-
-        binding.etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
-            manageSalaryHintColor(hasFocus)
-        }
-
-        binding.tbFilterToolBar.setOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        binding.ivClearSalary.setOnClickListener {
-            clearSalary()
-        }
-
-        binding.ckbSalaryCheckbox.setOnClickListener {
-            binding.etSalaryEditText.clearFocus()
         }
     }
 
