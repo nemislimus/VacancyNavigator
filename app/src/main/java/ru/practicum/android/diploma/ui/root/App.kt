@@ -29,9 +29,6 @@ class App : Application() {
         val dataUpdater: UpdateDbOnAppStartUseCase by inject()
 
         GlobalScope.launch(Dispatchers.IO) {
-
-            delay(10000)
-
             dataUpdater()
         }
     }

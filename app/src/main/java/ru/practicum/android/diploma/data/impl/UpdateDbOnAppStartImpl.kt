@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.data.impl
 
 import android.util.Log
+import kotlinx.coroutines.delay
 import ru.practicum.android.diploma.data.db.DbHelper
 import ru.practicum.android.diploma.data.db.converters.AreaDtoToTempAreaItemMapper
 import ru.practicum.android.diploma.data.db.converters.IndustryDtoToTempIndustryMapper
@@ -34,7 +35,7 @@ class UpdateDbOnAppStartImpl(
                     }
                 }
 
-                else -> throw IllegalArgumentException("Не удалось получить страны")
+                else -> throw IllegalArgumentException("Не удалось получить страны ${response.resultCode}")
             }
 
             when (val response = client.doRequest(ApiRequest.AreasAll)) {
