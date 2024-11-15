@@ -10,7 +10,11 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.practicum.android.diploma.BuildConfig
+import ru.practicum.android.diploma.data.db.DB_NAME
+import ru.practicum.android.diploma.data.db.DB_VERSION
+import ru.practicum.android.diploma.data.db.DbHelper
 import ru.practicum.android.diploma.data.db.XxxDataBase
+import ru.practicum.android.diploma.data.db.dao.OnStartUpdateDao
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.api.NetworkConnectionChecker
@@ -23,7 +27,19 @@ import java.nio.charset.StandardCharsets
 val dataModule = module {
 
     single<XxxDataBase> {
-        Room.databaseBuilder(androidContext(), XxxDataBase::class.java, "xxx-team.db").build()
+        Room.databaseBuilder(androidContext(), XxxDataBase::class.java, DB_NAME).build()
+    }
+
+    factory<DbHelper> {
+        DbHelper(
+            androidContext(),
+            DB_NAME,
+            DB_VERSION
+        )
+    }
+
+    factory<OnStartUpdateDao>{
+        get<XxxDataBase>().dbUpdateDao()
     }
 
     single<ConnectivityManager> {
