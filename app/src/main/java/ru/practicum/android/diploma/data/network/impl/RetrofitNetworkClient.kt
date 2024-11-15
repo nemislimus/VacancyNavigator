@@ -17,6 +17,7 @@ import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.api.NetworkConnectionChecker
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
+import java.io.IOException
 
 class RetrofitNetworkClient(
     private val hhSearchApi: HhSearchApi,
@@ -40,6 +41,9 @@ class RetrofitNetworkClient(
             } catch (e: HttpException) {
                 val response = initResponseByError(e.code(), e.message())
                 response
+            } catch (e: IOException) {
+                netLog("[$e] - IOException")
+                badResponse()
             }
         }
 
