@@ -9,7 +9,4 @@ import ru.practicum.android.diploma.domain.search.model.SearchVacancyOptions
 
 class SearchRepositoryImpl(private val networkClient: NetworkClient) : SearchRepository {
     override suspend fun searchVacancy(searchOptions: SearchVacancyOptions): Flow<List<VacancyShort>> = flow {}
-
-    override suspend fun hasActiveFilter(): Flow<Boolean> = flow {}
-
 }

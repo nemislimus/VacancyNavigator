@@ -6,5 +6,4 @@ import ru.practicum.android.diploma.domain.search.model.SearchVacancyOptions
 
 interface SearchRepository {
     suspend fun searchVacancy(searchOptions: SearchVacancyOptions): Flow<List<VacancyShort>>
-    suspend fun hasActiveFilter(): Flow<Boolean>
 }

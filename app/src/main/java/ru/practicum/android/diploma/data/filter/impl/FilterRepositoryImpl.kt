@@ -8,4 +8,5 @@ import ru.practicum.android.diploma.domain.models.SearchFilter
 
 class FilterRepositoryImpl(private val dataBase: XxxDataBase) : FilterRepository {
     override suspend fun getActiveFilter(): Flow<SearchFilter?> = flow { emit(null) }
+    override suspend fun activeFilterExist(): Flow<Boolean> = flow { emit(false) }
 }
