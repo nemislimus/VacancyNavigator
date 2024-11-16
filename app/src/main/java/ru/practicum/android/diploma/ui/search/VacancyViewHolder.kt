@@ -2,17 +2,18 @@ package ru.practicum.android.diploma.ui.search
 
 import androidx.recyclerview.widget.RecyclerView
 import ru.practicum.android.diploma.databinding.VacancyListItemBinding
-import ru.practicum.android.diploma.domain.search.model.Vacancy
+import ru.practicum.android.diploma.domain.models.Salary
+import ru.practicum.android.diploma.domain.models.VacancyShort
 
 class VacancyViewHolder(
     private val binding: VacancyListItemBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(model: Vacancy) {
+    fun bind(model: VacancyShort) {
         with(binding) {
             tvVacancyName.text = model.name
-            tvEmployer.text = model.employer
-            tvSalary.text = model.salary
+            tvEmployerName.text = model.employer
+            tvSalary.text = Salary.getStringSalaryValue(model.salary)
         }
     }
 }
