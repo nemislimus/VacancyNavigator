@@ -71,7 +71,6 @@ class UpdateDbOnAppStartRepositoryImpl(
             sql.close()
 
         } catch (er: IllegalArgumentException) {
-
             Log.d("WWW", "$er")
 
             sql.close()
@@ -194,7 +193,7 @@ class UpdateDbOnAppStartRepositoryImpl(
         db.insertWithOnConflict(industryNoIndexes, null, contentValues, CONFLICT_IGNORE)
     }
 
-    companion object{
+    companion object {
         const val NAME = "name"
         const val TYPE = "type"
         const val ID = "id"

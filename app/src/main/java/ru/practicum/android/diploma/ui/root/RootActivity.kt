@@ -5,11 +5,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.ActivityRootBinding
+import ru.practicum.android.diploma.viewmodels.MainActivityViewModel
 
 class RootActivity : AppCompatActivity() {
+
+    private val vModel: MainActivityViewModel by viewModel()
 
     private val binding: ActivityRootBinding by lazy {
         ActivityRootBinding.inflate(layoutInflater)

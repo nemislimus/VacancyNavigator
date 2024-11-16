@@ -79,7 +79,6 @@ val dataModule = module {
             val appname = "Навигатор Вакансий XXX"
 
             val appNameUrl = URLEncoder.encode(appname, StandardCharsets.UTF_8.toString())
-            //val appNameUrl = "Navigator Vakansij XXX"
             val mail = "amdoit.com@gmail.com"
 
             val originalRequest = chain.request()
