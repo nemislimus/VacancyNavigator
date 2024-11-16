@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -11,5 +12,9 @@ class MainActivityViewModel(dataUpdater: UpdateDbOnAppStartUseCase) : ViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             dataUpdater()
         }
+    }
+
+    fun pingMe() {
+        Log.d("WWW", "Hello! I am main activity))")
     }
 }
