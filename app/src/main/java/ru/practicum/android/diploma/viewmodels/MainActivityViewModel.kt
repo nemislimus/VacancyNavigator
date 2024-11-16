@@ -14,7 +14,7 @@ class MainActivityViewModel(dataUpdater: UpdateDbOnAppStartUseCase) : ViewModel(
         }
     }
 
-    fun pingMe(){
+    fun pingMe() {
         Log.d("WWW", "Hello! I am main activity))")
     }
 }
