@@ -15,6 +15,7 @@ import ru.practicum.android.diploma.domain.repository.UpdateDbOnAppStartReposito
 val repositoryModule = module {
     single<FilterRepository> { FilterRepositoryImpl(dataBase = get()) }
     single<SearchRepository> { SearchRepositoryImpl(networkClient = get()) }
+
     factory<UpdateDbOnAppStartRepository> {
         UpdateDbOnAppStartRepositoryImpl(
             client = get(),
