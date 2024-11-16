@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.data.network.impl
 
 import android.util.Log
+import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -42,6 +43,9 @@ class RetrofitNetworkClient(
                 val response = initResponseByError(e.code(), e.message())
                 response
             } catch (e: IOException) {
+                netLog("[$e] - IOException")
+                badResponse()
+            } catch (e: JsonSyntaxException) {
                 netLog("[$e] - IOException")
                 badResponse()
             }

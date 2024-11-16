@@ -21,7 +21,7 @@ interface HhSearchApi {
     @GET("areas/{id}")
     suspend fun getAreasByCountry(@Path("id") countryId: String): ApiResponse.AreaResponse
 
-    @GET("areas")
+    @GET("areas/0")
     suspend fun getAreas(): ApiResponse.AreaResponse
 
     @GET("industries")
