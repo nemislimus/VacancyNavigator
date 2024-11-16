@@ -39,9 +39,7 @@ val dataModule = module {
     }
 
     factory<DbHelper> {
-        DbHelper(
-            androidContext(), DB_NAME, DB_VERSION
-        )
+        DbHelper(androidContext(), DB_NAME, DB_VERSION)
     }
 
     single<IndustriesDao> {
@@ -68,7 +66,9 @@ val dataModule = module {
 
     single<NetworkClient> {
         RetrofitNetworkClient(
-            hhSearchApi = get(), connectionChecker = get(), mapper = get()
+            hhSearchApi = get(),
+            connectionChecker = get(),
+            mapper = get()
         )
     }
 

@@ -7,10 +7,10 @@ import android.database.sqlite.SQLiteOpenHelper
 class DbHelper(context: Context, name: String, version: Int) :
     SQLiteOpenHelper(context, name, null, version) {
     override fun onCreate(db: SQLiteDatabase?) {
-        // TODO("Not yet implemented")
+        // USE Room
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        // TODO("Not yet implemented")
+        // USE Room
     }
 }

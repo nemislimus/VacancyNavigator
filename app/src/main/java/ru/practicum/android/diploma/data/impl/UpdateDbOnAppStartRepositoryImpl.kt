@@ -18,7 +18,6 @@ import ru.practicum.android.diploma.data.search.dto.model.IndustryDto
 import ru.practicum.android.diploma.domain.models.AreaType
 import ru.practicum.android.diploma.domain.repository.UpdateDbOnAppStartRepository
 
-
 class UpdateDbOnAppStartRepositoryImpl(
     private val client: NetworkClient,
     private val sql: DbHelper,
@@ -26,7 +25,9 @@ class UpdateDbOnAppStartRepositoryImpl(
 ) : UpdateDbOnAppStartRepository {
 
     private val types = mapOf(
-        0 to AreaType.COUNTRY, 1 to AreaType.REGION, 2 to AreaType.CITY
+        0 to AreaType.COUNTRY,
+        1 to AreaType.REGION,
+        2 to AreaType.CITY
     )
 
     private val db: SQLiteDatabase by lazy { sql.writableDatabase }
@@ -168,28 +169,35 @@ class UpdateDbOnAppStartRepositoryImpl(
 
     private fun insertArea(area: AreaRoomTemp) {
         val contentValues = ContentValues()
-        contentValues.put("id", area.id)
-        contentValues.put("name", area.name)
-        contentValues.put("type", area.type)
-        contentValues.put("parentId", area.parentId)
+        contentValues.put(ID, area.id)
+        contentValues.put(NAME, area.name)
+        contentValues.put(TYPE, area.type)
+        contentValues.put(PARENT_ID, area.parentId)
         db.insertWithOnConflict(areasNoIndexes, null, contentValues, CONFLICT_IGNORE)
 
-        if(area.id==1){
+        if (area.id == 1) {
             // добавим Москву тоже в города
             val contentValues = ContentValues()
-            contentValues.put("id", -1)
-            contentValues.put("name", area.name)
-            contentValues.put("type", AreaType.CITY.type)
-            contentValues.put("parentId", area.id)
+            contentValues.put(ID, -1)
+            contentValues.put(NAME, area.name)
+            contentValues.put(TYPE, AreaType.CITY.type)
+            contentValues.put(PARENT_ID, area.id)
             db.insertWithOnConflict(areasNoIndexes, null, contentValues, CONFLICT_IGNORE)
         }
     }
 
     private fun insertIndustry(industry: IndustryRoomTemp) {
         val contentValues = ContentValues()
-        contentValues.put("id", industry.id)
-        contentValues.put("name", industry.name)
-        contentValues.put("parentId", industry.parentId)
+        contentValues.put(ID, industry.id)
+        contentValues.put(NAME, industry.name)
+        contentValues.put(PARENT_ID, industry.parentId)
         db.insertWithOnConflict(industryNoIndexes, null, contentValues, CONFLICT_IGNORE)
+    }
+
+    companion object{
+        const val NAME = "name"
+        const val TYPE = "type"
+        const val ID = "id"
+        const val PARENT_ID = "parentId"
     }
 }
