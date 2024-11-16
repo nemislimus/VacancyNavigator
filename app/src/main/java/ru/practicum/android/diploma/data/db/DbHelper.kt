@@ -4,9 +4,10 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class DbHelper(context: Context, name:String, version:Int) : SQLiteOpenHelper(context,name,null, version) {
+class DbHelper(context: Context, name: String, version: Int) :
+    SQLiteOpenHelper(context, name, null, version) {
     override fun onCreate(db: SQLiteDatabase?) {
-        // TODO("Not yet implemented")
+        //Log.d("WWW", checker.version())
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {

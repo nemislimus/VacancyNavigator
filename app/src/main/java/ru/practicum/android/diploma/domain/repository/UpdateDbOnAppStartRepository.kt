@@ -1,5 +1,5 @@
 package ru.practicum.android.diploma.domain.repository
 
-interface UpdateDbOnAppStart {
+interface UpdateDbOnAppStartRepository {
     suspend fun update(): Boolean
 }

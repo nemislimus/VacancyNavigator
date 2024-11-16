@@ -3,6 +3,7 @@ package ru.practicum.android.diploma.di
 import android.content.Context
 import android.net.ConnectivityManager
 import androidx.room.Room
+import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
@@ -10,11 +11,12 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.practicum.android.diploma.BuildConfig
-import ru.practicum.android.diploma.data.db.DB_NAME
-import ru.practicum.android.diploma.data.db.DB_VERSION
+import ru.practicum.android.diploma.data.CACHE_SIZE_BYTES
+import ru.practicum.android.diploma.data.DB_NAME
+import ru.practicum.android.diploma.data.DB_VERSION
 import ru.practicum.android.diploma.data.db.DbHelper
 import ru.practicum.android.diploma.data.db.XxxDataBase
-import ru.practicum.android.diploma.data.db.dao.OnStartUpdateDao
+import ru.practicum.android.diploma.data.db.dao.CreateDbDao
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.api.NetworkConnectionChecker
@@ -30,16 +32,16 @@ val dataModule = module {
         Room.databaseBuilder(androidContext(), XxxDataBase::class.java, DB_NAME).build()
     }
 
+    factory<CreateDbDao> {
+        get<XxxDataBase>().createDb()
+    }
+
     factory<DbHelper> {
         DbHelper(
             androidContext(),
             DB_NAME,
             DB_VERSION
         )
-    }
-
-    factory<OnStartUpdateDao>{
-        get<XxxDataBase>().dbUpdateDao()
     }
 
     single<ConnectivityManager> {
@@ -85,7 +87,11 @@ val dataModule = module {
 
         }
 
-        val okHttpClient = OkHttpClient().newBuilder().addInterceptor(interceptor).build()
+        val okHttpClient = OkHttpClient()
+            .newBuilder()
+            .cache(Cache(androidContext().cacheDir, CACHE_SIZE_BYTES))
+            .addInterceptor(interceptor)
+            .build()
 
         Retrofit
             .Builder()
