@@ -35,4 +35,10 @@
     
     <string name="unknown_viewholder_create">Unknown ViewHolder type for create</string>
     <string name="unknown_viewholder_bind">Unknown ViewHolder type for bind</string>
+    <string name="vacancy_details">Вакансия</string>
+    <string name="vacancy_to_fav">иконка: вакансия в избранном</string>
+    <string name="vacancy_share">иконка: поделиться вакансией</string>
+    <string name="experience">Требуемый опыт</string>
+    <string name="vacancy_info">Описание вакансии</string>
+    <string name="vacancy_key_skills">Ключевые навыки</string>
 </resources>

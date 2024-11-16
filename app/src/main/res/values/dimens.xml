@@ -26,4 +26,5 @@
     <dimen name="gap_height">36dp</dimen>
     <dimen name="size_24">24dp</dimen>
     <dimen name="margin_44">44dp</dimen>
+    <dimen name="width_height_80">80dp</dimen>
 </resources>
