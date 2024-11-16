@@ -5,5 +5,5 @@ import ru.practicum.android.diploma.domain.models.SearchFilter
 
 interface FilterRepository {
     suspend fun getActiveFilter(): Flow<SearchFilter?>
-    suspend fun activeFilterExist():Flow<Boolean>
+    suspend fun activeFilterExist(): Flow<Boolean>
 }
