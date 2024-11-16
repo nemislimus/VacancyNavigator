@@ -173,6 +173,16 @@ class UpdateDbOnAppStartRepositoryImpl(
         contentValues.put("type", area.type)
         contentValues.put("parentId", area.parentId)
         db.insertWithOnConflict(areasNoIndexes, null, contentValues, CONFLICT_IGNORE)
+
+        if(area.id==1){
+            // добавим Москву тоже в города
+            val contentValues = ContentValues()
+            contentValues.put("id", -1)
+            contentValues.put("name", area.name)
+            contentValues.put("type", AreaType.CITY.type)
+            contentValues.put("parentId", area.id)
+            db.insertWithOnConflict(areasNoIndexes, null, contentValues, CONFLICT_IGNORE)
+        }
     }
 
     private fun insertIndustry(industry: IndustryRoomTemp) {
