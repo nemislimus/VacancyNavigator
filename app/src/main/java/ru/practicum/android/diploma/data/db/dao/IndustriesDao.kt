@@ -9,6 +9,6 @@ interface IndustriesDao {
     @Query("SELECT * FROM industry ORDER BY parentId")
     suspend fun getIndustries(): List<IndustryRoom>
 
-    @Query("SELECT * FROM industry WHERE name LIKE '%' || :search || '%' ORDER BY parentId")
+    @Query("SELECT * FROM industry WHERE name LIKE '%' || :search || '%'")
     suspend fun getIndustriesByName(search: String): List<IndustryRoom>
 }
