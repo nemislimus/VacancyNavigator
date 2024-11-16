@@ -16,7 +16,9 @@ import ru.practicum.android.diploma.data.DB_NAME
 import ru.practicum.android.diploma.data.DB_VERSION
 import ru.practicum.android.diploma.data.db.DbHelper
 import ru.practicum.android.diploma.data.db.XxxDataBase
+import ru.practicum.android.diploma.data.db.dao.AreasDao
 import ru.practicum.android.diploma.data.db.dao.CreateDbDao
+import ru.practicum.android.diploma.data.db.dao.IndustriesDao
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.api.NetworkConnectionChecker
@@ -38,10 +40,16 @@ val dataModule = module {
 
     factory<DbHelper> {
         DbHelper(
-            androidContext(),
-            DB_NAME,
-            DB_VERSION
+            androidContext(), DB_NAME, DB_VERSION
         )
+    }
+
+    single<IndustriesDao> {
+        get<XxxDataBase>().industriesDao()
+    }
+
+    single<AreasDao> {
+        get<XxxDataBase>().areasDao()
     }
 
     single<ConnectivityManager> {
@@ -60,9 +68,7 @@ val dataModule = module {
 
     single<NetworkClient> {
         RetrofitNetworkClient(
-            hhSearchApi = get(),
-            connectionChecker = get(),
-            mapper = get()
+            hhSearchApi = get(), connectionChecker = get(), mapper = get()
         )
     }
 
@@ -77,10 +83,9 @@ val dataModule = module {
             val mail = "amdoit.com@gmail.com"
 
             val originalRequest = chain.request()
-            val builder = originalRequest.newBuilder()
+            val builder = originalRequest
+                .newBuilder()
                 .header("Authorization", "Bearer $token")
-                //.addHeader("Accept-Encoding", "gzip")
-                //.addHeader("Accept", "application/json")
                 .header("HH-User-Agent", "$appNameUrl ($mail)")
             val newRequest = builder.build()
             chain.proceed(newRequest)

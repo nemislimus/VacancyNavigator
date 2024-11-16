@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import ru.practicum.android.diploma.data.DB_VERSION
 import ru.practicum.android.diploma.data.db.dao.AreasDao
 import ru.practicum.android.diploma.data.db.dao.CreateDbDao
+import ru.practicum.android.diploma.data.db.dao.IndustriesDao
 import ru.practicum.android.diploma.data.db.models.AreaRoom
 import ru.practicum.android.diploma.data.db.models.AreaRoomTemp
 import ru.practicum.android.diploma.data.db.models.IndustryRoom
@@ -20,6 +21,7 @@ import ru.practicum.android.diploma.data.db.models.IndustryRoomTemp
     ]
 )
 abstract class XxxDataBase : RoomDatabase() {
-    abstract fun areasDao(): AreasDao
     abstract fun createDb(): CreateDbDao
+    abstract fun areasDao(): AreasDao
+    abstract fun industriesDao(): IndustriesDao
 }
