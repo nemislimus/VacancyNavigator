@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/miShareVacancy"
+        android:icon="@drawable/sharing"
+        android:title="@string/vacancy_share"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/miVacancyToFavorite"
+        android:icon="@drawable/favorites_off"
+        android:title="@string/vacancy_to_fav"
+        app:showAsAction="ifRoom" />
+
+</menu>

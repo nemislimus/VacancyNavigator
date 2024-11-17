@@ -57,4 +57,10 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:letterSpacing">0</item>
     </style>
+
+    <style name="bottom_navigation_panel" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconTint">@color/switch_navigation_item_color</item>
+        <item name="itemTextColor">@color/switch_navigation_item_color</item>
+        <item name="android:background">?attr/appBackgroundColor</item>
+    </style>
 </resources>

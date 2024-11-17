@@ -8,11 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.VacancyListGapBinding
 import ru.practicum.android.diploma.databinding.VacancyListItemBinding
-import ru.practicum.android.diploma.domain.search.model.Vacancy
+import ru.practicum.android.diploma.domain.models.VacancyShort
 
 class VacancyListAdapter(
     private val itemClickListener: ItemClickListener,
-) : ListAdapter<Vacancy, RecyclerView.ViewHolder>(ItemComparator()) {
+) : ListAdapter<VacancyShort, RecyclerView.ViewHolder>(ItemComparator()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -45,18 +45,18 @@ class VacancyListAdapter(
     override fun getItemViewType(position: Int): Int =
         if (currentList[position].id == GAP_ID) GAP_ITEM else VACANCY_ITEM
 
-    private class ItemComparator : DiffUtil.ItemCallback<Vacancy>() {
-        override fun areItemsTheSame(oldItem: Vacancy, newItem: Vacancy): Boolean {
+    private class ItemComparator : DiffUtil.ItemCallback<VacancyShort>() {
+        override fun areItemsTheSame(oldItem: VacancyShort, newItem: VacancyShort): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: Vacancy, newItem: Vacancy): Boolean {
+        override fun areContentsTheSame(oldItem: VacancyShort, newItem: VacancyShort): Boolean {
             return oldItem == newItem
         }
     }
 
     fun interface ItemClickListener {
-        fun onItemClick(item: Vacancy)
+        fun onItemClick(item: VacancyShort)
     }
 
     companion object {

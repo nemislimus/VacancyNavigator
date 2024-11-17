@@ -14,4 +14,17 @@ data class VacancyFull(
     val keySkills: List<String>, // ["Прием посетителей", "Первичный документооборот"], список может быть пустым []
     val address: String? = null, // Москва, Годовикова 9, стр. 10 (территория завода «Калибр»)
     val geolocation: Geolocation? = null
-)
+) {
+    companion object {
+        fun keySkillsToHtml(vacancy: VacancyFull): String {
+            val markedSkills = vacancy.keySkills.map { addHtmlListTag(it) }
+            return markedSkills.fold("") { result, skill ->
+                result + skill
+            }
+        }
+
+        private fun addHtmlListTag(value: String): String {
+            return "<li> $value</li>\n"
+        }
+    }
+}
