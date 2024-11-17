@@ -66,7 +66,6 @@ object SearchFilterToSearchFilterRoomMapper {
     }
 
     fun map(filter: SearchFilterRoom?): SearchFilter? {
-
         filter?.let {
             return SearchFilter(
                 country = country(filter),
@@ -91,7 +90,9 @@ object SearchFilterToSearchFilterRoomMapper {
                     type = AreaType.COUNTRY,
                     parentId = if (countryParentId > 0) {
                         countryParentId.toString()
-                    } else null
+                    } else {
+                        null
+                    }
                 )
             } else {
                 null
@@ -108,7 +109,9 @@ object SearchFilterToSearchFilterRoomMapper {
                     type = AreaType.COUNTRY,
                     parentId = if (regionParentId > 0) {
                         regionParentId.toString()
-                    } else null
+                    } else {
+                        null
+                    }
                 )
             } else {
                 null
@@ -125,7 +128,9 @@ object SearchFilterToSearchFilterRoomMapper {
                     type = AreaType.COUNTRY,
                     parentId = if (cityParentId > 0) {
                         cityParentId.toString()
-                    } else null
+                    } else {
+                        null
+                    }
                 )
             } else {
                 null
@@ -141,7 +146,9 @@ object SearchFilterToSearchFilterRoomMapper {
                     name = industryName,
                     parentId = if (industryParentId > 0) {
                         industryParentId.toString()
-                    } else null
+                    } else {
+                        null
+                    }
                 )
             } else {
                 null
@@ -156,7 +163,9 @@ object SearchFilterToSearchFilterRoomMapper {
                     lat = lat,
                     lng = lng
                 )
-            } else null
+            } else {
+                null
+            }
         }
     }
 }
