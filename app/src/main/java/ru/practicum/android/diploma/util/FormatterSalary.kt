@@ -10,9 +10,9 @@ fun formatterSalary(salary: Int?): String? {
         return null
     } else {
         val formatter: DecimalFormat = NumberFormat.getInstance(Locale.US) as DecimalFormat
-        val symbols: DecimalFormatSymbols = formatter.getDecimalFormatSymbols()
+        val symbols: DecimalFormatSymbols = formatter.decimalFormatSymbols
         symbols.setGroupingSeparator(' ')
-        formatter.setDecimalFormatSymbols(symbols)
+        formatter.decimalFormatSymbols = symbols
         return formatter.format(salary)
     }
 }

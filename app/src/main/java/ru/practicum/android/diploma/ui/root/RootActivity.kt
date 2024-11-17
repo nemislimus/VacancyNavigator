@@ -9,11 +9,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.ActivityRootBinding
-import ru.practicum.android.diploma.viewmodels.MainActivityViewModel
+import ru.practicum.android.diploma.viewmodels.RootActivityViewModel
 
 class RootActivity : AppCompatActivity() {
 
-    private val vModel: MainActivityViewModel by viewModel()
+    private val vModel: RootActivityViewModel by viewModel()
 
     private val binding: ActivityRootBinding by lazy {
         ActivityRootBinding.inflate(layoutInflater)
