@@ -19,6 +19,7 @@ import ru.practicum.android.diploma.data.db.XxxDataBase
 import ru.practicum.android.diploma.data.db.dao.AreasDao
 import ru.practicum.android.diploma.data.db.dao.CreateDbDao
 import ru.practicum.android.diploma.data.db.dao.IndustriesDao
+import ru.practicum.android.diploma.data.db.dao.SearchFilterDao
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.api.NetworkConnectionChecker
@@ -48,6 +49,10 @@ val dataModule = module {
 
     single<AreasDao> {
         get<XxxDataBase>().areasDao()
+    }
+
+    single<SearchFilterDao> {
+        get<XxxDataBase>().searchFilterDao()
     }
 
     single<ConnectivityManager> {
