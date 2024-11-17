@@ -41,4 +41,9 @@
     <string name="experience">Требуемый опыт</string>
     <string name="vacancy_info">Описание вакансии</string>
     <string name="vacancy_key_skills">Ключевые навыки</string>
+    <string name="vacancy_not_found_or_delete">Вакансия не найдена или удалена</string>
+    <string name="server_error">Ошибка сервера</string>
+    <string name="not_found_regions">Не удалось получить список</string>
+    <string name="favorite_list_empty">Список пуст</string>
+    <string name="region_not_found">Такого региона нет</string>
 </resources>

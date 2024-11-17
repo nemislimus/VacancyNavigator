@@ -130,5 +130,4 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
             }
         }
     }
-
 }

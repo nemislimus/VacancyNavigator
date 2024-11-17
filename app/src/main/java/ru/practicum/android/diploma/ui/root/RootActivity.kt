@@ -31,6 +31,11 @@ class RootActivity : AppCompatActivity() {
                     binding.flDivider.isVisible = false
                 }
 
+                R.id.vacancyFragment -> {
+                    binding.bottomNavigationPanel.isVisible = false
+                    binding.flDivider.isVisible = false
+                }
+
                 else -> {
                     binding.bottomNavigationPanel.isVisible = true
                     binding.flDivider.isVisible = true
@@ -45,5 +50,4 @@ class RootActivity : AppCompatActivity() {
     private fun networkRequestExample(accessToken: String) {
         // ...
     }
-
 }
