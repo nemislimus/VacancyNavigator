@@ -73,7 +73,7 @@ object SearchFilterToSearchFilterRoomMapper {
                 city = city(filter),
                 industry = industry(filter),
                 salary = if (filter.salary == -1) null else filter.salary,
-                onlyWithSalary = (filter.onlyWithSalary == 1),
+                onlyWithSalary = filter.onlyWithSalary == 1,
                 geolocation = geolocation(filter)
             )
         } ?: run {
