@@ -1,5 +1,11 @@
 package ru.practicum.android.diploma.data.network.mapper
 
+import ru.practicum.android.diploma.data.network.ApiResponse
+import ru.practicum.android.diploma.data.search.dto.model.SalaryDto
+import ru.practicum.android.diploma.data.search.dto.model.VacancyDto
+import ru.practicum.android.diploma.domain.models.Salary
+import ru.practicum.android.diploma.domain.models.VacancyList
+import ru.practicum.android.diploma.domain.models.VacancyShort
 import ru.practicum.android.diploma.domain.search.model.SearchVacancyOptions
 
 /*
@@ -34,6 +40,36 @@ class NetworkMapper {
         }
 
         return map
+    }
+
+    fun map(response: ApiResponse.VacancyResponse): VacancyList {
+        val items: List<VacancyShort> = response.items.map { map(it) }
+        return VacancyList(
+            items = items,
+            found = response.found ?: 0,
+            pages = response.pages ?: 0,
+            perPage = response.perPage ?: 0,
+            page = response.page ?: 0
+        )
+    }
+
+    fun map(vacancyDto: VacancyDto): VacancyShort {
+        return VacancyShort(
+            id = vacancyDto.id,
+            name = vacancyDto.name,
+            employer = vacancyDto.employer?.name ?: "",
+            areaName = vacancyDto.area?.name ?: "",
+            iconUrl = vacancyDto.employer?.logoUrls?.s90,
+            salary = vacancyDto.salary?.let { map(it) }
+        )
+    }
+
+    fun map(salaryDto: SalaryDto): Salary {
+        return Salary(
+            from = salaryDto.from,
+            to = salaryDto.to,
+            currency = salaryDto.currency ?: ""
+        )
     }
 
     companion object {

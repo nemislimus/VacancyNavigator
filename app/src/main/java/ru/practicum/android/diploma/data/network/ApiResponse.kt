@@ -21,6 +21,7 @@ sealed class ApiResponse {
         val items: ArrayList<VacancyDto>,
         val found: Int? = null,
         val page: Int? = null,
+        val pages: Int? = null,
         @SerializedName("per_page") val perPage: Int? = null,
     ) : ApiResponse()
 

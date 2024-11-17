@@ -2,7 +2,7 @@ package ru.practicum.android.diploma.domain.search.impl
 
 import kotlinx.coroutines.flow.Flow
 import ru.practicum.android.diploma.domain.models.Resource
-import ru.practicum.android.diploma.domain.models.VacancyShort
+import ru.practicum.android.diploma.domain.models.VacancyList
 import ru.practicum.android.diploma.domain.repository.GetSearchFilterRepository
 import ru.practicum.android.diploma.domain.search.api.SearchInteractor
 import ru.practicum.android.diploma.domain.search.api.SearchRepository
@@ -12,7 +12,7 @@ class SearchInteractorImpl(
     private val searchRepository: SearchRepository,
     private val filterRepository: GetSearchFilterRepository
 ) : SearchInteractor {
-    override suspend fun searchVacancy(text: String, page: Int): Flow<Resource<List<VacancyShort>>> {
+    override suspend fun searchVacancy(text: String, page: Int): Flow<Resource<VacancyList>> {
         val filter = filterRepository.getFilterForNetworkClient(page)
         val options = SearchVacancyOptions(
             text = text,
