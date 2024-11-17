@@ -1,10 +1,12 @@
 package ru.practicum.android.diploma.data.network.mapper
 
 import ru.practicum.android.diploma.data.network.ApiResponse
+import ru.practicum.android.diploma.data.search.dto.model.AddressDto
 import ru.practicum.android.diploma.data.search.dto.model.AreaDto
 import ru.practicum.android.diploma.data.search.dto.model.EmployerDto
 import ru.practicum.android.diploma.data.search.dto.model.SalaryDto
 import ru.practicum.android.diploma.data.search.dto.model.VacancyDto
+import ru.practicum.android.diploma.domain.models.Geolocation
 import ru.practicum.android.diploma.domain.models.Salary
 import ru.practicum.android.diploma.domain.models.VacancyFull
 import ru.practicum.android.diploma.domain.models.VacancyList
@@ -90,6 +92,14 @@ class NetworkMapper {
             schedule = vacDto.schedule?.name ?: "",
             description = vacDto.description ?: "",
             keySkills = vacDto.keySkills?.map { it.name } ?: emptyList(),
+            address = vacDto.address?.raw ?: "",
+            geolocation = vacDto.address?.let { map(it) }
+        )
+
+    fun map(addressDto: AddressDto): Geolocation =
+        Geolocation(
+            lat = addressDto.lat?.toString() ?: "",
+            lng = addressDto.lng?.toString() ?: ""
         )
 
     private fun getAreaName(areaDto: AreaDto?): String = areaDto?.name ?: ""
