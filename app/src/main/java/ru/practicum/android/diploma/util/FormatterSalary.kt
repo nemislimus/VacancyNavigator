@@ -13,6 +13,6 @@ fun formatterSalary(salary: Int?): String? {
         val symbols: DecimalFormatSymbols = formatter.getDecimalFormatSymbols()
         symbols.setGroupingSeparator(' ')
         formatter.setDecimalFormatSymbols(symbols)
-        return (formatter.format(salary))
+        return formatter.format(salary)
     }
 }
