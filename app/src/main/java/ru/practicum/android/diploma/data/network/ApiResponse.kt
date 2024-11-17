@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.data.network
 
 import com.google.gson.annotations.SerializedName
+import ru.practicum.android.diploma.data.search.dto.model.AddressDto
 import ru.practicum.android.diploma.data.search.dto.model.AreaDto
 import ru.practicum.android.diploma.data.search.dto.model.CountryDto
 import ru.practicum.android.diploma.data.search.dto.model.EmployerDto
@@ -21,6 +22,7 @@ sealed class ApiResponse {
         val items: ArrayList<VacancyDto>,
         val found: Int? = null,
         val page: Int? = null,
+        val pages: Int? = null,
         @SerializedName("per_page") val perPage: Int? = null,
     ) : ApiResponse()
 
@@ -35,6 +37,7 @@ sealed class ApiResponse {
         val employment: EmploymentDto? = null,
         val description: String? = null,
         @SerializedName("key_skills") val keySkills: List<SkillDto>? = null,
+        val address: AddressDto? = null
     ) : ApiResponse()
 
     data class IndustryResponse(val result: ArrayList<IndustryDto>) : ApiResponse()
