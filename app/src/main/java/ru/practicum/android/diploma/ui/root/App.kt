@@ -1,6 +1,8 @@
 package ru.practicum.android.diploma.ui.root
 
 import android.app.Application
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -26,9 +28,7 @@ class App : Application() {
 
         val dataUpdater: UpdateDbOnAppStartUseCase by inject()
 
-        val scope = kotlinx.coroutines.CoroutineScope(
-            kotlinx.coroutines.Dispatchers.IO
-        )
+        val scope = CoroutineScope(Dispatchers.IO)
 
         scope.launch {
             dataUpdater()
