@@ -22,12 +22,13 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tbSearchToolBar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="@dimen/size_64dp"
         app:buttonGravity="center_vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="@dimen/margin_8"
         app:menu="@menu/search_toolbar_menu"
         app:title="@string/vacancy_search"
         app:titleTextAppearance="@style/TextMedium_22size_500weight"

@@ -9,13 +9,15 @@
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_border"
-        style="@style/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="@dimen/margin_16" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/right_border"
-        style="@style/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="@dimen/margin_16" />
 

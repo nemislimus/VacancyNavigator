@@ -11,7 +11,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
-import ru.practicum.android.diploma.domain.search.model.Vacancy
+import ru.practicum.android.diploma.domain.models.VacancyShort
 import ru.practicum.android.diploma.ui.search.VacancyListAdapter
 import ru.practicum.android.diploma.ui.utils.MenuBindingFragment
 import ru.practicum.android.diploma.util.EMPTY_STRING
@@ -76,10 +76,9 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         )
     }
 
-    private fun clickOnVacancy(vacancy: Vacancy) {
+    private fun clickOnVacancy(vacancy: VacancyShort) {
         findNavController().navigate(
             R.id.action_searchFragment_to_vacancyFragment
         )
     }
-
 }
