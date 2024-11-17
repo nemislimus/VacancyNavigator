@@ -17,7 +17,7 @@ interface SearchFilterDao {
     suspend fun replaceFilter(filter: SearchFilterRoom)
 
     @Query("SELECT * FROM search_filter WHERE filterId=1")
-    suspend fun getFilterFlow(): Flow<SearchFilterRoom?>
+    fun getFilterFlow(): Flow<SearchFilterRoom?>
 
     @Query("SELECT * FROM search_filter WHERE filterId=1")
     suspend fun getFilter(): SearchFilterRoom?
