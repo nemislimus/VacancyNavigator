@@ -82,7 +82,7 @@ class UpdateDbOnAppStartRepositoryImpl(
         return true
     }
 
-    private suspend fun clearTempTables(){
+    private suspend fun clearTempTables() {
         db.execSQL("DELETE FROM areas_temp")
         db.execSQL("DELETE FROM industry_temp")
     }
