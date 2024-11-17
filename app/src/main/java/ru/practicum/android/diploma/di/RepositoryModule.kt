@@ -28,7 +28,7 @@ val repositoryModule = module {
     }
 
     single<SearchRepository> {
-        SearchRepositoryImpl(networkClient = get())
+        SearchRepositoryImpl(networkClient = get(), mapper = get())
     }
 
     factory<UpdateDbOnAppStartRepository> {
