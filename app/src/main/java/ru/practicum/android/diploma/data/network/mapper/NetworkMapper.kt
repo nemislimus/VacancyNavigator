@@ -1,9 +1,12 @@
 package ru.practicum.android.diploma.data.network.mapper
 
 import ru.practicum.android.diploma.data.network.ApiResponse
+import ru.practicum.android.diploma.data.search.dto.model.AreaDto
+import ru.practicum.android.diploma.data.search.dto.model.EmployerDto
 import ru.practicum.android.diploma.data.search.dto.model.SalaryDto
 import ru.practicum.android.diploma.data.search.dto.model.VacancyDto
 import ru.practicum.android.diploma.domain.models.Salary
+import ru.practicum.android.diploma.domain.models.VacancyFull
 import ru.practicum.android.diploma.domain.models.VacancyList
 import ru.practicum.android.diploma.domain.models.VacancyShort
 import ru.practicum.android.diploma.domain.search.model.SearchVacancyOptions
@@ -53,24 +56,44 @@ class NetworkMapper {
         )
     }
 
+    fun map(salaryDto: SalaryDto?): Salary? {
+        return salaryDto?.let {
+            Salary(
+                from = it.from,
+                to = it.to,
+                currency = it.currency ?: ""
+            )
+        }
+    }
+
     fun map(vacancyDto: VacancyDto): VacancyShort {
         return VacancyShort(
             id = vacancyDto.id,
             name = vacancyDto.name,
             employer = vacancyDto.employer?.name ?: "",
-            areaName = vacancyDto.area?.name ?: "",
-            iconUrl = vacancyDto.employer?.logoUrls?.s90,
-            salary = vacancyDto.salary?.let { map(it) }
+            areaName = getAreaName(vacancyDto.area),
+            iconUrl = getEmployerLogo(vacancyDto.employer),
+            salary = map(vacancyDto.salary)
         )
     }
 
-    fun map(salaryDto: SalaryDto): Salary {
-        return Salary(
-            from = salaryDto.from,
-            to = salaryDto.to,
-            currency = salaryDto.currency ?: ""
+    fun map(vacDto: ApiResponse.VacancyDetailedResponse): VacancyFull =
+        VacancyFull(
+            id = vacDto.id,
+            name = vacDto.name,
+            employer = vacDto.employer?.name ?: "",
+            areaName = getAreaName(vacDto.area),
+            iconUrl = getEmployerLogo(vacDto.employer),
+            salary = map(vacDto.salary),
+            experience = vacDto.experience?.name ?: "",
+            employment = vacDto.employment?.name ?: "",
+            schedule = vacDto.schedule?.name ?: "",
+            description = vacDto.description ?: "",
+            keySkills = vacDto.keySkills?.map { it.name } ?: emptyList(),
         )
-    }
+
+    private fun getAreaName(areaDto: AreaDto?): String = areaDto?.name ?: ""
+    private fun getEmployerLogo(employerDto: EmployerDto?): String? = employerDto?.logoUrls?.s90
 
     companion object {
         const val VACANCIES_PER_PAGE = "20"
