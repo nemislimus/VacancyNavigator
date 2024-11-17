@@ -22,8 +22,7 @@ class SearchRepositoryImpl(private val networkClient: NetworkClient, private val
             emit(
                 when (response.resultCode) {
                     ApiResponse.SUCCESSFUL_RESPONSE_CODE -> {
-                        val vacancies = (response as ApiResponse.VacancyResponse)
-                        Resource.Success(mapper.map(vacancies))
+                        Resource.Success(mapper.map((response as ApiResponse.VacancyResponse)))
                     }
 
                     ApiResponse.NO_CONNECTION_CODE -> {
