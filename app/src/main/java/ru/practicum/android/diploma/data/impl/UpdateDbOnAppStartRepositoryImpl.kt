@@ -44,6 +44,7 @@ class UpdateDbOnAppStartRepositoryImpl(
         db.execSQL("CREATE TABLE IF NOT EXISTS $industryNoIndexes AS SELECT * FROM industry_temp LIMIT 0")
         db.execSQL("DELETE FROM $areasNoIndexes")
         db.execSQL("DELETE FROM $industryNoIndexes")
+        clearTempTables()
 
         try {
             getCountries()
@@ -56,7 +57,6 @@ class UpdateDbOnAppStartRepositoryImpl(
             db.execSQL("ALTER TABLE areas RENAME TO _areas")
             db.execSQL("ALTER TABLE areas_temp RENAME TO areas")
             db.execSQL("ALTER TABLE _areas RENAME TO areas_temp")
-            db.execSQL("DELETE FROM areas_temp")
 
             db.execSQL("ALTER TABLE industry RENAME TO _industry")
             db.execSQL("ALTER TABLE industry_temp RENAME TO industry")
@@ -66,6 +66,7 @@ class UpdateDbOnAppStartRepositoryImpl(
 
             logTime("таблицы в BD заменены")
 
+            clearTempTables()
             db.execSQL("DROP TABLE $areasNoIndexes")
             db.execSQL("DROP TABLE $industryNoIndexes")
             sql.close()
@@ -79,6 +80,11 @@ class UpdateDbOnAppStartRepositoryImpl(
         }
 
         return true
+    }
+
+    private suspend fun clearTempTables(){
+        db.execSQL("DELETE FROM areas_temp")
+        db.execSQL("DELETE FROM industry_temp")
     }
 
     private suspend fun getCountries() {
