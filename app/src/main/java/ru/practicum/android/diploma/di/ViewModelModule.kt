@@ -6,6 +6,6 @@ import ru.practicum.android.diploma.viewmodels.MainActivityViewModel
 
 val viewModelModule = module {
     viewModel {
-        MainActivityViewModel(dataUpdater = get())
+        MainActivityViewModel()
     }
 }
