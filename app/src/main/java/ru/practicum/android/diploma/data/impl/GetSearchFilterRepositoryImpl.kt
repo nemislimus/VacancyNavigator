@@ -2,12 +2,8 @@ package ru.practicum.android.diploma.data.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ru.practicum.android.diploma.data.db.converters.AreaRoomToAreaMapper
 import ru.practicum.android.diploma.data.db.converters.SearchFilterToSearchFilterRoomMapper
 import ru.practicum.android.diploma.data.db.dao.SearchFilterDao
-import ru.practicum.android.diploma.domain.models.Area
-import ru.practicum.android.diploma.domain.models.Geolocation
-import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.domain.models.SearchFilter
 import ru.practicum.android.diploma.domain.repository.GetSearchFilterRepository
 
@@ -25,7 +21,6 @@ class GetSearchFilterRepositoryImpl(private val dao: SearchFilterDao) : GetSearc
     }
 
     override suspend fun getFilterForNetworkClient(page: Int): SearchFilter? {
-
         if (hasActiveFilter && page > 0) {
             return activeFilter
         }

@@ -13,78 +13,65 @@ class SetSearchFilterRepositoryImpl(private val dao: SearchFilterDao) : SetSearc
     private val mapper = SearchFilterToSearchFilterRoomMapper
 
     override suspend fun saveCountry(country: Area?) {
-        val filter = getFilterOrDefault()
-        filter.country = country
-        filter.region = null
-        filter.city = null
+        val filter = getFilterOrDefault().copy(country = country).copy(region = null).copy(city = null)
         dao.replaceFilter(mapper.map(filter))
     }
 
     override suspend fun saveRegion(region: Area?) {
-        val filter = getFilterOrDefault()
-        filter.region = region
-        filter.city = null
+        var country: Area? = null
 
         if (region?.parentId != null) {
             dao.getParentArea(region.parentId.toInt())?.let { roomCountry ->
-                filter.country = AreaRoomToAreaMapper.map(roomCountry)
-            } ?: run {
-                filter.country = null
+                country = AreaRoomToAreaMapper.map(roomCountry)
             }
         }
+
+        val filter = getFilterOrDefault().copy(country = country).copy(region = region).copy(city = null)
 
         dao.replaceFilter(mapper.map(filter))
     }
 
     override suspend fun saveCity(city: Area?) {
-        val filter = getFilterOrDefault()
-
-        filter.city = city
+        var country: Area? = null
+        var region: Area? = null
 
         if (city?.parentId != null) {
             dao.getParentArea(city.parentId.toInt())?.let { roomRegion ->
-                filter.region = AreaRoomToAreaMapper.map(roomRegion)
-            } ?: run {
-                filter.region = null
+                region = AreaRoomToAreaMapper.map(roomRegion)
             }
         }
 
-        val regionParentId = filter.region?.parentId
+        val regionParentId = region?.parentId
 
         if (regionParentId != null) {
             dao.getParentArea(regionParentId.toInt())?.let { roomCountry ->
-                filter.country = AreaRoomToAreaMapper.map(roomCountry)
-            } ?: run {
-                filter.country = null
+                country = AreaRoomToAreaMapper.map(roomCountry)
             }
         }
+
+        val filter = getFilterOrDefault().copy(country = country).copy(region = region).copy(city = city)
 
         dao.replaceFilter(mapper.map(filter))
     }
 
     override suspend fun saveIndustry(industry: Industry?) {
-        val filter = getFilterOrDefault()
-
-        filter.industry = industry
+        val filter = getFilterOrDefault().copy(industry = industry)
 
         dao.replaceFilter(mapper.map(filter))
     }
 
     override suspend fun saveSalary(salary: Int?) {
-        val filter = getFilterOrDefault()
-        filter.salary = salary
+        val filter = getFilterOrDefault().copy(salary = salary)
         dao.replaceFilter(mapper.map(filter))
     }
 
     override suspend fun saveOnlyWithSalary(onlyWithSalary: Boolean) {
-        val filter = getFilterOrDefault()
-        filter.onlyWithSalary = onlyWithSalary
+        val filter = getFilterOrDefault().copy(onlyWithSalary = onlyWithSalary)
         dao.replaceFilter(mapper.map(filter))
     }
 
     override suspend fun saveGeolocation(geolocation: Geolocation?) {
-        val filter = getFilterOrDefault()
-        filter.geolocation = geolocation
+        val filter = getFilterOrDefault().copy(geolocation = geolocation)
         dao.replaceFilter(mapper.map(filter))
     }
 

@@ -12,11 +12,11 @@ package ru.practicum.android.diploma.domain.models
  * @author Киреенко А.
  * */
 data class SearchFilter(
-    var country: Area? = null,
-    var region: Area? = null,
-    var city: Area? = null,
-    var industry: Industry? = null,
-    var salary: Int? = null,
-    var onlyWithSalary: Boolean = false,
-    var geolocation: Geolocation? = null
+    val country: Area? = null,
+    val region: Area? = null,
+    val city: Area? = null,
+    val industry: Industry? = null,
+    val salary: Int? = null,
+    val onlyWithSalary: Boolean = false,
+    val geolocation: Geolocation? = null
 )
