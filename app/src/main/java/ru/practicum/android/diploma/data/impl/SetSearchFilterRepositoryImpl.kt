@@ -15,12 +15,15 @@ class SetSearchFilterRepositoryImpl(private val dao: SearchFilterDao) : SetSearc
     override suspend fun saveCountry(country: Area?) {
         val filter = getFilterOrDefault()
         filter.country = country
+        filter.region = null
+        filter.city = null
         dao.replaceFilter(mapper.map(filter))
     }
 
     override suspend fun saveRegion(region: Area?) {
         val filter = getFilterOrDefault()
         filter.region = region
+        filter.city = null
 
         if (region?.parentId != null) {
             dao.getParentArea(region.parentId.toInt())?.let { roomCountry ->
