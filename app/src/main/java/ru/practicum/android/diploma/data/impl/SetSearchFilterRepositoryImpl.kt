@@ -13,8 +13,9 @@ class SetSearchFilterRepositoryImpl(private val dao: SearchFilterDao) : SetSearc
     private val mapper = SearchFilterToSearchFilterRoomMapper
 
     override suspend fun saveCountry(country: Area?) {
-        val filter = getFilterOrDefault().copy(country = country).copy(region = null).copy(city = null)
-        dao.replaceFilter(mapper.map(filter))
+        setFilterOrNull(
+            filter = getFilterOrDefault().copy(country = country).copy(region = null).copy(city = null)
+        )
     }
 
     override suspend fun saveRegion(region: Area?) {
@@ -26,9 +27,9 @@ class SetSearchFilterRepositoryImpl(private val dao: SearchFilterDao) : SetSearc
             }
         }
 
-        val filter = getFilterOrDefault().copy(country = country).copy(region = region).copy(city = null)
-
-        dao.replaceFilter(mapper.map(filter))
+        setFilterOrNull(
+            filter = getFilterOrDefault().copy(country = country).copy(region = region).copy(city = null)
+        )
     }
 
     override suspend fun saveCity(city: Area?) {
@@ -49,34 +50,45 @@ class SetSearchFilterRepositoryImpl(private val dao: SearchFilterDao) : SetSearc
             }
         }
 
-        val filter = getFilterOrDefault().copy(country = country).copy(region = region).copy(city = city)
-
-        dao.replaceFilter(mapper.map(filter))
+        setFilterOrNull(
+            filter = getFilterOrDefault().copy(country = country).copy(region = region).copy(city = city)
+        )
     }
 
     override suspend fun saveIndustry(industry: Industry?) {
-        val filter = getFilterOrDefault().copy(industry = industry)
-
-        dao.replaceFilter(mapper.map(filter))
+        setFilterOrNull(
+            filter = getFilterOrDefault().copy(industry = industry)
+        )
     }
 
     override suspend fun saveSalary(salary: Int?) {
-        val filter = getFilterOrDefault().copy(salary = salary)
-        dao.replaceFilter(mapper.map(filter))
+        setFilterOrNull(
+            filter = getFilterOrDefault().copy(salary = salary)
+        )
     }
 
     override suspend fun saveOnlyWithSalary(onlyWithSalary: Boolean) {
-        val filter = getFilterOrDefault().copy(onlyWithSalary = onlyWithSalary)
-        dao.replaceFilter(mapper.map(filter))
+        setFilterOrNull(
+            filter = getFilterOrDefault().copy(onlyWithSalary = onlyWithSalary)
+        )
     }
 
     override suspend fun saveGeolocation(geolocation: Geolocation?) {
-        val filter = getFilterOrDefault().copy(geolocation = geolocation)
-        dao.replaceFilter(mapper.map(filter))
+        setFilterOrNull(
+            filter = getFilterOrDefault().copy(geolocation = geolocation)
+        )
     }
 
     override suspend fun resetFilter() {
         dao.deleteFilter()
+    }
+
+    private suspend fun setFilterOrNull(filter: SearchFilter) {
+        if (filter == SearchFilter()) {
+            dao.deleteFilter()
+        } else {
+            dao.replaceFilter(mapper.map(filter))
+        }
     }
 
     private suspend fun getFilterOrDefault(): SearchFilter {
@@ -85,7 +97,6 @@ class SetSearchFilterRepositoryImpl(private val dao: SearchFilterDao) : SetSearc
                 return it
             }
         }
-
         return SearchFilter()
     }
 }
