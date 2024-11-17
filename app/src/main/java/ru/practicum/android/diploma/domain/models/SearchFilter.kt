@@ -17,6 +17,6 @@ data class SearchFilter(
     val city: Area? = null,
     val industry: Industry? = null,
     val salary: Int? = null,
-    val onlyWithSalary: Boolean? = null,
+    val onlyWithSalary: Boolean = false,
     val geolocation: Geolocation? = null
 )
