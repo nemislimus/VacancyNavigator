@@ -24,7 +24,8 @@ import ru.practicum.android.diploma.data.db.models.SearchFilterRoom
         IndustryRoomTemp::class,
         SearchFilterRoom::class,
         FavoriteVacancyRoom::class
-    ]
+    ],
+    exportSchema = true
 )
 abstract class XxxDataBase : RoomDatabase() {
     abstract fun createDb(): CreateDbDao

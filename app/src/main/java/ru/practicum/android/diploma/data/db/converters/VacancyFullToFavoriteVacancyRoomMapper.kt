@@ -8,6 +8,7 @@ import ru.practicum.android.diploma.domain.models.VacancyShort
 
 object VacancyFullToFavoriteVacancyRoomMapper {
     private const val DELIMITER = "#XXX-TEAM-DELIMITER#"
+    private const val MILLISECONDS_IN_SECOND = 1000
 
     data class DetektSalary(
         val from: Int = -1,
@@ -90,7 +91,7 @@ object VacancyFullToFavoriteVacancyRoomMapper {
     }
 
     private fun timestamp(): Int {
-        return (System.currentTimeMillis() / 1000).toInt()
+        return (System.currentTimeMillis() / MILLISECONDS_IN_SECOND).toInt()
     }
 
     private fun help(salary: Salary?): DetektSalary {
