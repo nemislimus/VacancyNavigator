@@ -10,11 +10,11 @@ import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
 import ru.practicum.android.diploma.domain.models.Resource
 import ru.practicum.android.diploma.domain.models.VacancyList
-import ru.practicum.android.diploma.domain.search.api.SearchRepository
+import ru.practicum.android.diploma.domain.search.api.VacancyRepository
 import ru.practicum.android.diploma.domain.search.model.SearchVacancyOptions
 
-class SearchRepositoryImpl(private val networkClient: NetworkClient, private val mapper: NetworkMapper) :
-    SearchRepository {
+class VacancyRepositoryImpl(private val networkClient: NetworkClient, private val mapper: NetworkMapper) :
+    VacancyRepository {
     override suspend fun searchVacancy(searchOptions: SearchVacancyOptions): Flow<Resource<VacancyList>> =
         flow {
             val request = ApiRequest.Vacancy(searchOptions = searchOptions)

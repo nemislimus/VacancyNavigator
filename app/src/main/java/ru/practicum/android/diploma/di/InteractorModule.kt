@@ -14,7 +14,7 @@ import ru.practicum.android.diploma.domain.search.api.SearchInteractor
 import ru.practicum.android.diploma.domain.search.impl.SearchInteractorImpl
 
 val interactorModule = module {
-    single<SearchInteractor> { SearchInteractorImpl(searchRepository = get(), filterRepository = get()) }
+    single<SearchInteractor> { SearchInteractorImpl(vacancyRepository = get(), filterRepository = get()) }
 
     factory<UpdateDbOnAppStartUseCase> {
         UpdateDbOnAppStartUseCase(

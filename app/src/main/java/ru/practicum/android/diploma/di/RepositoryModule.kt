@@ -6,13 +6,13 @@ import ru.practicum.android.diploma.data.impl.GetSearchFilterRepositoryImpl
 import ru.practicum.android.diploma.data.impl.IndustriesRepositoryImpl
 import ru.practicum.android.diploma.data.impl.SetSearchFilterRepositoryImpl
 import ru.practicum.android.diploma.data.impl.UpdateDbOnAppStartRepositoryImpl
-import ru.practicum.android.diploma.data.search.impl.SearchRepositoryImpl
+import ru.practicum.android.diploma.data.search.impl.VacancyRepositoryImpl
 import ru.practicum.android.diploma.domain.repository.AreasRepository
 import ru.practicum.android.diploma.domain.repository.GetSearchFilterRepository
 import ru.practicum.android.diploma.domain.repository.IndustriesRepository
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterRepository
 import ru.practicum.android.diploma.domain.repository.UpdateDbOnAppStartRepository
-import ru.practicum.android.diploma.domain.search.api.SearchRepository
+import ru.practicum.android.diploma.domain.search.api.VacancyRepository
 
 val repositoryModule = module {
     single<GetSearchFilterRepository> {
@@ -27,8 +27,8 @@ val repositoryModule = module {
         )
     }
 
-    single<SearchRepository> {
-        SearchRepositoryImpl(networkClient = get(), mapper = get())
+    single<VacancyRepository> {
+        VacancyRepositoryImpl(networkClient = get(), mapper = get())
     }
 
     factory<UpdateDbOnAppStartRepository> {
