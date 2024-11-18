@@ -14,6 +14,7 @@ import ru.practicum.android.diploma.databinding.FragmentSearchBinding
 import ru.practicum.android.diploma.domain.models.VacancyShort
 import ru.practicum.android.diploma.ui.search.VacancyListAdapter
 import ru.practicum.android.diploma.ui.utils.MenuBindingFragment
+import ru.practicum.android.diploma.ui.vacancy.VacancyFragment
 import ru.practicum.android.diploma.util.EMPTY_STRING
 
 class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
@@ -42,7 +43,6 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.rvVacancyList.adapter = listAdapter
 
         binding.llSearchFieldContainer.ivClearIcon.setOnClickListener {
@@ -78,7 +78,8 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
     private fun clickOnVacancy(vacancy: VacancyShort) {
         findNavController().navigate(
-            R.id.action_searchFragment_to_vacancyFragment
+            R.id.action_searchFragment_to_vacancyFragment,
+            VacancyFragment.createArgs(vacancy.id)
         )
     }
 }

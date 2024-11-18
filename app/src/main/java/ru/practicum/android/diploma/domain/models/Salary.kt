@@ -1,5 +1,7 @@
 package ru.practicum.android.diploma.domain.models
 
+import ru.practicum.android.diploma.util.formatterSalary
+
 data class Salary(
     val from: Int? = null,
     val to: Int? = null,
@@ -25,9 +27,10 @@ data class Salary(
                 NO_SALARY
             } else {
                 when (getSalaryType(salary)) {
-                    FULL_SALARY -> "от ${salary.from} до ${salary.to} ${getCurrencySymbol(salary.currency)}"
-                    JUST_FROM -> "от ${salary.from} ${getCurrencySymbol(salary.currency)}"
-                    else -> "${salary.to} ${getCurrencySymbol(salary.currency)}"
+                    FULL_SALARY -> "от ${formatterSalary(salary.from)} до ${formatterSalary(salary.to)} " +
+                        getCurrencySymbol(salary.currency)
+                    JUST_FROM -> "от ${formatterSalary(salary.from)} ${getCurrencySymbol(salary.currency)}"
+                    else -> "${formatterSalary(salary.to)} ${getCurrencySymbol(salary.currency)}"
                 }
             }
         }
