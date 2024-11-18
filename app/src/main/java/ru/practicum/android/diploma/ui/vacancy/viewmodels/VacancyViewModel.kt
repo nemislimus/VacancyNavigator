@@ -14,7 +14,7 @@ import ru.practicum.android.diploma.ui.vacancy.models.VacancyDetailsState
 
 class VacancyViewModel(
     private val vacancyId: String,
-    private val context: Context,
+    private var context: Context?,
     private val interactor: VacancyDetailsInteractor,
 ) : ViewModel() {
     private var vacancyDetailsStateLiveData =
@@ -26,36 +26,53 @@ class VacancyViewModel(
         getVacancyDetails(vacancyId)
     }
 
+    override fun onCleared() {
+        context = null
+        super.onCleared()
+    }
+
     private fun getVacancyDetails(id: String) {
         updateState(VacancyDetailsState.Loading)
         viewModelScope.launch {
             interactor.searchVacancyById(id).collect { result ->
-                manageDetailsResult(result.first, result.second)
+                manageDetailsResult(result)
             }
         }
     }
 
-    private fun manageDetailsResult(data: VacancyFull?, message: String?) {
-        if (data == null) {
-            when (message) {
-                Resource.NOT_FOUND -> updateState(
-                    VacancyDetailsState.EmptyResult(
-                        emptyMessage = context.getString(R.string.vacancy_not_found_or_delete)
-                    )
+    private fun manageDetailsResult(result: Resource<VacancyFull>) {
+        when (result) {
+            is Resource.ConnectionError -> context?.let {
+                VacancyDetailsState.NoConnection(
+                    errorMessage = it.getString(R.string.no_internet)
                 )
-                Resource.CHECK_CONNECTION -> updateState(
-                    VacancyDetailsState.NoConnection(
-                        errorMessage = context.getString(R.string.no_internet)
-                    )
-                )
-                else -> updateState(
-                    VacancyDetailsState.ServerError(
-                        errorMessage = context.getString(R.string.server_error)
-                    )
+            }?.let {
+                updateState(
+                    it
                 )
             }
-        } else {
-            updateState(VacancyDetailsState.Content(data))
+
+            is Resource.NotFoundError -> context?.let {
+                VacancyDetailsState.EmptyResult(
+                    emptyMessage = it.getString(R.string.vacancy_not_found_or_delete)
+                )
+            }?.let {
+                updateState(
+                    it
+                )
+            }
+
+            is Resource.ServerError -> context?.getString(R.string.server_error)?.let {
+                VacancyDetailsState.ServerError(
+                    errorMessage = it
+                )
+            }?.let {
+                updateState(
+                    it
+                )
+            }
+
+            is Resource.Success -> updateState(VacancyDetailsState.Content(result.data))
         }
     }
 
