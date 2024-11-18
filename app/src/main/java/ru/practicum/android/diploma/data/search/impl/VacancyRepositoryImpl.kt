@@ -41,7 +41,10 @@ class VacancyRepositoryImpl(private val networkClient: NetworkClient, private va
             val response = networkClient.doRequest(ApiRequest.VacancyDetail(vacancyId = id))
             emit(
                 when (response.resultCode) {
-                    ApiResponse.SUCCESSFUL_RESPONSE_CODE -> Resource.Success(mapper.map(response as ApiResponse.VacancyDetailedResponse))
+                    ApiResponse.SUCCESSFUL_RESPONSE_CODE -> Resource.Success(
+                        mapper.map(response as ApiResponse.VacancyDetailedResponse)
+                    )
+
                     ApiResponse.NO_CONNECTION_CODE -> Resource.ConnectionError("check connection")
                     ApiResponse.NOT_FOUND_CODE -> Resource.NotFoundError("404 - not founded")
                     else -> Resource.ServerError(
