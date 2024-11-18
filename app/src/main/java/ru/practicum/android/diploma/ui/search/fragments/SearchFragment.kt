@@ -5,10 +5,14 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
@@ -48,37 +52,61 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.rvVacancyList.adapter = listAdapter
-        binding.llSearchFieldContainer.ivClearIcon.setOnClickListener {
-            clearQuery()
-        }
-
-        binding.llSearchFieldContainer.etSearchQueryText.addTextChangedListener { s ->
-            if (s.isNullOrBlank()) {
-                clearScreen()
+        with(binding) {
+            rvVacancyList.adapter = listAdapter
+            llSearchFieldContainer.ivClearIcon.setOnClickListener {
+                clearQuery()
             }
-            viewModel.searchDebounce(s.toString())
-            setSearchIcon(s.isNullOrBlank())
-            showIntro(s.isNullOrBlank())
+
+            llSearchFieldContainer.etSearchQueryText.addTextChangedListener { s ->
+                if (s.isNullOrBlank()) {
+                    clearScreen()
+                }
+                viewModel.searchDebounce(s.toString())
+                setSearchIcon(s.isNullOrBlank())
+                showIntro(s.isNullOrBlank())
+            }
+            rvVacancyList.addOnScrollListener(object : OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    if (dy > 0) {
+                        val pos = (binding.rvVacancyList.layoutManager as LinearLayoutManager)
+                            .findLastVisibleItemPosition()
+                        if (pos >= listAdapter.itemCount - 1) {
+                            viewModel.onLastItemReached()
+                        }
+                    }
+                }
+            })
         }
 
         viewModel.searchState.observe(viewLifecycleOwner) { searchResult ->
             when (searchResult) {
-                SearchState.ConnectionError -> showConnectionError()
-                is SearchState.Content -> showContent(searchResult.pageData)
                 SearchState.IsLoading -> showLoading()
+                SearchState.IsLoadingNextPage -> showLoadingNextPage()
+                is SearchState.Content -> showContent(searchResult.pageData)
+                SearchState.ConnectionError -> showConnectionError()
                 SearchState.NotFoundError -> showNotFoundError()
             }
         }
+    }
 
+    private fun showLoadingNextPage() {
+        binding.pbNextPageProgress.isVisible = true
     }
 
     private fun showErrorBase() {
         with(binding) {
             pbSearchProgress.isVisible = false
+            pbNextPageProgress.isVisible = false
             rvVacancyList.isVisible = false
             clPlaceholder.root.isVisible = true
         }
+    }
+
+    private fun showToast(message: Int) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     private fun showNotFoundError() {
@@ -90,15 +118,21 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
     }
 
     private fun showConnectionError() {
-        showErrorBase()
-        with(binding) {
-            clPlaceholder.tvPlaceholderText.text = getString(R.string.no_internet)
-            clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_no_internet_picture)
+        if (listAdapter.itemCount > 0) {
+            binding.pbNextPageProgress.isVisible = false
+            showToast(R.string.no_internet)
+        } else {
+            showErrorBase()
+            with(binding) {
+                clPlaceholder.tvPlaceholderText.text = getString(R.string.no_internet)
+                clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_no_internet_picture)
+            }
         }
     }
 
     private fun clearScreen() {
         listAdapter.submitList(emptyList())
+        binding.rvVacancyList.isVisible = false
         clearPlaceholders()
     }
 
@@ -106,11 +140,13 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         with(binding) {
             clPlaceholder.root.isVisible = false
             pbSearchProgress.isVisible = false
+            pbNextPageProgress.isVisible = false
         }
     }
 
     private fun showLoading() {
         with(binding) {
+            clPlaceholder.root.isVisible = false
             pbSearchProgress.isVisible = true
         }
     }
