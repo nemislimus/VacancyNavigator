@@ -37,6 +37,7 @@ sealed class ApiResponse {
         val employment: EmploymentDto? = null,
         val description: String? = null,
         @SerializedName("key_skills") val keySkills: List<SkillDto>? = null,
+        @SerializedName("alternate_url") val alternateUrl: String,
         val address: AddressDto? = null
     ) : ApiResponse()
 

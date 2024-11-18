@@ -6,4 +6,5 @@ data class VacancyDto(
     val salary: SalaryDto? = null,
     val employer: EmployerDto? = null,
     val area: AreaDto? = null,
+    val address: AddressDto? = null
 )

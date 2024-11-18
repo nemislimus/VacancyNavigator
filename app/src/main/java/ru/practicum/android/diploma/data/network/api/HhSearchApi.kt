@@ -26,5 +26,4 @@ interface HhSearchApi {
 
     @GET("industries")
     suspend fun getIndustries(): ArrayList<IndustryDto>
-
 }

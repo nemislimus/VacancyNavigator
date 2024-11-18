@@ -75,7 +75,8 @@ class NetworkMapper {
             employer = vacancyDto.employer?.name ?: "",
             areaName = getAreaName(vacancyDto.area),
             iconUrl = getEmployerLogo(vacancyDto.employer),
-            salary = map(vacancyDto.salary)
+            salary = map(vacancyDto.salary),
+            geolocation = vacancyDto.address?.let { map(it) }
         )
     }
 
@@ -93,7 +94,8 @@ class NetworkMapper {
             description = vacDto.description ?: "",
             keySkills = vacDto.keySkills?.map { it.name } ?: emptyList(),
             address = vacDto.address?.raw ?: "",
-            geolocation = vacDto.address?.let { map(it) }
+            geolocation = vacDto.address?.let { map(it) },
+            urlHh = vacDto.alternateUrl
         )
 
     fun map(addressDto: AddressDto): Geolocation =

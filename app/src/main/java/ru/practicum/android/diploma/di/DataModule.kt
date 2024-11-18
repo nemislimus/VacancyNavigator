@@ -93,7 +93,6 @@ val dataModule = module {
                 .header("HH-User-Agent", "$appNameUrl ($mail)")
             val newRequest = builder.build()
             chain.proceed(newRequest)
-
         }
 
         val okHttpClient = OkHttpClient()

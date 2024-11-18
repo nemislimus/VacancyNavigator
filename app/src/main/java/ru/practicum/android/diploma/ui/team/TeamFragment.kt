@@ -14,4 +14,3 @@ class TeamFragment : BindingFragment<FragmentTeamBinding>() {
         return FragmentTeamBinding.inflate(inflater, container, false)
     }
 }
-
