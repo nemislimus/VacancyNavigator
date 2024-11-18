@@ -18,6 +18,7 @@ import ru.practicum.android.diploma.data.db.DbHelper
 import ru.practicum.android.diploma.data.db.XxxDataBase
 import ru.practicum.android.diploma.data.db.dao.AreasDao
 import ru.practicum.android.diploma.data.db.dao.CreateDbDao
+import ru.practicum.android.diploma.data.db.dao.FavoriteVacancyDao
 import ru.practicum.android.diploma.data.db.dao.IndustriesDao
 import ru.practicum.android.diploma.data.db.dao.SearchFilterDao
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
@@ -53,6 +54,10 @@ val dataModule = module {
 
     single<SearchFilterDao> {
         get<XxxDataBase>().searchFilterDao()
+    }
+
+    single<FavoriteVacancyDao> {
+        get<XxxDataBase>().favoriteVacancyDao()
     }
 
     single<ConnectivityManager> {
