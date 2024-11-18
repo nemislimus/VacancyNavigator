@@ -11,7 +11,7 @@ class FavoriteVacancyInteractorImpl(private val repository: FavoriteVacancyRepos
         repository.add(vacancy)
     }
 
-    override suspend fun remove(vacancyId: Int) {
+    override suspend fun remove(vacancyId: String) {
         repository.remove(vacancyId)
     }
 
@@ -19,7 +19,7 @@ class FavoriteVacancyInteractorImpl(private val repository: FavoriteVacancyRepos
         return repository.getList()
     }
 
-    override suspend fun getById(vacancyId: Int): VacancyFull {
+    override suspend fun getById(vacancyId: String): VacancyFull? {
         return repository.getById(vacancyId)
     }
 }

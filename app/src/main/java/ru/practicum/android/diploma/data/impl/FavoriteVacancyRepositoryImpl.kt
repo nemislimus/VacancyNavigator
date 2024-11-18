@@ -1,24 +1,31 @@
 package ru.practicum.android.diploma.data.impl
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import ru.practicum.android.diploma.data.db.converters.VacancyFullToFavoriteVacancyRoomMapper
+import ru.practicum.android.diploma.data.db.dao.FavoriteVacancyDao
 import ru.practicum.android.diploma.domain.models.VacancyFull
 import ru.practicum.android.diploma.domain.models.VacancyShort
 import ru.practicum.android.diploma.domain.repository.FavoriteVacancyRepository
 
-class FavoriteVacancyRepositoryImpl : FavoriteVacancyRepository {
+class FavoriteVacancyRepositoryImpl(private val dao: FavoriteVacancyDao) : FavoriteVacancyRepository {
+    private val mapper = VacancyFullToFavoriteVacancyRoomMapper
+
     override suspend fun add(vacancy: VacancyFull) {
-        TODO("Not yet implemented")
+        dao.add(
+            mapper.map(vacancy)
+        )
     }
 
-    override suspend fun remove(vacancyId: Int) {
-        TODO("Not yet implemented")
+    override suspend fun remove(vacancyId: String) {
+        dao.remove(vacancyId.toInt())
     }
 
     override suspend fun getList(): Flow<List<VacancyShort>> {
-        TODO("Not yet implemented")
+        return dao.getList().map { mapper.map(it) }
     }
 
-    override suspend fun getById(vacancyId: Int): VacancyFull {
-        TODO("Not yet implemented")
+    override suspend fun getById(vacancyId: String): VacancyFull? {
+        return mapper.toFull(dao.getById(vacancyId.toInt()))
     }
 }

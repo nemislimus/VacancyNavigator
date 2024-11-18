@@ -7,9 +7,9 @@ import ru.practicum.android.diploma.domain.models.VacancyShort
 interface FavoriteVacancyRepository {
     suspend fun add(vacancy: VacancyFull)
 
-    suspend fun remove(vacancyId: Int)
+    suspend fun remove(vacancyId: String)
 
     suspend fun getList(): Flow<List<VacancyShort>>
 
-    suspend fun getById(vacancyId: Int): VacancyFull
+    suspend fun getById(vacancyId: String): VacancyFull?
 }
