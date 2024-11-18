@@ -58,6 +58,7 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
             is VacancyDetailsState.Content -> showContent(state.vacancy)
             is VacancyDetailsState.EmptyResult -> showPlaceholder(state.emptyMessage)
             is VacancyDetailsState.ServerError -> showPlaceholder(state.errorMessage)
+            is VacancyDetailsState.NoConnection -> showPlaceholder(state.errorMessage)
         }
     }
 
@@ -104,12 +105,23 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
             svInfoGroup.isVisible = false
             pbVacancyProgress.isVisible = false
             clPlaceholder.root.isVisible = true
-            if (message == requireContext().getString(R.string.vacancy_not_found_or_delete)) {
-                clPlaceholder.tvPlaceholderText.text = message
-                clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_vacancy_not_found_or_delete)
-            } else {
-                clPlaceholder.tvPlaceholderText.text = requireContext().getString(R.string.server_error)
-                clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_vacancy_server_error)
+            when (message) {
+                requireContext().getString(R.string.vacancy_not_found_or_delete) -> {
+                    clPlaceholder.tvPlaceholderText.text = message
+                    clPlaceholder.ivPlaceholderPicture.setImageResource(
+                        R.drawable.placeholder_vacancy_not_found_or_delete
+                    )
+                }
+
+                requireContext().getString(R.string.no_internet) -> {
+                    clPlaceholder.tvPlaceholderText.text = message
+                    clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_no_internet_picture)
+                }
+
+                else -> {
+                    clPlaceholder.tvPlaceholderText.text = requireContext().getString(R.string.server_error)
+                    clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_vacancy_server_error)
+                }
             }
         }
     }
