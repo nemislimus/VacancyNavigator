@@ -5,6 +5,6 @@ import ru.practicum.android.diploma.domain.models.Resource
 import ru.practicum.android.diploma.domain.models.VacancyList
 import ru.practicum.android.diploma.domain.search.model.SearchVacancyOptions
 
-interface SearchRepository {
+interface VacancyRepository {
     suspend fun searchVacancy(searchOptions: SearchVacancyOptions): Flow<Resource<VacancyList>>
 }
