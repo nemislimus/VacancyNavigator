@@ -50,7 +50,6 @@ class RetrofitNetworkClient(
                 badResponse()
             }
         }
-
     }
 
     private suspend fun sendValidRequest(dto: ApiRequest): ApiResponse {
