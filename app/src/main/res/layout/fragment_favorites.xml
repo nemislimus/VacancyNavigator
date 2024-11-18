@@ -22,7 +22,7 @@
             app:layout_constraintGuide_end="@dimen/margin_16" />
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/tbVacancyToolBar"
+            android:id="@+id/tbFavoritesToolBar"
             android:layout_width="0dp"
             android:layout_height="@dimen/size_64dp"
             app:buttonGravity="center_vertical"
@@ -43,7 +43,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tbVacancyToolBar" />
+            app:layout_constraintTop_toBottomOf="@id/tbFavoritesToolBar" />
         
         <ImageView
             android:id="@+id/ivFavoritesEmpty"
@@ -58,7 +58,7 @@
             app:layout_constraintDimensionRatio="@string/pictures_ratio"
             app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
             app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
-            app:layout_constraintTop_toBottomOf="@id/tbVacancyToolBar"/>
+            app:layout_constraintTop_toBottomOf="@id/tbFavoritesToolBar"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -81,7 +81,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
             app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
-            app:layout_constraintTop_toBottomOf="@id/tbVacancyToolBar" />
+            app:layout_constraintTop_toBottomOf="@id/tbFavoritesToolBar" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -90,7 +90,7 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tbVacancyToolBar"
+            app:layout_constraintTop_toBottomOf="@id/tbFavoritesToolBar"
             tools:itemCount="1"
             tools:listitem="@layout/vacancy_list_item"
             />
