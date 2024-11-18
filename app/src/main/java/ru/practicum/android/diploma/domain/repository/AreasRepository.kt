@@ -14,4 +14,10 @@ interface AreasRepository {
     suspend fun getCitiesInCountry(countryId: String, search: String? = null): List<Area>
 
     suspend fun getCitiesInRegion(regionId: String, search: String? = null): List<Area>
+
+    suspend fun countCitiesInCountry(countryId: String): Int
+
+    suspend fun countCitiesInRegion(regionId: String): Int
+
+    suspend fun countRegionsInCountry(countryId: String): Int
 }
