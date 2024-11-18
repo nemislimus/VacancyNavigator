@@ -23,5 +23,4 @@ abstract class MenuBindingFragment<T : ViewBinding> : BindingFragment<T>(), Menu
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         menuInflater.inflate(getMenuRes(), menu)
     }
-
 }

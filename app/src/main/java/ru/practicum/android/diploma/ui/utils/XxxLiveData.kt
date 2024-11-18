@@ -19,7 +19,6 @@ class XxxLiveData<T : Any> : MutableLiveData<T>() {
                 }
 
                 getAll = false
-
             } else {
                 if (classMap.contains(t::class.java)) {
                     observer.onChanged(t)

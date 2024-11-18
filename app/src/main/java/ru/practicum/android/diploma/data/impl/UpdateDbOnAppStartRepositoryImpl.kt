@@ -70,7 +70,6 @@ class UpdateDbOnAppStartRepositoryImpl(
             db.execSQL("DROP TABLE $areasNoIndexes")
             db.execSQL("DROP TABLE $industryNoIndexes")
             sql.close()
-
         } catch (er: IllegalArgumentException) {
             Log.d("WWW", "$er")
 

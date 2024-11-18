@@ -13,7 +13,8 @@ data class VacancyFull(
     val description: String, // "<p><strong>ics-it</strong> — команда экспертов в ...</p>
     val keySkills: List<String>, // ["Прием посетителей", "Первичный документооборот"], список может быть пустым []
     val address: String? = null, // Москва, Годовикова 9, стр. 10 (территория завода «Калибр»)
-    val geolocation: Geolocation? = null
+    val geolocation: Geolocation? = null,
+    val urlHh: String // https://hh.ru/vacancy/110194878
 ) {
     companion object {
         fun keySkillsToHtml(vacancy: VacancyFull): String {
