@@ -26,4 +26,10 @@ interface AreasDao {
             "AND c.name LIKE '%' || :search || '%'"
     )
     suspend fun citiesInCountryByName(countryId: Int, search: String): List<AreaRoom>
+
+    @Query("SELECT COUNT(*) FROM areas c INNER JOIN areas r ON c.parentId=r.id WHERE r.parentId=:countryId")
+    suspend fun countCitiesInCountry(countryId: Int): Int
+
+    @Query("SELECT COUNT(*) FROM areas WHERE parentId=:parentId")
+    suspend fun countAreasInParent(parentId: Int): Int
 }
