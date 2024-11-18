@@ -4,6 +4,8 @@ import ru.practicum.android.diploma.domain.models.VacancyShort
 
 sealed interface SearchState {
 
+    data object IsLoadingNextPage: SearchState
+
     data object IsLoading : SearchState
 
     data object ConnectionError : SearchState
