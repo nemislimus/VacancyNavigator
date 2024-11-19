@@ -40,16 +40,13 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     private fun clearPagingHistory() {
         vacanciesList.clear()
+        maxPages = Integer.MAX_VALUE
         currentPage = 0
     }
 
     private fun searchVacancies(searchQuery: String) {
         if (searchQuery.isNotEmpty() && currentPage < maxPages) {
-            if (currentPage == 0) {
-                renderState(SearchState.IsLoading)
-            } else {
-                renderState(SearchState.IsLoadingNextPage)
-            }
+            renderLoadingState()
             viewModelScope.launch {
                 searchInteractor.searchVacancy(searchQuery, currentPage).collect { result ->
                     when (result) {
@@ -59,6 +56,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
                         is Resource.Success -> {
                             ++currentPage
                             isNextPageLoading = false
+                            maxPages = result.data.pages
                             if (result.data.found > 0) {
                                 vacanciesList.addAll(result.data.items)
                                 renderState(SearchState.Content(vacanciesList))
@@ -69,6 +67,14 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
                     }
                 }
             }
+        }
+    }
+
+    private fun renderLoadingState() {
+        if (currentPage == 0) {
+            renderState(SearchState.IsLoading)
+        } else {
+            renderState(SearchState.IsLoadingNextPage)
         }
     }
 
