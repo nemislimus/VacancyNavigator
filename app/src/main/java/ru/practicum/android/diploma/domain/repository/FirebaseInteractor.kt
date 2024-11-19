@@ -1,8 +1,7 @@
 package ru.practicum.android.diploma.domain.repository
 
+import ru.practicum.android.diploma.domain.models.FirebaseEvent
+
 interface FirebaseInteractor {
-
-    fun d(tag: String, value: String)
-
-    fun d(eventName: String, eventParams: Map<String, String>)
+    suspend fun logEvent(event: FirebaseEvent)
 }

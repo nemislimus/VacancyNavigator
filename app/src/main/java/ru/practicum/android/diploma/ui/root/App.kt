@@ -13,6 +13,7 @@ import ru.practicum.android.diploma.di.repositoryModule
 import ru.practicum.android.diploma.di.uiModule
 import ru.practicum.android.diploma.di.viewModelModule
 import ru.practicum.android.diploma.domain.impl.UpdateDbOnAppStartUseCase
+import ru.practicum.android.diploma.domain.models.FirebaseEvent
 import ru.practicum.android.diploma.domain.repository.FirebaseInteractor
 
 class App : Application() {
@@ -37,9 +38,9 @@ class App : Application() {
             runCatching {
                 dataUpdater()
             }.onSuccess {
-                firebaseLog.d("WWW", "Areas updated. DB is ok")
-            }.onFailure {
-                firebaseLog.d("WWW", "Areas update fail. DB fail")
+                firebaseLog.logEvent(FirebaseEvent.Log("Areas updated. DB is ok"))
+            }.onFailure { er ->
+                firebaseLog.logEvent(FirebaseEvent.Error("Start Update: $er"))
             }
         }
     }

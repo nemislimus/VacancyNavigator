@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import ru.practicum.android.diploma.domain.models.FirebaseEvent
 import ru.practicum.android.diploma.domain.repository.FirebaseRepository
 import kotlin.math.min
 
@@ -25,7 +28,24 @@ class FirebaseRepositoryImpl(private val analytics: FirebaseAnalytics) : Firebas
     log.d("viewScreen", "Экран избранных вакансий")
      */
 
-    override fun d(tag: String, value: String) {
+    override suspend fun logEvent(event: FirebaseEvent) {
+        withContext(Dispatchers.IO) {
+            runCatching {
+                when (event) {
+                    is FirebaseEvent.AddToFavorite -> {}
+                    is FirebaseEvent.Error -> logKeyValue(ERROR_EVENT_NAME, event.message)
+                    is FirebaseEvent.Log -> logKeyValue(LOG_EVENT_NAME, event.message)
+                    is FirebaseEvent.SearchVacancy -> logKeyValue(SEARCH_VACANCY, event.text)
+                    is FirebaseEvent.ViewScreen -> logKeyValue(VIEW_SCREEN, event.name)
+                }
+            }.onFailure { er ->
+                Log.d("WWW", "Firebase Error: $er")
+            }
+        }
+    }
+
+    private fun logKeyValue(tag: String, value: String) {
+
         Log.d(tag, value)
 
         if (fireBaseEnabled) {
@@ -36,7 +56,7 @@ class FirebaseRepositoryImpl(private val analytics: FirebaseAnalytics) : Firebas
             if (validKey.isNotBlank()) {
                 if (validValue.isNotBlank()) {
                     analytics.logEvent(validKey) {
-                        param(getValue(validValue + "_value"), validValue)
+                        param(validKey, validValue)
                     }
                 } else {
                     analytics.logEvent(validKey, null)
@@ -61,7 +81,7 @@ class FirebaseRepositoryImpl(private val analytics: FirebaseAnalytics) : Firebas
     ))
      */
 
-    override fun d(eventName: String, eventParams: Map<String, String>) {
+    private fun logEventWithParams(eventName: String, eventParams: Map<String, String>) {
         Log.d(eventName, eventParams.toString())
 
         if (fireBaseEnabled) {
@@ -105,5 +125,10 @@ class FirebaseRepositoryImpl(private val analytics: FirebaseAnalytics) : Firebas
         const val N25 = 25
         const val N40 = 40
         const val N100 = 100
+        const val LOG_EVENT_NAME = "WWW"
+        const val ERROR_EVENT_NAME = "ERROR_EVENT"
+        const val SEARCH_VACANCY = "SEARCH_VACANCY"
+        const val ADD_VACANCY_TO_FAV = "ADD_VACANCY_TO_FAV"
+        const val VIEW_SCREEN = "VIEW_SCREEN"
     }
 }

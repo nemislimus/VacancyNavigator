@@ -13,7 +13,9 @@ val viewModelModule = module {
     }
 
     viewModel {
-        RootActivityViewModel()
+        RootActivityViewModel(
+            firebase = get()
+        )
     }
 
     viewModel { (vacancyId: String) ->

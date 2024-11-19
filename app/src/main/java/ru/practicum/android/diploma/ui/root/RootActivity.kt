@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.ui.root
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
@@ -45,6 +46,10 @@ class RootActivity : AppCompatActivity() {
                     binding.flDivider.isVisible = true
                 }
             }
+
+            vModel.sendVIewScreenEventToStat(
+                screenName = destination.label.toString()
+            )
         }
 
         // Пример использования access token для HeadHunter API
