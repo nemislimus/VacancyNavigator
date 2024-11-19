@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.ui.root
 
 import android.app.Application
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +32,13 @@ class App : Application() {
         val scope = CoroutineScope(Dispatchers.IO)
 
         scope.launch {
-            dataUpdater()
+            runCatching {
+                dataUpdater()
+            }.onSuccess {
+                Log.d("WWW", "all ok")
+            }.onFailure {
+                Log.d("WWW", "DB fail")
+            }
         }
     }
 }

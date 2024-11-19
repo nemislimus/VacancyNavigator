@@ -28,7 +28,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginEnd="@dimen/margin_8"
         app:menu="@menu/search_toolbar_menu"
         app:title="@string/vacancy_search"
         app:titleTextAppearance="@style/TextMedium_22size_500weight"
@@ -83,20 +82,35 @@
         app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
         app:layout_constraintTop_toBottomOf="@id/llSearchFieldContainer" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvVacancyList"
+    <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constrainedHeight="true"
-        app:layout_constrainedWidth="true"
+        android:layout_height="0dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
         app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
-        app:layout_constraintTop_toTopOf="@id/tvResultInfo"
-        app:layout_constraintVertical_bias="0"
-        tools:listitem="@layout/vacancy_list_item" />
+        app:layout_constraintTop_toTopOf="@id/tvResultInfo">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvVacancyList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="4"
+            tools:listitem="@layout/vacancy_list_item" />
+
+        <ProgressBar
+            android:id="@+id/pbNextPageProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginVertical="@dimen/size_16dp"
+            android:indeterminateTint="@color/blue"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvResultInfo"

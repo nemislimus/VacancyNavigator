@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.ui.search
+package ru.practicum.android.diploma.ui.search.rv
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide

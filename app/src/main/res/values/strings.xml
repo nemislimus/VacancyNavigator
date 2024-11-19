@@ -48,5 +48,6 @@
     <string name="region_not_found">Такого региона нет</string>
     <string name="favourites">Избранное</string>
     <string name="list_empty">Список пуст</string>
+    <string name="search_result_info">Найдена %d вакансия | Найдены %d вакансии | Найдено %d вакансий</string>
     <string name="cant_add_to_favorite">Невозможно сохранить в избранное</string>
 </resources>

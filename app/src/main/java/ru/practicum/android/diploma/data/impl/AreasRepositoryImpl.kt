@@ -109,6 +109,18 @@ class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
         }
     }
 
+    override suspend fun countCitiesInCountry(countryId: String): Int {
+        return dao.countCitiesInCountry(countryId.toInt())
+    }
+
+    override suspend fun countCitiesInRegion(regionId: String): Int {
+        return dao.countAreasInParent(regionId.toInt())
+    }
+
+    override suspend fun countRegionsInCountry(countryId: String): Int {
+        return dao.countAreasInParent(countryId.toInt())
+    }
+
     companion object {
         const val MOSCOW_ID = 1
     }
