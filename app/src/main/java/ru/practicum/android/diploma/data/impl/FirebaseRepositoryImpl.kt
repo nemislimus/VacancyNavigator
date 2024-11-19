@@ -45,7 +45,6 @@ class FirebaseRepositoryImpl(private val analytics: FirebaseAnalytics) : Firebas
     }
 
     private fun logKeyValue(tag: String, value: String) {
-
         Log.d(tag, value)
 
         if (fireBaseEnabled) {
