@@ -49,6 +49,7 @@ class SomeClass(....) : SomeParentClass(), NumDeclension
 for(i in 0..10){
     println(declension(i, "Найдена %d вакансия | Найдены %d вакансии | Найдено %d вакансий"))
 }
+
 Вывод будет такой:
 Найдено 0 вакансий
 Найдена 1 вакансия
