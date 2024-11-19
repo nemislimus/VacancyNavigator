@@ -2,9 +2,10 @@ package ru.practicum.android.diploma.di
 
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import ru.practicum.android.diploma.ui.favorites.viewmodels.FavoritesViewModel
+import ru.practicum.android.diploma.ui.root.viewmodels.RootActivityViewModel
 import ru.practicum.android.diploma.ui.search.viewmodels.SearchViewModel
 import ru.practicum.android.diploma.ui.vacancy.viewmodels.VacancyViewModel
-import ru.practicum.android.diploma.viewmodels.RootActivityViewModel
 
 val viewModelModule = module {
     viewModel {
@@ -17,5 +18,11 @@ val viewModelModule = module {
 
     viewModel { (vacancyId: String) ->
         VacancyViewModel(vacancyId, get())
+    }
+
+    viewModel {
+        FavoritesViewModel(
+            favorites = get()
+        )
     }
 }
