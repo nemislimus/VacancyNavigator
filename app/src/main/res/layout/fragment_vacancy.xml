@@ -54,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constrainedHeight="true"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/tbVacancyToolBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -132,11 +132,6 @@
                     app:cardElevation="0dp"
                     app:layout_constraintStart_toStartOf="@id/vInfoBackground"
                     app:layout_constraintTop_toTopOf="@id/vInfoBackground">
-
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/vacancy_logo_background" />
 
                     <ImageView
                         android:id="@+id/ivEmployerLogoValue"

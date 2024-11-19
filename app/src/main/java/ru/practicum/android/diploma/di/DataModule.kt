@@ -28,6 +28,8 @@ import ru.practicum.android.diploma.data.network.api.NetworkConnectionChecker
 import ru.practicum.android.diploma.data.network.impl.NetworkConnectionCheckerImpl
 import ru.practicum.android.diploma.data.network.impl.RetrofitNetworkClient
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
+import ru.practicum.android.diploma.data.sharing.ExternalNavigatorImpl
+import ru.practicum.android.diploma.domain.sharing.api.ExternalNavigator
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -118,5 +120,9 @@ val dataModule = module {
 
     factory<FirebaseAnalytics> {
         FirebaseAnalytics.getInstance(androidContext())
+    }
+
+    factory<ExternalNavigator> {
+        ExternalNavigatorImpl(get())
     }
 }
