@@ -16,4 +16,8 @@ sealed interface VacancyDetailsState {
     data class EmptyResult(
         val emptyMessage: String
     ) : VacancyDetailsState
+
+    data class NoConnection(
+        val errorMessage: String
+    ) : VacancyDetailsState
 }
