@@ -95,7 +95,7 @@ class VacancyViewModel(
     }
 
     private suspend fun removeVacancyFromFavorite() {
-        currentVacancy?.let { favoriteInteractor.remove(it.id) }
+        removeCurrentVacancy()
         vacancyIsFavorite = false
     }
 
@@ -122,6 +122,11 @@ class VacancyViewModel(
             showDeny(SHARE_TOAST_MARKER)
         }
     }
+
+    suspend fun removeCurrentVacancy() {
+        favoriteInteractor.remove(vacancyId)
+    }
+
     companion object {
         private const val FAV_TOAST_MARKER = 0
         private const val SHARE_TOAST_MARKER = 1
