@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="?attr/appBackgroundColor">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tbVacancyToolBar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size_64dp"
+        app:buttonGravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="@dimen/margin_8"
+        app:navigationIcon="@drawable/arrow_back"
+        app:menu="@menu/vacancy_details_menu"
+        app:title="@string/vacancy_details"
+        app:titleTextAppearance="@style/TextMedium_22size_500weight"
+        app:titleTextColor="?attr/elementColor_black_white" />
+
+    <ProgressBar
+        android:id="@+id/pbVacancyProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tbVacancyToolBar" />
+
+    <include
+        android:id="@+id/clPlaceholder"
+        layout="@layout/placeholder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        android:layout_marginHorizontal="@dimen/margin_16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tbVacancyToolBar" />
+
+
+    <ScrollView
+        android:id="@+id/svInfoGroup"
+        android:background="@android:color/transparent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constrainedHeight="true"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/tbVacancyToolBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/glLeftBorder_16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/margin_16" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/glRightBorder_16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/margin_16" />
+
+            <TextView
+                android:id="@+id/tvVacancyNameValue"
+                app:layout_constraintTag="name"
+                android:textAppearance="@style/TextBold_32size_700weight"
+                android:gravity="start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Андроид-разработчик"
+                android:textColor="?attr/elementColor_black_white"
+                android:layout_marginTop="@dimen/margin_24"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintStart_toStartOf="@+id/glLeftBorder_16"
+                app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/tvSalaryValue"
+                app:layout_constraintTag="salary"
+                android:textAppearance="@style/TextMedium_22size_500weight"
+                android:gravity="start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="от 100 000 ₽"
+                android:textColor="?attr/elementColor_black_white"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintStart_toStartOf="@+id/glLeftBorder_16"
+                app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
+                app:layout_constraintTop_toBottomOf="@id/tvVacancyNameValue"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/vInfoBackground"
+                app:layout_constraintTag="bg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constrainedWidth="true"
+                app:layout_constrainedHeight="true"
+                android:layout_marginTop="@dimen/margin_24"
+                android:padding="@dimen/margin_16"
+                android:background="@drawable/search_container_background"
+                app:layout_constraintStart_toStartOf="@id/glLeftBorder_16"
+                app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
+                app:layout_constraintTop_toBottomOf="@id/tvSalaryValue">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvEmployerLogo"
+                    app:layout_constraintTag="card"
+                    android:layout_width="@dimen/size_48dp"
+                    android:layout_height="@dimen/size_48dp"
+                    app:cardBackgroundColor="?attr/appBackgroundColor"
+                    app:cardCornerRadius="@dimen/size_12dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintStart_toStartOf="@id/vInfoBackground"
+                    app:layout_constraintTop_toTopOf="@id/vInfoBackground">
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/vacancy_logo_background" />
+
+                    <ImageView
+                        android:id="@+id/ivEmployerLogoValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/vacancy_logo"
+                        android:scaleType="centerCrop"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_droid" />
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/tvEmployerNameValue"
+                    app:layout_constraintTag="employerName"
+                    android:textAppearance="@style/TextMedium_22size_500weight"
+                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tools:text="Еда"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="@dimen/margin_8"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintStart_toEndOf="@id/cvEmployerLogo"
+                    app:layout_constraintEnd_toEndOf="@id/vInfoBackground"
+                    app:layout_constraintTop_toTopOf="@id/cvEmployerLogo"/>
+
+                <TextView
+                    android:id="@+id/tvEmployerAreaValue"
+                    app:layout_constraintTag="employerArea"
+                    android:textAppearance="@style/TextRegular_16size_400weight"
+                    android:gravity="start"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tools:text="Санкт-Петербург"
+                    android:textColor="@color/black"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintStart_toStartOf="@id/tvEmployerNameValue"
+                    app:layout_constraintEnd_toEndOf="@id/vInfoBackground"
+                    app:layout_constraintTop_toBottomOf="@id/tvEmployerNameValue"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/tvExperience"
+                app:layout_constraintTag="experience"
+                android:textAppearance="@style/TextMedium_16size_500weight"
+                android:gravity="start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/experience"
+                android:textColor="?attr/elementColor_black_white"
+                app:layout_constrainedWidth="true"
+                android:layout_marginTop="@dimen/margin_24"
+                app:layout_constraintStart_toStartOf="@id/glLeftBorder_16"
+                app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
+                app:layout_constraintTop_toBottomOf="@id/vInfoBackground"/>
+
+            <TextView
+                android:id="@+id/tvExperienceValue"
+                app:layout_constraintTag="experienceValue"
+                android:textAppearance="@style/TextRegular_16size_400weight"
+                android:gravity="start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:text="От 1 года до 3 лет"
+                android:textColor="?attr/elementColor_black_white"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintStart_toStartOf="@id/glLeftBorder_16"
+                app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
+                app:layout_constraintTop_toBottomOf="@id/tvExperience"/>
+
+            <TextView
+                android:id="@+id/tvEmploymentValue"
+                app:layout_constraintTag="employmentValue"
+                android:textAppearance="@style/TextRegular_16size_400weight"
+                android:gravity="start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:text="Полная занятость, Удалённая работа"
+                android:textColor="?attr/elementColor_black_white"
+                app:layout_constrainedWidth="true"
+                android:layout_marginTop="@dimen/margin_8"
+                app:layout_constraintStart_toStartOf="@id/glLeftBorder_16"
+                app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
+                app:layout_constraintTop_toBottomOf="@id/tvExperienceValue"/>
+
+            <TextView
+                android:id="@+id/tvVacancyDescription"
+                app:layout_constraintTag="description"
+                android:textAppearance="@style/TextMedium_22size_500weight"
+                android:gravity="start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/vacancy_info"
+                android:textColor="?attr/elementColor_black_white"
+                android:layout_marginTop="@dimen/margin_32"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintStart_toStartOf="@id/glLeftBorder_16"
+                app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
+                app:layout_constraintTop_toBottomOf="@id/tvEmploymentValue"/>
+
+            <TextView
+                android:id="@+id/tvVacancyDescriptionValue"
+                app:layout_constraintTag="descriptionValue"
+                android:textAppearance="@style/TextRegular_16size_400weight"
+                android:gravity="start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:text="HTML блок описания"
+                android:textColor="?attr/elementColor_black_white"
+                android:layout_marginTop="@dimen/margin_16"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintStart_toStartOf="@id/glLeftBorder_16"
+                app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
+                app:layout_constraintTop_toBottomOf="@id/tvVacancyDescription"/>
+
+            <TextView
+                android:id="@+id/tvVacancyKeySkills"
+                app:layout_constraintTag="skills"
+                android:textAppearance="@style/TextMedium_22size_500weight"
+                android:gravity="start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/vacancy_key_skills"
+                android:textColor="?attr/elementColor_black_white"
+                android:layout_marginTop="@dimen/margin_24"
+                app:layout_constrainedWidth="true"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="@id/glLeftBorder_16"
+                app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
+                app:layout_constraintTop_toBottomOf="@id/tvVacancyDescriptionValue"/>
+
+            <TextView
+                android:id="@+id/tvVacancyKeySkillsValue"
+                app:layout_constraintTag="skillsValue"
+                android:textAppearance="@style/TextRegular_16size_400weight"
+                android:gravity="start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:text="Ключевые навыки преобразованные в HTML"
+                android:textColor="?attr/elementColor_black_white"
+                android:layout_marginTop="@dimen/margin_16"
+                android:layout_marginBottom="@dimen/margin_24"
+                app:layout_constrainedWidth="true"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="@id/glLeftBorder_16"
+                app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
+                app:layout_constraintTop_toBottomOf="@id/tvVacancyKeySkills"/>
+
+            <View
+                app:layout_constraintTag="bottomView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/margin_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvVacancyKeySkillsValue"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

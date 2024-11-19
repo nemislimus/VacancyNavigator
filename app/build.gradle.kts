@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("ru.practicum.android.diploma.plugins.developproperties")
+    id("kotlin-kapt")
     id("com.google.gms.google-services")
 }
 
@@ -36,6 +37,7 @@ android {
     }
 
     buildFeatures {
+        viewBinding = true
         buildConfig = true
     }
 }
@@ -43,10 +45,35 @@ android {
 dependencies {
     implementation(libs.androidX.core)
     implementation(libs.androidX.appCompat)
+    implementation(libs.kotlinx.coroutines.android)
 
     // UI layer libraries
     implementation(libs.ui.material)
     implementation(libs.ui.constraintLayout)
+    implementation(libs.activity.ktx)
+    implementation(libs.glide)
+    implementation(libs.viewbinding)
+    annotationProcessor(libs.compilerGlide)
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.navigation.ui.ktx)
+    implementation(libs.fragment.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
+
+    // Koin
+    implementation(libs.koin.android)
+    // endKoin
+
+    // Network
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.gson)
+    // endNetwork
+
+    // Room
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
+    kapt(libs.room.compiler)
+    // endRoom
 
     // region Unit tests
     testImplementation(libs.unitTests.junit)
@@ -57,12 +84,9 @@ dependencies {
     androidTestImplementation(libs.uiTests.espressoCore)
     // endregion
 
-    //Koin
-    implementation(libs.koin.android)
-    //endKoin
-
-    //firebase
+    // firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
-    //endfirebase
+    // endfirebase
+
 }
