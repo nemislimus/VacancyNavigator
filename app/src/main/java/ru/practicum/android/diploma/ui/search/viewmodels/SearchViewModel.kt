@@ -35,7 +35,6 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
         lastSearchRequest = searchQuery
 
         _searchDebounce(searchQuery)
-
     }
 
     private fun clearPagingHistory() {

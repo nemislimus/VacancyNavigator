@@ -5,12 +5,14 @@ import ru.practicum.android.diploma.domain.details.api.VacancyDetailsInteractor
 import ru.practicum.android.diploma.domain.details.impl.VacancyDetailsInteractorImpl
 import ru.practicum.android.diploma.domain.impl.AreasInteractorImpl
 import ru.practicum.android.diploma.domain.impl.FavoriteVacancyInteractorImpl
+import ru.practicum.android.diploma.domain.impl.FirebaseInteractorImpl
 import ru.practicum.android.diploma.domain.impl.GetSearchFilterInteractorImpl
 import ru.practicum.android.diploma.domain.impl.IndustriesInteractorImpl
 import ru.practicum.android.diploma.domain.impl.SetSearchFilterInteractorImpl
 import ru.practicum.android.diploma.domain.impl.UpdateDbOnAppStartUseCase
 import ru.practicum.android.diploma.domain.repository.AreasInteractor
 import ru.practicum.android.diploma.domain.repository.FavoriteVacancyInteractor
+import ru.practicum.android.diploma.domain.repository.FirebaseInteractor
 import ru.practicum.android.diploma.domain.repository.GetSearchFilterInteractor
 import ru.practicum.android.diploma.domain.repository.IndustriesInteractor
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterInteractor
@@ -48,6 +50,12 @@ val interactorModule = module {
 
     factory<FavoriteVacancyInteractor> {
         FavoriteVacancyInteractorImpl(
+            repository = get()
+        )
+    }
+
+    factory<FirebaseInteractor> {
+        FirebaseInteractorImpl(
             repository = get()
         )
     }
