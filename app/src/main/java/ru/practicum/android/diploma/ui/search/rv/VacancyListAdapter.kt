@@ -9,6 +9,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.VacancyListGapBinding
 import ru.practicum.android.diploma.databinding.VacancyListItemBinding
 import ru.practicum.android.diploma.domain.models.VacancyShort
+import ru.practicum.android.diploma.util.EMPTY_STRING
 
 class VacancyListAdapter(
     private val itemClickListener: ItemClickListener,
@@ -33,8 +34,9 @@ class VacancyListAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is VacancyViewHolder -> {
-                holder.bind(currentList[position])
-                holder.itemView.setOnClickListener { itemClickListener.onItemClick(currentList[position]) }
+                val item = currentList[position]
+                holder.bind(item)
+                holder.itemView.setOnClickListener { itemClickListener.onItemClick(item) }
             }
 
             is GapViewHolder -> Unit
@@ -44,6 +46,18 @@ class VacancyListAdapter(
 
     override fun getItemViewType(position: Int): Int =
         if (currentList[position].id == GAP_ID) GAP_ITEM else VACANCY_ITEM
+
+    fun getGap(): VacancyShort {
+        return VacancyShort(
+            id = GAP_ID,
+            name = GAP_ID,
+            employer = GAP_ID,
+            areaName = GAP_ID,
+            null,
+            null,
+            null
+        )
+    }
 
     private class ItemComparator : DiffUtil.ItemCallback<VacancyShort>() {
         override fun areItemsTheSame(oldItem: VacancyShort, newItem: VacancyShort): Boolean {
