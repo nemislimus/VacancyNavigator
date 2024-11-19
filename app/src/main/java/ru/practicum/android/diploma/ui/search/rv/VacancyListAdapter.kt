@@ -9,7 +9,6 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.VacancyListGapBinding
 import ru.practicum.android.diploma.databinding.VacancyListItemBinding
 import ru.practicum.android.diploma.domain.models.VacancyShort
-import ru.practicum.android.diploma.util.EMPTY_STRING
 
 class VacancyListAdapter(
     private val itemClickListener: ItemClickListener,
