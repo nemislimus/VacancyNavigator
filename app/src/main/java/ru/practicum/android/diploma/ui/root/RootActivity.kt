@@ -9,7 +9,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.ActivityRootBinding
-import ru.practicum.android.diploma.viewmodels.RootActivityViewModel
+import ru.practicum.android.diploma.ui.root.viewmodels.RootActivityViewModel
 
 class RootActivity : AppCompatActivity() {
 
