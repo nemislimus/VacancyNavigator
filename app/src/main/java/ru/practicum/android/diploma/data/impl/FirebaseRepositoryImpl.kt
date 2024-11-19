@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.data.impl
 
-import android.os.Bundle
 import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
@@ -79,33 +78,33 @@ class FirebaseRepositoryImpl(private val analytics: FirebaseAnalytics) : Firebas
         "company" to "Yandex"
     ))
      */
+    /*
+        private fun logEventWithParams(eventName: String, eventParams: Map<String, String>) {
+            Log.d(eventName, eventParams.toString())
 
-    private fun logEventWithParams(eventName: String, eventParams: Map<String, String>) {
-        Log.d(eventName, eventParams.toString())
+            if (fireBaseEnabled) {
+                val validEventParams = Bundle()
 
-        if (fireBaseEnabled) {
-            val validEventParams = Bundle()
+                eventParams.forEach { (key, value) ->
 
-            eventParams.forEach { (key, value) ->
+                    val validKey = getKey(key)
 
-                val validKey = getKey(key)
+                    val validValue = getValue(value)
 
-                val validValue = getValue(value)
+                    if (validKey.isNotBlank() && validValue.isNotBlank()) {
+                        validEventParams.putString(validKey, validValue)
+                    } else {
+                        Log.d(eventName, "$key -> $value не подходит для Firebase")
+                    }
+                }
 
-                if (validKey.isNotBlank() && validValue.isNotBlank()) {
-                    validEventParams.putString(validKey, validValue)
-                } else {
-                    Log.d(eventName, "$key -> $value не подходит для Firebase")
+                // Параметров может быть не больше 25
+                if (validEventParams.size() in 1..N25) {
+                    analytics.logEvent(eventName, validEventParams)
                 }
             }
-
-            // Параметров может быть не больше 25
-            if (validEventParams.size() in 1..N25) {
-                analytics.logEvent(eventName, validEventParams)
-            }
         }
-    }
-
+    */
     private fun getKey(key: String): String {
         // Ключ должен быть не длинее 40 символов
         // соделжать только латинские буквы, цифры и подчеркивания

@@ -1,7 +1,6 @@
 package ru.practicum.android.diploma.ui.root
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
