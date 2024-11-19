@@ -17,7 +17,7 @@ val viewModelModule = module {
     }
 
     viewModel { (vacancyId: String) ->
-        VacancyViewModel(vacancyId, get(), get(), get())
+        VacancyViewModel(vacancyId, get(), get(), get(), get())
     }
 
     viewModel {

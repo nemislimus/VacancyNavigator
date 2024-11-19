@@ -50,4 +50,6 @@
     <string name="list_empty">Список пуст</string>
     <string name="search_result_info">Найдена %d вакансия | Найдены %d вакансии | Найдено %d вакансий</string>
     <string name="cant_add_to_favorite">Невозможно сохранить в избранное</string>
+    <string name="no_apps_for_text_sending">На устройстве нет приложений для отправки текста!</string>
+    <string name="cant_share">Невозможно поделиться вакансией</string>
 </resources>

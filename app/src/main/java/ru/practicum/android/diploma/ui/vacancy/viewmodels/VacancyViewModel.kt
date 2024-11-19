@@ -12,13 +12,15 @@ import ru.practicum.android.diploma.domain.details.api.VacancyDetailsInteractor
 import ru.practicum.android.diploma.domain.models.Resource
 import ru.practicum.android.diploma.domain.models.VacancyFull
 import ru.practicum.android.diploma.domain.repository.FavoriteVacancyInteractor
+import ru.practicum.android.diploma.domain.sharing.api.SharingInteractor
 import ru.practicum.android.diploma.ui.vacancy.models.VacancyDetailsState
 
 class VacancyViewModel(
     private val vacancyId: String,
     private var context: Context?,
-    private val interactor: VacancyDetailsInteractor,
-    private val favInteractor: FavoriteVacancyInteractor,
+    private val vacancyInteractor: VacancyDetailsInteractor,
+    private val favoriteInteractor: FavoriteVacancyInteractor,
+    private val sharingInteractor: SharingInteractor,
 ) : ViewModel() {
 
     private var currentVacancy: VacancyFull? = null
@@ -41,7 +43,7 @@ class VacancyViewModel(
     private fun getVacancyDetails(id: String) {
         updateState(VacancyDetailsState.Loading)
         viewModelScope.launch {
-            interactor.searchVacancyById(id).collect { result ->
+            vacancyInteractor.searchVacancyById(id).collect { result ->
                 manageDetailsResult(result)
             }
         }
@@ -76,29 +78,52 @@ class VacancyViewModel(
     }
 
     private suspend fun checkFavorite() {
-        vacancyIsFavorite = favInteractor.getById(vacancyId) != null
+        vacancyIsFavorite = favoriteInteractor.getById(vacancyId) != null
     }
 
     suspend fun clickOnFavoriteIcon(state: VacancyDetailsState?) {
         if (state is VacancyDetailsState.Content) {
             if (vacancyIsFavorite) removeVacancyFromFavorite() else addVacancyToFavorite()
         } else {
-            showDeny()
+            showDeny(FAV_TOAST_MARKER)
         }
     }
 
     private suspend fun addVacancyToFavorite() {
-        currentVacancy?.let { favInteractor.add(it) }
+        currentVacancy?.let { favoriteInteractor.add(it) }
         vacancyIsFavorite = true
     }
 
     private suspend fun removeVacancyFromFavorite() {
-        currentVacancy?.let { favInteractor.remove(it.id) }
+        currentVacancy?.let { favoriteInteractor.remove(it.id) }
         vacancyIsFavorite = false
     }
 
-    private fun showDeny() {
-        Toast.makeText(context, context?.getString(R.string.cant_add_to_favorite), Toast.LENGTH_SHORT)
-            .show()
+    private fun showDeny(marker: Int) {
+        when (marker) {
+            FAV_TOAST_MARKER -> Toast.makeText(
+                context,
+                context?.getString(R.string.cant_add_to_favorite),
+                Toast.LENGTH_SHORT
+            ).show()
+
+            else -> Toast.makeText(
+                context,
+                context?.getString(R.string.cant_share),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    fun clickOnShareIcon(state: VacancyDetailsState?) {
+        if (state is VacancyDetailsState.Content) {
+            currentVacancy?.let { sharingInteractor.shareAppMessageOrLink(it.urlHh) }
+        } else {
+            showDeny(SHARE_TOAST_MARKER)
+        }
+    }
+    companion object {
+        private const val FAV_TOAST_MARKER = 0
+        private const val SHARE_TOAST_MARKER = 1
     }
 }

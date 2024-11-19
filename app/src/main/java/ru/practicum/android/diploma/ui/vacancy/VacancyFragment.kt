@@ -41,9 +41,8 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        if (menuItem.itemId == R.id.miVacancyToFavorite) {
-            onFavoriteIconClick()
-        }
+        if (menuItem.itemId == R.id.miVacancyToFavorite) onFavoriteIconClick()
+        if (menuItem.itemId == R.id.miShareVacancy) viewModel.clickOnShareIcon(currentState)
         return true
     }
 

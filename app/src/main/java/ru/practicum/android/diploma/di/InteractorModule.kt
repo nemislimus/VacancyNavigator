@@ -18,6 +18,8 @@ import ru.practicum.android.diploma.domain.repository.IndustriesInteractor
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterInteractor
 import ru.practicum.android.diploma.domain.search.api.SearchInteractor
 import ru.practicum.android.diploma.domain.search.impl.SearchInteractorImpl
+import ru.practicum.android.diploma.domain.sharing.api.SharingInteractor
+import ru.practicum.android.diploma.domain.sharing.impl.SharingInteractorImpl
 
 val interactorModule = module {
     single<SearchInteractor> { SearchInteractorImpl(vacancyRepository = get(), filterRepository = get()) }
@@ -64,5 +66,9 @@ val interactorModule = module {
         VacancyDetailsInteractorImpl(
             vacancyRepository = get()
         )
+    }
+
+    factory<SharingInteractor> {
+        SharingInteractorImpl(get())
     }
 }
