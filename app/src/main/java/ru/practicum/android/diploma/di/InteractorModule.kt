@@ -1,6 +1,8 @@
 package ru.practicum.android.diploma.di
 
 import org.koin.dsl.module
+import ru.practicum.android.diploma.domain.details.api.VacancyDetailsInteractor
+import ru.practicum.android.diploma.domain.details.impl.VacancyDetailsInteractorImpl
 import ru.practicum.android.diploma.domain.impl.AreasInteractorImpl
 import ru.practicum.android.diploma.domain.impl.FavoriteVacancyInteractorImpl
 import ru.practicum.android.diploma.domain.impl.FirebaseInteractorImpl
@@ -55,6 +57,12 @@ val interactorModule = module {
     factory<FirebaseInteractor> {
         FirebaseInteractorImpl(
             repository = get()
+        )
+    }
+
+    factory<VacancyDetailsInteractor> {
+        VacancyDetailsInteractorImpl(
+            vacancyRepository = get()
         )
     }
 }
