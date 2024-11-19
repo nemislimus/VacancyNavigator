@@ -9,9 +9,11 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.practicum.android.diploma.R
@@ -29,6 +31,7 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
     private val viewModel by viewModel<VacancyViewModel> {
         parametersOf(requireArguments().getString(VACANCY_ID_KEY))
     }
+    private var currentState: VacancyDetailsState? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -38,6 +41,9 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        if (menuItem.itemId == R.id.miVacancyToFavorite) {
+            onFavoriteIconClick()
+        }
         return true
     }
 
@@ -53,6 +59,7 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
     }
 
     private fun render(state: VacancyDetailsState) {
+        currentState = state
         when (state) {
             is VacancyDetailsState.Loading -> showLoading()
             is VacancyDetailsState.Content -> showContent(state.vacancy)
@@ -84,6 +91,7 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
                     Html.fromHtml(VacancyFull.keySkillsToHtml(vacancy), Html.FROM_HTML_MODE_LEGACY)
             }
         }
+        setFavIcon()
 
         Glide.with(requireContext())
             .load(vacancy.iconUrl)
@@ -124,6 +132,22 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
                 }
             }
         }
+    }
+
+    private fun onFavoriteIconClick() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val clickJob = launch {
+                viewModel.clickOnFavoriteIcon(currentState)
+            }
+            clickJob.join()
+            setFavIcon()
+        }
+    }
+
+    private fun setFavIcon() {
+        binding.tbVacancyToolBar.menu.findItem(R.id.miVacancyToFavorite).setIcon(
+            if (viewModel.vacancyIsFavorite) R.drawable.favorites_on else R.drawable.favorites_off
+        )
     }
 
     companion object {
