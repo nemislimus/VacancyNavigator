@@ -162,7 +162,8 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             setResultInfo(vacanciesCount, R.string.search_result_info)
         }
         clearPlaceholders()
-        listAdapter.submitList(searchData)
+        val listWithGap = setGap(searchData)
+        listAdapter.submitList(listWithGap)
     }
 
     private fun setResultInfo(vacanciesCount: Int = -1, messageId: Int) {
@@ -204,5 +205,11 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             R.id.action_searchFragment_to_vacancyFragment,
             VacancyFragment.createArgs(vacancy.id)
         )
+    }
+
+    private fun setGap(data: List<VacancyShort>): MutableList<VacancyShort> {
+        val mutableList = data.toMutableList()
+        mutableList.add(0, listAdapter.getGap())
+        return mutableList
     }
 }

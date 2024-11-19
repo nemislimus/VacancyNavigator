@@ -105,7 +105,7 @@ class NetworkMapper {
         )
 
     private fun getAreaName(areaDto: AreaDto?): String = areaDto?.name ?: ""
-    private fun getEmployerLogo(employerDto: EmployerDto?): String? = employerDto?.logoUrls?.s90
+    private fun getEmployerLogo(employerDto: EmployerDto?): String? = employerDto?.logoUrls?.s240
 
     companion object {
         const val VACANCIES_PER_PAGE = "20"
