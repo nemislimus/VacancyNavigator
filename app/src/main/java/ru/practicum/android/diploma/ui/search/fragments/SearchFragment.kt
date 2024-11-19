@@ -23,6 +23,7 @@ import ru.practicum.android.diploma.ui.search.viewmodels.SearchViewModel
 import ru.practicum.android.diploma.ui.utils.MenuBindingFragment
 import ru.practicum.android.diploma.ui.vacancy.VacancyFragment
 import ru.practicum.android.diploma.util.EMPTY_STRING
+import ru.practicum.android.diploma.util.declension
 
 class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
@@ -85,7 +86,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             when (searchResult) {
                 SearchState.IsLoading -> showLoading()
                 SearchState.IsLoadingNextPage -> showLoadingNextPage()
-                is SearchState.Content -> showContent(searchResult.pageData)
+                is SearchState.Content -> showContent(searchResult.pageData, searchResult.vacanciesCount)
                 SearchState.ConnectionError -> showConnectionError()
                 SearchState.NotFoundError -> showNotFoundError()
             }
@@ -110,6 +111,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
     }
 
     private fun showNotFoundError() {
+        setResultInfo(messageId = R.string.no_query_vacancies)
         showErrorBase()
         with(binding) {
             clPlaceholder.tvPlaceholderText.text = getString(R.string.not_found_vacancies)
@@ -126,6 +128,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             with(binding) {
                 clPlaceholder.tvPlaceholderText.text = getString(R.string.no_internet)
                 clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_no_internet_picture)
+                tvResultInfo.isVisible = false
             }
         }
     }
@@ -133,6 +136,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
     private fun clearScreen() {
         listAdapter.submitList(emptyList())
         binding.rvVacancyList.isVisible = false
+        binding.tvResultInfo.isVisible = false
         clearPlaceholders()
     }
 
@@ -148,13 +152,26 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         with(binding) {
             clPlaceholder.root.isVisible = false
             pbSearchProgress.isVisible = true
+            tvResultInfo.isVisible = false
         }
     }
 
-    private fun showContent(searchData: List<VacancyShort>) {
-        binding.rvVacancyList.isVisible = true
+    private fun showContent(searchData: List<VacancyShort>, vacanciesCount: Int) {
+        with(binding) {
+            rvVacancyList.isVisible = true
+            setResultInfo(vacanciesCount, R.string.search_result_info)
+        }
         clearPlaceholders()
         listAdapter.submitList(searchData)
+    }
+
+    private fun setResultInfo(vacanciesCount: Int = -1, messageId: Int) {
+        binding.tvResultInfo.isVisible = true
+        if (vacanciesCount != -1) {
+            binding.tvResultInfo.text = declension(vacanciesCount, getString(messageId))
+        } else {
+            binding.tvResultInfo.text = getString(messageId)
+        }
     }
 
     private fun setSearchIcon(queryIsEmpty: Boolean) {

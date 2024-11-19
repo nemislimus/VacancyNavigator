@@ -54,14 +54,16 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
                         is Resource.NotFoundError -> renderState(SearchState.NotFoundError)
                         is Resource.ServerError -> renderState(SearchState.NotFoundError)
                         is Resource.Success -> {
-                            ++currentPage
-                            isNextPageLoading = false
-                            maxPages = result.data.pages
-                            if (result.data.found > 0) {
-                                vacanciesList.addAll(result.data.items)
-                                renderState(SearchState.Content(vacanciesList))
-                            } else {
-                                renderState(SearchState.NotFoundError)
+                            with(result.data) {
+                                ++currentPage
+                                isNextPageLoading = false
+                                maxPages = pages
+                                if (found > 0) {
+                                    vacanciesList.addAll(items)
+                                    renderState(SearchState.Content(vacanciesList, found))
+                                } else {
+                                    renderState(SearchState.NotFoundError)
+                                }
                             }
                         }
                     }
