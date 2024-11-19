@@ -36,14 +36,12 @@ fun declension(
     return result.replace("%d", num.toString())
 }
 
-
 private const val N100: Int = 100
 private const val N5: Int = 5
 private const val N20: Int = 20
 private const val N10: Int = 10
 private const val N4: Int = 4
 private const val N3: Int = 3
-
 
 /*
 Пример использования. Добавляем к классу реализацию интерфейса
