@@ -13,5 +13,4 @@ sealed interface SearchState {
     data object NotFoundError : SearchState
 
     data class Content(val pageData: List<VacancyShort>, val vacanciesCount: Int) : SearchState
-
 }

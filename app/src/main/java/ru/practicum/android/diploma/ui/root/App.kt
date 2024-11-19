@@ -1,7 +1,6 @@
 package ru.practicum.android.diploma.ui.root
 
 import android.app.Application
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,6 +13,7 @@ import ru.practicum.android.diploma.di.repositoryModule
 import ru.practicum.android.diploma.di.uiModule
 import ru.practicum.android.diploma.di.viewModelModule
 import ru.practicum.android.diploma.domain.impl.UpdateDbOnAppStartUseCase
+import ru.practicum.android.diploma.domain.repository.FirebaseInteractor
 
 class App : Application() {
 
@@ -29,15 +29,17 @@ class App : Application() {
 
         val dataUpdater: UpdateDbOnAppStartUseCase by inject()
 
+        val firebaseLog: FirebaseInteractor by inject()
+
         val scope = CoroutineScope(Dispatchers.IO)
 
         scope.launch {
             runCatching {
                 dataUpdater()
             }.onSuccess {
-                Log.d("WWW", "all ok")
+                firebaseLog.d("WWW", "Areas updated. DB is ok")
             }.onFailure {
-                Log.d("WWW", "DB fail")
+                firebaseLog.d("WWW", "Areas update fail. DB fail")
             }
         }
     }

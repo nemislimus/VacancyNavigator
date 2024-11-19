@@ -1,9 +1,9 @@
 package ru.practicum.android.diploma.domain.impl
 
-import ru.practicum.android.diploma.domain.repository.TeamLogInteractor
-import ru.practicum.android.diploma.domain.repository.TeamLogRepository
+import ru.practicum.android.diploma.domain.repository.FirebaseInteractor
+import ru.practicum.android.diploma.domain.repository.FirebaseRepository
 
-class TeamLogInteractorImpl(private val repository: TeamLogRepository) : TeamLogInteractor {
+class FirebaseInteractorImpl(private val repository: FirebaseRepository) : FirebaseInteractor {
 
     override fun d(tag: String, value: String) {
         repository.d(tag, value)

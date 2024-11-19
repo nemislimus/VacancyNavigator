@@ -3,6 +3,7 @@ package ru.practicum.android.diploma.di
 import android.content.Context
 import android.net.ConnectivityManager
 import androidx.room.Room
+import com.google.firebase.analytics.FirebaseAnalytics
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -113,5 +114,9 @@ val dataModule = module {
             .client(okHttpClient)
             .build()
             .create(HhSearchApi::class.java)
+    }
+
+    factory<FirebaseAnalytics> {
+        FirebaseAnalytics.getInstance(androidContext())
     }
 }
