@@ -1,7 +1,7 @@
 package ru.practicum.android.diploma.domain.repository
 
-interface FirebaseRepository {
-    fun d(tag: String, value: String)
+import ru.practicum.android.diploma.domain.models.FirebaseEvent
 
-    fun d(eventName: String, eventParams: Map<String, String>)
+interface FirebaseRepository {
+    suspend fun logEvent(event: FirebaseEvent)
 }

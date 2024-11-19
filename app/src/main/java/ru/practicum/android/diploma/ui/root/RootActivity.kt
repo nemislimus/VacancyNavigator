@@ -45,6 +45,10 @@ class RootActivity : AppCompatActivity() {
                     binding.flDivider.isVisible = true
                 }
             }
+
+            vModel.sendVIewScreenEventToStat(
+                screenName = destination.label.toString()
+            )
         }
 
         // Пример использования access token для HeadHunter API
