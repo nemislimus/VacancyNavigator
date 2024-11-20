@@ -11,8 +11,17 @@ import ru.practicum.android.diploma.databinding.VacancyListItemBinding
 import ru.practicum.android.diploma.domain.models.VacancyShort
 
 class VacancyListAdapter(
-    private val itemClickListener: ItemClickListener,
+    private val itemClickListener: ItemClickListener
 ) : ListAdapter<VacancyShort, RecyclerView.ViewHolder>(ItemComparator()) {
+    private var gapONListTop: Int = 0
+
+    fun setGapONListTop() {
+        gapONListTop = 1
+    }
+
+    override fun getItemCount(): Int {
+        return currentList.size + gapONListTop
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -33,7 +42,7 @@ class VacancyListAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is VacancyViewHolder -> {
-                val item = currentList[position]
+                val item = currentList[position - gapONListTop]
                 holder.bind(item)
                 holder.itemView.setOnClickListener { itemClickListener.onItemClick(item) }
             }
@@ -44,7 +53,7 @@ class VacancyListAdapter(
     }
 
     override fun getItemViewType(position: Int): Int =
-        if (currentList[position].id == GAP_ID) GAP_ITEM else VACANCY_ITEM
+        if (gapONListTop > 0 && position == 0) GAP_ITEM else VACANCY_ITEM
 
     fun getGap(): VacancyShort {
         return VacancyShort(
