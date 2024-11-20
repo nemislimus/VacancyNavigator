@@ -6,7 +6,8 @@ sealed interface VacancyDetailsState {
     data object Loading : VacancyDetailsState
 
     data class Content(
-        val vacancy: VacancyFull
+        val vacancy: VacancyFull,
+        val vacancyIsFavorite: Boolean
     ) : VacancyDetailsState
 
     data class ServerError(
