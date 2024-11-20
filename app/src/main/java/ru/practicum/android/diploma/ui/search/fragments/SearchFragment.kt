@@ -131,7 +131,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
     }
 
     private fun showConnectionError() {
-        if (listAdapter.itemCount > 0) {
+        if (listAdapter.itemCount > 1) {
             binding.pbNextPageProgress.isVisible = false
             showToast(R.string.no_internet)
         } else {
