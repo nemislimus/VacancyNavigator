@@ -93,9 +93,10 @@ class VacancyViewModel(
 
             delay(RESPONSE_AWAIT_TIME)
 
-            dbVacancy?.let {
+            dbVacancy?.let { vacancy ->
                 if (currentVacancy == null) {
-                    updateState(VacancyDetailsState.Content(it))
+                    currentVacancy = vacancy
+                    updateState(VacancyDetailsState.Content(vacancy))
                 }
             }
         }
@@ -126,20 +127,17 @@ class VacancyViewModel(
         isFavoriteLiveData.postValue(vacancyIsFavorite)
     }
 
-    fun clickOnFavoriteIcon(state: VacancyDetailsState?) {
+    fun clickOnFavoriteIcon() {
         viewModelScope.launch {
-            if (state is VacancyDetailsState.Content) {
-                currentVacancy?.let {
-                    vacancyIsFavorite = !vacancyIsFavorite
-                    if (vacancyIsFavorite) {
-                        favoriteInteractor.add(it)
-                    } else {
-                        favoriteInteractor.remove(it.id)
-                    }
+            currentVacancy?.let {
+                vacancyIsFavorite = !vacancyIsFavorite
+                if (vacancyIsFavorite) {
+                    favoriteInteractor.add(it)
+                } else {
+                    favoriteInteractor.remove(it.id)
                 }
-
                 isFavoriteLiveData.postValue(vacancyIsFavorite)
-            } else {
+            } ?: run {
                 withContext(Dispatchers.Main) {
                     showDeny(FAV_TOAST_MARKER)
                 }
@@ -159,10 +157,10 @@ class VacancyViewModel(
         }
     }
 
-    fun clickOnShareIcon(state: VacancyDetailsState?) {
-        if (state is VacancyDetailsState.Content) {
-            currentVacancy?.let { sharingInteractor.shareAppMessageOrLink(it.urlHh) }
-        } else {
+    fun clickOnShareIcon() {
+        currentVacancy?.let {
+            sharingInteractor.shareAppMessageOrLink(it.urlHh)
+        } ?: run {
             showDeny(SHARE_TOAST_MARKER)
         }
     }
