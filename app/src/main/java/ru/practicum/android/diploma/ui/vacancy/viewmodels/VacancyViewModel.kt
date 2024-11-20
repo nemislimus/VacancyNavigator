@@ -176,6 +176,6 @@ class VacancyViewModel(
     companion object {
         private const val FAV_TOAST_MARKER = 0
         private const val SHARE_TOAST_MARKER = 1
-        private const val RESPONSE_AWAIT_TIME = 1000L
+        private const val RESPONSE_AWAIT_TIME = 500L
     }
 }
