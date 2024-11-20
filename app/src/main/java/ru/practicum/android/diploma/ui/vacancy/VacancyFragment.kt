@@ -30,7 +30,6 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
         parametersOf(requireArguments().getString(VACANCY_ID_KEY))
     }
     private var currentState: VacancyDetailsState? = null
-    private var vacancyIsFavorite: Boolean? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -56,15 +55,7 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
         }
 
         viewModel.observeIsFavorite().observe(viewLifecycleOwner) { isFavorite ->
-            vacancyIsFavorite = isFavorite
             setFavIcon(isFavorite)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        vacancyIsFavorite?.let {
-            setFavIcon(it)
         }
     }
 
@@ -72,14 +63,14 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
         currentState = state
         when (state) {
             is VacancyDetailsState.Loading -> showLoading()
-            is VacancyDetailsState.Content -> showContent(state.vacancy, state.vacancyIsFavorite)
+            is VacancyDetailsState.Content -> showContent(state.vacancy)
             is VacancyDetailsState.EmptyResult -> showPlaceholder(state.emptyMessage)
             is VacancyDetailsState.ServerError -> showPlaceholder(state.errorMessage)
             is VacancyDetailsState.NoConnection -> showPlaceholder(state.errorMessage)
         }
     }
 
-    private fun showContent(vacancy: VacancyFull, isFavorite: Boolean) {
+    private fun showContent(vacancy: VacancyFull) {
         with(binding) {
             svInfoGroup.isVisible = true
             pbVacancyProgress.isVisible = false
@@ -107,10 +98,6 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
             .placeholder(R.drawable.ic_droid)
             .transform(CenterCrop())
             .into(binding.ivEmployerLogoValue)
-
-        vacancyIsFavorite = isFavorite
-
-        setFavIcon(isFavorite)
     }
 
     private fun showLoading() {
