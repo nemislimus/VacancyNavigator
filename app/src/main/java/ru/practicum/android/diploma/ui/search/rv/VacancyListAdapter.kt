@@ -73,7 +73,8 @@ class VacancyListAdapter(
         }
 
         override fun areContentsTheSame(oldItem: VacancyShort, newItem: VacancyShort): Boolean {
-            return oldItem == newItem
+            // return oldItem == newItem
+            return oldItem.id == newItem.id
         }
     }
 
