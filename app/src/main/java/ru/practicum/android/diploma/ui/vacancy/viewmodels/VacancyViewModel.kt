@@ -49,7 +49,7 @@ class VacancyViewModel(
             favoriteInteractor.getById(id)?.let { vacancy ->
                 vacancyIsFavorite = true
                 currentVacancy = vacancy
-                updateState(VacancyDetailsState.Content(vacancy))
+                updateState(VacancyDetailsState.Content(vacancy, true))
             }
 
             launch {
@@ -92,7 +92,7 @@ class VacancyViewModel(
         }
     }
 
-    private suspend fun manageDetailsResult(result: Resource<VacancyFull>) {
+    private fun manageDetailsResult(result: Resource<VacancyFull>) {
         when (result) {
             is Resource.ConnectionError -> android.getString(R.string.no_internet)?.let {
                 VacancyDetailsState.NoConnection(errorMessage = it)
@@ -107,16 +107,14 @@ class VacancyViewModel(
             }?.let { updateState(it) }
 
             is Resource.Success -> {
-                updateState(VacancyDetailsState.Content(result.data))
+                updateState(VacancyDetailsState.Content(result.data, vacancyIsFavorite))
             }
         }
     }
 
-    private suspend fun updateState(state: VacancyDetailsState) {
-        withContext(Dispatchers.Main) {
-            vacancyDetailsStateLiveData.value = state
-            isFavoriteLiveData.value = vacancyIsFavorite
-        }
+    private fun updateState(state: VacancyDetailsState) {
+        vacancyDetailsStateLiveData.postValue(state)
+        isFavoriteLiveData.postValue(vacancyIsFavorite)
     }
 
     fun clickOnFavoriteIcon(state: VacancyDetailsState?) {

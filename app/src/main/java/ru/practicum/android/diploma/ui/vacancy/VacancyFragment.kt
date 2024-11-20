@@ -72,14 +72,14 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
         currentState = state
         when (state) {
             is VacancyDetailsState.Loading -> showLoading()
-            is VacancyDetailsState.Content -> showContent(state.vacancy)
+            is VacancyDetailsState.Content -> showContent(state.vacancy, state.vacancyIsFavorite)
             is VacancyDetailsState.EmptyResult -> showPlaceholder(state.emptyMessage)
             is VacancyDetailsState.ServerError -> showPlaceholder(state.errorMessage)
             is VacancyDetailsState.NoConnection -> showPlaceholder(state.errorMessage)
         }
     }
 
-    private fun showContent(vacancy: VacancyFull) {
+    private fun showContent(vacancy: VacancyFull, isFavorite: Boolean) {
         with(binding) {
             svInfoGroup.isVisible = true
             pbVacancyProgress.isVisible = false
@@ -107,6 +107,10 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
             .placeholder(R.drawable.ic_droid)
             .transform(CenterCrop())
             .into(binding.ivEmployerLogoValue)
+
+        vacancyIsFavorite = isFavorite
+
+        setFavIcon(isFavorite)
     }
 
     private fun showLoading() {
