@@ -44,7 +44,6 @@ class VacancyViewModel(
 
     private fun getVacancyDetails(id: String) {
         viewModelScope.launch {
-
             updateState(VacancyDetailsState.Loading)
 
             favoriteInteractor.getById(id)?.let { vacancy ->
