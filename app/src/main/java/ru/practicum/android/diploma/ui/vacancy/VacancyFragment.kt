@@ -9,11 +9,9 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.practicum.android.diploma.R
@@ -147,12 +145,7 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
     }
 
     private fun onFavoriteIconClick() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            val clickJob = launch {
-                viewModel.clickOnFavoriteIcon(currentState)
-            }
-            clickJob.join()
-        }
+        viewModel.clickOnFavoriteIcon(currentState)
     }
 
     private fun setFavIcon(vacancyIsFavorite: Boolean) {
