@@ -21,7 +21,7 @@ object VacancyFullToFavoriteVacancyRoomMapper {
         val lng: String = ""
     )
 
-    fun map(vacancy: VacancyFull): FavoriteVacancyRoom {
+    fun map(vacancy: VacancyFull, lastMod: Int? = null): FavoriteVacancyRoom {
         val detektSalary = help(vacancy.salary)
         val geo = help(vacancy.geolocation)
 
@@ -44,7 +44,7 @@ object VacancyFullToFavoriteVacancyRoomMapper {
                 lat = geo.lat,
                 lng = geo.lng,
                 urlHh = urlHh,
-                lastMod = timestamp()
+                lastMod = lastMod ?: timestamp()
             )
         }
     }

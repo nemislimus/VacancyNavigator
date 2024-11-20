@@ -20,4 +20,7 @@ interface FavoriteVacancyDao {
 
     @Query("SELECT * FROM favorite_vacancy WHERE id=:id")
     suspend fun getById(id: Int): FavoriteVacancyRoom?
+
+    @Query("SELECT lastMod FROM favorite_vacancy WHERE id=:id")
+    suspend fun getLastMod(id: Int): Int?
 }

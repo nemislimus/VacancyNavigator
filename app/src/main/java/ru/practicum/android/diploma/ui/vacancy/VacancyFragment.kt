@@ -55,6 +55,10 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
         viewModel.observeState().observe(viewLifecycleOwner) { state ->
             render(state)
         }
+
+        viewModel.observeIsFavorite().observe(viewLifecycleOwner) { vacancyIsFavorite ->
+            setFavIcon(vacancyIsFavorite)
+        }
     }
 
     private fun render(state: VacancyDetailsState) {
@@ -90,7 +94,6 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
                     Html.fromHtml(VacancyFull.keySkillsToHtml(vacancy), Html.FROM_HTML_MODE_LEGACY)
             }
         }
-        setFavIcon()
 
         Glide.with(requireContext())
             .load(vacancy.iconUrl)
@@ -118,9 +121,7 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
                     clPlaceholder.ivPlaceholderPicture.setImageResource(
                         R.drawable.placeholder_vacancy_not_found_or_delete
                     )
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        viewModel.removeCurrentVacancy()
-                    }
+                    viewModel.removeCurrentVacancy()
                 }
 
                 requireContext().getString(R.string.no_internet) -> {
@@ -142,13 +143,12 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
                 viewModel.clickOnFavoriteIcon(currentState)
             }
             clickJob.join()
-            setFavIcon()
         }
     }
 
-    private fun setFavIcon() {
+    private fun setFavIcon(vacancyIsFavorite: Boolean) {
         binding.tbVacancyToolBar.menu.findItem(R.id.miVacancyToFavorite).setIcon(
-            if (viewModel.vacancyIsFavorite) R.drawable.favorites_on else R.drawable.favorites_off
+            if (vacancyIsFavorite) R.drawable.favorites_on else R.drawable.favorites_off
         )
     }
 

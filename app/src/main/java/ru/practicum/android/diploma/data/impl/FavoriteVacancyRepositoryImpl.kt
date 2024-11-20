@@ -12,8 +12,9 @@ class FavoriteVacancyRepositoryImpl(private val dao: FavoriteVacancyDao) : Favor
     private val mapper = VacancyFullToFavoriteVacancyRoomMapper
 
     override suspend fun add(vacancy: VacancyFull) {
+        val lastMod = dao.getLastMod(vacancy.id.toInt())
         dao.add(
-            mapper.map(vacancy)
+            mapper.map(vacancy, lastMod)
         )
     }
 

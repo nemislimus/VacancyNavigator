@@ -9,6 +9,7 @@ import ru.practicum.android.diploma.domain.impl.FirebaseInteractorImpl
 import ru.practicum.android.diploma.domain.impl.GetSearchFilterInteractorImpl
 import ru.practicum.android.diploma.domain.impl.IndustriesInteractorImpl
 import ru.practicum.android.diploma.domain.impl.SetSearchFilterInteractorImpl
+import ru.practicum.android.diploma.domain.impl.SystemInteractorImpl
 import ru.practicum.android.diploma.domain.impl.UpdateDbOnAppStartUseCase
 import ru.practicum.android.diploma.domain.repository.AreasInteractor
 import ru.practicum.android.diploma.domain.repository.FavoriteVacancyInteractor
@@ -16,6 +17,7 @@ import ru.practicum.android.diploma.domain.repository.FirebaseInteractor
 import ru.practicum.android.diploma.domain.repository.GetSearchFilterInteractor
 import ru.practicum.android.diploma.domain.repository.IndustriesInteractor
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterInteractor
+import ru.practicum.android.diploma.domain.repository.SystemInteractor
 import ru.practicum.android.diploma.domain.search.api.SearchInteractor
 import ru.practicum.android.diploma.domain.search.impl.SearchInteractorImpl
 import ru.practicum.android.diploma.domain.sharing.api.SharingInteractor
@@ -70,5 +72,9 @@ val interactorModule = module {
 
     factory<SharingInteractor> {
         SharingInteractorImpl(get())
+    }
+
+    factory<SystemInteractor> {
+        SystemInteractorImpl(repository = get())
     }
 }

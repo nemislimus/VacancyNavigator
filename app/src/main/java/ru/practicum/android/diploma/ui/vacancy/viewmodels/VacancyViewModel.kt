@@ -1,117 +1,148 @@
 package ru.practicum.android.diploma.ui.vacancy.viewmodels
 
-import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.domain.details.api.VacancyDetailsInteractor
 import ru.practicum.android.diploma.domain.models.Resource
 import ru.practicum.android.diploma.domain.models.VacancyFull
 import ru.practicum.android.diploma.domain.repository.FavoriteVacancyInteractor
+import ru.practicum.android.diploma.domain.repository.SystemInteractor
 import ru.practicum.android.diploma.domain.sharing.api.SharingInteractor
 import ru.practicum.android.diploma.ui.vacancy.models.VacancyDetailsState
 
 class VacancyViewModel(
     private val vacancyId: String,
-    private var context: Context?,
+    private var android: SystemInteractor,
     private val vacancyInteractor: VacancyDetailsInteractor,
     private val favoriteInteractor: FavoriteVacancyInteractor,
     private val sharingInteractor: SharingInteractor,
 ) : ViewModel() {
-
+    @Volatile
     private var currentVacancy: VacancyFull? = null
-    var vacancyIsFavorite = false
 
-    private var vacancyDetailsStateLiveData =
+    @Volatile
+    private var vacancyIsFavorite = false
+
+    private val vacancyDetailsStateLiveData =
         MutableLiveData<VacancyDetailsState>()
 
+    private val isFavoriteLiveData = MutableLiveData<Boolean>()
+
     fun observeState(): LiveData<VacancyDetailsState> = vacancyDetailsStateLiveData
+
+    fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
 
     init {
         getVacancyDetails(vacancyId)
     }
 
-    override fun onCleared() {
-        context = null
-        super.onCleared()
-    }
-
     private fun getVacancyDetails(id: String) {
         updateState(VacancyDetailsState.Loading)
         viewModelScope.launch {
-            vacancyInteractor.searchVacancyById(id).collect { result ->
-                manageDetailsResult(result)
+            favoriteInteractor.getById(id)?.let { vacancy ->
+                vacancyIsFavorite = true
+                currentVacancy = vacancy
+                updateState(VacancyDetailsState.Content(vacancy))
+            }
+
+            launch {
+                vacancyInteractor.searchVacancyById(id).collect { result ->
+                    when (result) {
+                        is Resource.ConnectionError -> {
+                            if (currentVacancy == null) {
+                                manageDetailsResult(result)
+                            }
+                        }
+
+                        is Resource.NotFoundError -> {
+                            // прокидываем результат, отрабатываем удаление вакансии
+                            currentVacancy = null
+                            vacancyIsFavorite = false
+                            manageDetailsResult(result)
+                        }
+
+                        is Resource.ServerError -> {
+                            if (currentVacancy == null) {
+                                manageDetailsResult(result)
+                            }
+                        }
+
+                        is Resource.Success -> {
+                            // если вакансия еще не на странице или отличается от той, что на странице обновляем ее
+                            if (currentVacancy != result.data) {
+                                currentVacancy = result.data
+                                manageDetailsResult(result)
+                            }
+                            // обновляем вакансию в БД
+                            favoriteInteractor.add(result.data)
+                        }
+                    }
+                }
             }
         }
     }
 
     private fun manageDetailsResult(result: Resource<VacancyFull>) {
         when (result) {
-            is Resource.ConnectionError -> context?.getString(R.string.no_internet)?.let {
+            is Resource.ConnectionError -> android.getString(R.string.no_internet)?.let {
                 VacancyDetailsState.NoConnection(errorMessage = it)
             }?.let { updateState(it) }
 
-            is Resource.NotFoundError -> context?.getString(R.string.vacancy_not_found_or_delete)?.let {
+            is Resource.NotFoundError -> android.getString(R.string.vacancy_not_found_or_delete)?.let {
                 VacancyDetailsState.EmptyResult(emptyMessage = it)
             }?.let { updateState(it) }
 
-            is Resource.ServerError -> context?.getString(R.string.server_error)?.let {
+            is Resource.ServerError -> android.getString(R.string.server_error)?.let {
                 VacancyDetailsState.ServerError(errorMessage = it)
             }?.let { updateState(it) }
 
             is Resource.Success -> {
-                viewModelScope.launch {
-                    checkFavorite()
-                    currentVacancy = result.data
-                    updateState(VacancyDetailsState.Content(result.data))
-                }
+                updateState(VacancyDetailsState.Content(result.data))
             }
         }
     }
 
     private fun updateState(state: VacancyDetailsState) {
         vacancyDetailsStateLiveData.postValue(state)
-    }
-
-    private suspend fun checkFavorite() {
-        vacancyIsFavorite = favoriteInteractor.getById(vacancyId) != null
+        isFavoriteLiveData.postValue(vacancyIsFavorite)
     }
 
     suspend fun clickOnFavoriteIcon(state: VacancyDetailsState?) {
-        if (state is VacancyDetailsState.Content) {
-            if (vacancyIsFavorite) removeVacancyFromFavorite() else addVacancyToFavorite()
-        } else {
-            showDeny(FAV_TOAST_MARKER)
+        viewModelScope.launch {
+            if (state is VacancyDetailsState.Content) {
+                currentVacancy?.let {
+                    vacancyIsFavorite = !vacancyIsFavorite
+                    if (vacancyIsFavorite) {
+                        favoriteInteractor.add(it)
+                    } else {
+                        favoriteInteractor.remove(it.id)
+                    }
+                }
+
+                isFavoriteLiveData.postValue(vacancyIsFavorite)
+            } else {
+                withContext(Dispatchers.Main) {
+                    showDeny(FAV_TOAST_MARKER)
+                }
+            }
         }
-    }
-
-    private suspend fun addVacancyToFavorite() {
-        currentVacancy?.let { favoriteInteractor.add(it) }
-        vacancyIsFavorite = true
-    }
-
-    private suspend fun removeVacancyFromFavorite() {
-        removeCurrentVacancy()
-        vacancyIsFavorite = false
     }
 
     private fun showDeny(marker: Int) {
         when (marker) {
-            FAV_TOAST_MARKER -> Toast.makeText(
-                context,
-                context?.getString(R.string.cant_add_to_favorite),
-                Toast.LENGTH_SHORT
-            ).show()
+            FAV_TOAST_MARKER -> android.showToast(
+                android.getString(R.string.cant_add_to_favorite)
+            )
 
-            else -> Toast.makeText(
-                context,
-                context?.getString(R.string.cant_share),
-                Toast.LENGTH_SHORT
-            ).show()
+            else -> android.showToast(
+                android.getString(R.string.cant_share)
+            )
         }
     }
 
@@ -123,8 +154,10 @@ class VacancyViewModel(
         }
     }
 
-    suspend fun removeCurrentVacancy() {
-        favoriteInteractor.remove(vacancyId)
+    fun removeCurrentVacancy() {
+        viewModelScope.launch {
+            favoriteInteractor.remove(vacancyId)
+        }
     }
 
     companion object {
