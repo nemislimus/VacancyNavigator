@@ -32,6 +32,7 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
         parametersOf(requireArguments().getString(VACANCY_ID_KEY))
     }
     private var currentState: VacancyDetailsState? = null
+    private var vacancyIsFavorite: Boolean? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -56,8 +57,16 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
             render(state)
         }
 
-        viewModel.observeIsFavorite().observe(viewLifecycleOwner) { vacancyIsFavorite ->
-            setFavIcon(vacancyIsFavorite)
+        viewModel.observeIsFavorite().observe(viewLifecycleOwner) { isFavorite ->
+            vacancyIsFavorite = isFavorite
+            setFavIcon(isFavorite)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vacancyIsFavorite?.let {
+            setFavIcon(it)
         }
     }
 
