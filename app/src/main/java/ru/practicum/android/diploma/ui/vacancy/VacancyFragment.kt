@@ -29,7 +29,6 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
     private val viewModel by viewModel<VacancyViewModel> {
         parametersOf(requireArguments().getString(VACANCY_ID_KEY))
     }
-    private var currentState: VacancyDetailsState? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -40,7 +39,7 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         if (menuItem.itemId == R.id.miVacancyToFavorite) onFavoriteIconClick()
-        if (menuItem.itemId == R.id.miShareVacancy) viewModel.clickOnShareIcon(currentState)
+        if (menuItem.itemId == R.id.miShareVacancy) viewModel.clickOnShareIcon()
         return true
     }
 
@@ -60,7 +59,6 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
     }
 
     private fun render(state: VacancyDetailsState) {
-        currentState = state
         when (state) {
             is VacancyDetailsState.Loading -> showLoading()
             is VacancyDetailsState.Content -> showContent(state.vacancy)
@@ -136,7 +134,7 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
     }
 
     private fun onFavoriteIconClick() {
-        viewModel.clickOnFavoriteIcon(currentState)
+        viewModel.clickOnFavoriteIcon()
     }
 
     private fun setFavIcon(vacancyIsFavorite: Boolean) {
