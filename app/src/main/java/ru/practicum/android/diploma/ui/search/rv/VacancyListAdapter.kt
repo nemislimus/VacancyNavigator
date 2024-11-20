@@ -55,25 +55,12 @@ class VacancyListAdapter(
     override fun getItemViewType(position: Int): Int =
         if (gapONListTop > 0 && position == 0) GAP_ITEM else VACANCY_ITEM
 
-    fun getGap(): VacancyShort {
-        return VacancyShort(
-            id = GAP_ID,
-            name = GAP_ID,
-            employer = GAP_ID,
-            areaName = GAP_ID,
-            null,
-            null,
-            null
-        )
-    }
-
     private class ItemComparator : DiffUtil.ItemCallback<VacancyShort>() {
         override fun areItemsTheSame(oldItem: VacancyShort, newItem: VacancyShort): Boolean {
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: VacancyShort, newItem: VacancyShort): Boolean {
-            // return oldItem == newItem
             return oldItem.id == newItem.id
         }
     }
@@ -85,7 +72,5 @@ class VacancyListAdapter(
     companion object {
         private const val VACANCY_ITEM = 0
         private const val GAP_ITEM = 1
-
-        private const val GAP_ID: String = "GAP"
     }
 }
