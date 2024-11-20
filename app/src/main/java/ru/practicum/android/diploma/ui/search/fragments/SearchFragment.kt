@@ -53,6 +53,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        listAdapter.setGapONListTop()
         with(binding) {
             rvVacancyList.adapter = listAdapter
             llSearchFieldContainer.ivClearIcon.setOnClickListener {
@@ -72,8 +73,8 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
                     super.onScrolled(recyclerView, dx, dy)
 
                     if (dy > 0) {
-                        val pos = (binding.rvVacancyList.layoutManager as LinearLayoutManager)
-                            .findLastVisibleItemPosition()
+                        val pos =
+                            (binding.rvVacancyList.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                         if (pos >= listAdapter.itemCount - 1) {
                             viewModel.onLastItemReached()
                         }
@@ -162,8 +163,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             setResultInfo(vacanciesCount, R.string.search_result_info)
         }
         clearPlaceholders()
-        val listWithGap = setGap(searchData)
-        listAdapter.submitList(listWithGap)
+        listAdapter.submitList(searchData)
     }
 
     private fun setResultInfo(vacanciesCount: Int = -1, messageId: Int) {
