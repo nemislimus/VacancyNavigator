@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.R
@@ -43,33 +44,33 @@ class VacancyViewModel(
     }
 
     private fun getVacancyDetails(id: String) {
-        viewModelScope.launch {
-            updateState(VacancyDetailsState.Loading)
+        updateState(VacancyDetailsState.Loading)
 
+        var dbVacancy: VacancyFull? = null
+
+        viewModelScope.launch {
             favoriteInteractor.getById(id)?.let { vacancy ->
                 vacancyIsFavorite = true
-                currentVacancy = vacancy
-                updateState(VacancyDetailsState.Content(vacancy, true))
+                dbVacancy = vacancy
             }
 
             launch {
                 vacancyInteractor.searchVacancyById(id).collect { result ->
                     when (result) {
                         is Resource.ConnectionError -> {
-                            if (currentVacancy == null) {
+                            if (!vacancyIsFavorite) {
                                 manageDetailsResult(result)
                             }
                         }
 
                         is Resource.NotFoundError -> {
                             // прокидываем результат, отрабатываем удаление вакансии
-                            currentVacancy = null
                             vacancyIsFavorite = false
                             manageDetailsResult(result)
                         }
 
                         is Resource.ServerError -> {
-                            if (currentVacancy == null) {
+                            if (!vacancyIsFavorite) {
                                 manageDetailsResult(result)
                             }
                         }
@@ -87,6 +88,14 @@ class VacancyViewModel(
                             }
                         }
                     }
+                }
+            }
+
+            delay(RESPONSE_AWAIT_TIME)
+
+            dbVacancy?.let {
+                if (currentVacancy == null) {
+                    updateState(VacancyDetailsState.Content(it))
                 }
             }
         }
@@ -107,7 +116,7 @@ class VacancyViewModel(
             }?.let { updateState(it) }
 
             is Resource.Success -> {
-                updateState(VacancyDetailsState.Content(result.data, vacancyIsFavorite))
+                updateState(VacancyDetailsState.Content(result.data))
             }
         }
     }
@@ -167,5 +176,6 @@ class VacancyViewModel(
     companion object {
         private const val FAV_TOAST_MARKER = 0
         private const val SHARE_TOAST_MARKER = 1
+        private const val RESPONSE_AWAIT_TIME = 1000L
     }
 }
