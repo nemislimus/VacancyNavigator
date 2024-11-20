@@ -56,38 +56,7 @@ class VacancyViewModel(
 
             launch {
                 vacancyInteractor.searchVacancyById(id).collect { result ->
-                    when (result) {
-                        is Resource.ConnectionError -> {
-                            if (!vacancyIsFavorite) {
-                                manageDetailsResult(result)
-                            }
-                        }
-
-                        is Resource.NotFoundError -> {
-                            // прокидываем результат, отрабатываем удаление вакансии
-                            vacancyIsFavorite = false
-                            manageDetailsResult(result)
-                        }
-
-                        is Resource.ServerError -> {
-                            if (!vacancyIsFavorite) {
-                                manageDetailsResult(result)
-                            }
-                        }
-
-                        is Resource.Success -> {
-                            // если вакансия еще не на странице или отличается от той, что на странице обновляем ее
-                            if (currentVacancy != result.data) {
-                                currentVacancy = result.data
-                                manageDetailsResult(result)
-
-                                if (vacancyIsFavorite) {
-                                    // обновляем вакансию в БД
-                                    favoriteInteractor.add(result.data)
-                                }
-                            }
-                        }
-                    }
+                    preManageDetailsResult(result)
                 }
             }
 
@@ -102,19 +71,54 @@ class VacancyViewModel(
         }
     }
 
+    private suspend fun preManageDetailsResult(result: Resource<VacancyFull>) {
+        when (result) {
+            is Resource.ConnectionError -> {
+                if (!vacancyIsFavorite) {
+                    manageDetailsResult(result)
+                }
+            }
+
+            is Resource.NotFoundError -> {
+                // прокидываем результат, отрабатываем удаление вакансии
+                vacancyIsFavorite = false
+                manageDetailsResult(result)
+            }
+
+            is Resource.ServerError -> {
+                if (!vacancyIsFavorite) {
+                    manageDetailsResult(result)
+                }
+            }
+
+            is Resource.Success -> {
+                // если вакансия еще не на странице или отличается от той, что на странице обновляем ее
+                if (currentVacancy != result.data) {
+                    currentVacancy = result.data
+                    manageDetailsResult(result)
+
+                    if (vacancyIsFavorite) {
+                        // обновляем вакансию в БД
+                        favoriteInteractor.add(result.data)
+                    }
+                }
+            }
+        }
+    }
+
     private fun manageDetailsResult(result: Resource<VacancyFull>) {
         when (result) {
-            is Resource.ConnectionError -> android.getString(R.string.no_internet)?.let {
+            is Resource.ConnectionError -> android.getString(R.string.no_internet).let {
                 VacancyDetailsState.NoConnection(errorMessage = it)
-            }?.let { updateState(it) }
+            }.let { updateState(it) }
 
-            is Resource.NotFoundError -> android.getString(R.string.vacancy_not_found_or_delete)?.let {
+            is Resource.NotFoundError -> android.getString(R.string.vacancy_not_found_or_delete).let {
                 VacancyDetailsState.EmptyResult(emptyMessage = it)
-            }?.let { updateState(it) }
+            }.let { updateState(it) }
 
-            is Resource.ServerError -> android.getString(R.string.server_error)?.let {
+            is Resource.ServerError -> android.getString(R.string.server_error).let {
                 VacancyDetailsState.ServerError(errorMessage = it)
-            }?.let { updateState(it) }
+            }.let { updateState(it) }
 
             is Resource.Success -> {
                 updateState(VacancyDetailsState.Content(result.data))
