@@ -43,8 +43,10 @@ class VacancyViewModel(
     }
 
     private fun getVacancyDetails(id: String) {
-        updateState(VacancyDetailsState.Loading)
         viewModelScope.launch {
+
+            updateState(VacancyDetailsState.Loading)
+
             favoriteInteractor.getById(id)?.let { vacancy ->
                 vacancyIsFavorite = true
                 currentVacancy = vacancy
@@ -78,9 +80,12 @@ class VacancyViewModel(
                             if (currentVacancy != result.data) {
                                 currentVacancy = result.data
                                 manageDetailsResult(result)
+
+                                if (vacancyIsFavorite) {
+                                    // обновляем вакансию в БД
+                                    favoriteInteractor.add(result.data)
+                                }
                             }
-                            // обновляем вакансию в БД
-                            favoriteInteractor.add(result.data)
                         }
                     }
                 }
@@ -88,7 +93,7 @@ class VacancyViewModel(
         }
     }
 
-    private fun manageDetailsResult(result: Resource<VacancyFull>) {
+    private suspend fun manageDetailsResult(result: Resource<VacancyFull>) {
         when (result) {
             is Resource.ConnectionError -> android.getString(R.string.no_internet)?.let {
                 VacancyDetailsState.NoConnection(errorMessage = it)
@@ -108,12 +113,14 @@ class VacancyViewModel(
         }
     }
 
-    private fun updateState(state: VacancyDetailsState) {
-        vacancyDetailsStateLiveData.postValue(state)
-        isFavoriteLiveData.postValue(vacancyIsFavorite)
+    private suspend fun updateState(state: VacancyDetailsState) {
+        withContext(Dispatchers.Main) {
+            vacancyDetailsStateLiveData.value = state
+            isFavoriteLiveData.value = vacancyIsFavorite
+        }
     }
 
-    suspend fun clickOnFavoriteIcon(state: VacancyDetailsState?) {
+    fun clickOnFavoriteIcon(state: VacancyDetailsState?) {
         viewModelScope.launch {
             if (state is VacancyDetailsState.Content) {
                 currentVacancy?.let {

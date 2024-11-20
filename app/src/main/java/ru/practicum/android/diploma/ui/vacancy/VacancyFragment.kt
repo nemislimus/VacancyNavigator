@@ -2,6 +2,7 @@ package ru.practicum.android.diploma.ui.vacancy
 
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -147,12 +148,7 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
     }
 
     private fun onFavoriteIconClick() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            val clickJob = launch {
-                viewModel.clickOnFavoriteIcon(currentState)
-            }
-            clickJob.join()
-        }
+        viewModel.clickOnFavoriteIcon(currentState)
     }
 
     private fun setFavIcon(vacancyIsFavorite: Boolean) {
