@@ -1,18 +1,23 @@
 package ru.practicum.android.diploma.ui.search.fragments
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
@@ -85,7 +90,12 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
         viewModel.searchState.observe(viewLifecycleOwner) { searchResult ->
             when (searchResult) {
-                SearchState.IsLoading -> showLoading()
+                SearchState.IsLoading -> {
+                    listAdapter.submitList(emptyList())
+                    showLoading()
+                    closeKeyboard()
+                }
+
                 SearchState.IsLoadingNextPage -> showLoadingNextPage()
                 is SearchState.Content -> showContent(searchResult.pageData, searchResult.vacanciesCount)
                 SearchState.ConnectionError -> showConnectionError()
@@ -164,6 +174,12 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         }
         clearPlaceholders()
         listAdapter.submitList(searchData)
+        if (searchData.size <= PER_PAGE) {
+            lifecycleScope.launch {
+                delay(DELAY)
+                binding.rvVacancyList.scrollToPosition(0)
+            }
+        }
     }
 
     private fun setResultInfo(vacanciesCount: Int = -1, messageId: Int) {
@@ -207,9 +223,22 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         )
     }
 
-    private fun setGap(data: List<VacancyShort>): MutableList<VacancyShort> {
-        val mutableList = data.toMutableList()
-        mutableList.add(0, listAdapter.getGap())
-        return mutableList
+    private fun closeKeyboard() {
+        activity?.let {
+            it.currentFocus?.let { view ->
+                val manager = requireActivity().baseContext.getSystemService(
+                    INPUT_METHOD_SERVICE
+                ) as InputMethodManager
+                manager.hideSoftInputFromWindow(
+                    view.windowToken,
+                    0
+                )
+            }
+        }
+    }
+
+    companion object {
+        const val PER_PAGE = 20
+        const val DELAY = 200L
     }
 }
