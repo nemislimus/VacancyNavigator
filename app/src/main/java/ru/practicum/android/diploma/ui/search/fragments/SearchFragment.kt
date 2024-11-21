@@ -11,13 +11,10 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
@@ -90,12 +87,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
         viewModel.searchState.observe(viewLifecycleOwner) { searchResult ->
             when (searchResult) {
-                SearchState.IsLoading -> {
-                    listAdapter.submitList(emptyList())
-                    showLoading()
-                    closeKeyboard()
-                }
-
+                SearchState.IsLoading -> showLoading()
                 SearchState.IsLoadingNextPage -> showLoadingNextPage()
                 is SearchState.Content -> showContent(searchResult.pageData, searchResult.vacanciesCount)
                 SearchState.ConnectionError -> showConnectionError()
@@ -173,12 +165,13 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             setResultInfo(vacanciesCount, R.string.search_result_info)
         }
         clearPlaceholders()
-        listAdapter.submitList(searchData)
+        closeKeyboard()
         if (searchData.size <= PER_PAGE) {
-            lifecycleScope.launch {
-                delay(DELAY)
+            listAdapter.submitList(searchData) {
                 binding.rvVacancyList.scrollToPosition(0)
             }
+        } else {
+            listAdapter.submitList(searchData)
         }
     }
 
@@ -208,6 +201,8 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             rvVacancyList.isVisible = false
             pbSearchProgress.isVisible = false
         }
+        listAdapter.submitList(emptyList())
+        closeKeyboard()
     }
 
     private fun goToFilter() {
@@ -239,6 +234,5 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
     companion object {
         const val PER_PAGE = 20
-        const val DELAY = 200L
     }
 }
