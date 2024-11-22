@@ -54,4 +54,5 @@
     <string name="cant_share">Невозможно поделиться вакансией</string>
     <string name="industry_select">Выбор отрасли</string>
     <string name="select">Выбрать</string>
+    <string name="enter_industry_query">Введите отрасль</string>
 </resources>

@@ -35,7 +35,7 @@
 
     <include
         android:id="@+id/llSearchIndustryField"
-        layout="@layout/search_field"
+        layout="@layout/search_field_industry"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/margin_8"
