@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Value"
-            android:textColor="@color/gray"
+            android:textColor="?attr/elementColor_black_white"
             android:textAppearance="@style/TextRegular_16size_400weight"/>
 
     </LinearLayout>

@@ -50,10 +50,9 @@
         android:visibility="visible"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_marginTop="@dimen/margin_8"
-        android:layout_marginEnd="@dimen/margin_8"
         tools:listitem="@layout/filter_industry_element"
         app:layout_constraintStart_toStartOf="@id/glLeftBorder_16"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
         app:layout_constraintTop_toBottomOf="@id/llSearchIndustryField"
         app:layout_constraintBottom_toTopOf="@id/btnSelectIndustry"/>
 

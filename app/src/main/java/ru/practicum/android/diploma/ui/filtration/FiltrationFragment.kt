@@ -27,17 +27,8 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         getAttrColors()
-
-        with(binding) {
-            clCountryValue.tvValue.text = requireContext().getText(R.string.place_of_work)
-            clCountryValue.tvHint.text = requireContext().getText(R.string.place_of_work)
-
-            clIndustryValue.tvValue.text = requireContext().getText(R.string.industry)
-            clIndustryValue.tvHint.text = requireContext().getText(R.string.industry)
-        }
-
+        setFilterFieldUiValues()
         manageFilterElementClick()
 
         binding.etSalaryEditText.addTextChangedListener { s ->
@@ -72,12 +63,9 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
         }
 
         binding.clIndustryValue.ivElementButton.setOnClickListener {
-            with(binding.clIndustryValue) {
-                tvHint.isVisible = true
-                ivElementButton.isVisible = false
-                ivClearElementButton.isVisible = true
-                tvValue.setTextColor(valuesThemeColor)
-            }
+            findNavController().navigate(
+                R.id.action_filtrationFragment_to_filtrationIndustryFragment
+            )
         }
 
         binding.clCountryValue.ivClearElementButton.setOnClickListener {
@@ -106,6 +94,18 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
         requireContext().theme.resolveAttribute(R.attr.elementColor_gray_white, themeSalaryHintTextColor, true)
         valuesThemeColor = themeValuesTextColor.data
         salaryThemeColor = themeSalaryHintTextColor.data
+    }
+
+    private fun setFilterFieldUiValues() {
+        with(binding) {
+            clCountryValue.tvValue.text = requireContext().getText(R.string.place_of_work)
+            clCountryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
+            clCountryValue.tvHint.text = requireContext().getText(R.string.place_of_work)
+
+            clIndustryValue.tvValue.text = requireContext().getText(R.string.industry)
+            clIndustryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
+            clIndustryValue.tvHint.text = requireContext().getText(R.string.industry)
+        }
     }
 
     private fun clearSalary() {
