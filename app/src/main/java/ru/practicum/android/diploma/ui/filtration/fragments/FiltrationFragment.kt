@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.ui.filtration
+package ru.practicum.android.diploma.ui.filtration.fragments
 
 import android.os.Bundle
 import android.util.TypedValue

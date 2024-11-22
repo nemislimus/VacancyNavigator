@@ -1,4 +1,4 @@
-package ru.practicum.android.diploma.ui.filtration
+package ru.practicum.android.diploma.ui.filtration.fragments
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
@@ -9,15 +9,19 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.databinding.FragmentFiltrationIndustryBinding
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.ui.filtration.adapters.IndustryAdapter
+import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationIndustryData
+import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationIndustryViewModel
 import ru.practicum.android.diploma.ui.utils.BindingFragment
 import ru.practicum.android.diploma.util.EMPTY_STRING
 
 class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBinding>() {
-
     private val listAdapter = IndustryAdapter { clickOnIndustry(it) }
+    private val vModel: FiltrationIndustryViewModel by viewModel()
+    private var selectedIndustry: Industry? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -30,7 +34,7 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            tbIndustryToolBar.setOnClickListener { findNavController().navigateUp() }
+            tbIndustryToolBar.setOnClickListener { goBack() }
             rvIndustryist.adapter = listAdapter
             llSearchIndustryField.ivClearIcon.setOnClickListener {
                 clearQuery()
@@ -38,6 +42,20 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
 
             llSearchIndustryField.etSearchQueryText.addTextChangedListener { s ->
                 setSearchIcon(s.isNullOrBlank())
+                vModel.getIndustries(s.toString())
+            }
+
+            btnSelectIndustry.setOnClickListener {
+                selectedIndustry?.let { industry ->
+                    vModel.setIndustry(industry)
+                }
+            }
+        }
+
+        vModel.getLiveData().observe(viewLifecycleOwner) {
+            when (it) {
+                FiltrationIndustryData.GoBack -> goBack()
+                is FiltrationIndustryData.Industries -> listAdapter.submitList(it.industries)
             }
         }
     }
@@ -73,5 +91,10 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
     private fun clickOnIndustry(industry: Industry) {
         binding.btnSelectIndustry.isVisible = true
         // сохраняем значение в фильтр
+        selectedIndustry = industry
+    }
+
+    private fun goBack() {
+        findNavController().navigateUp()
     }
 }
