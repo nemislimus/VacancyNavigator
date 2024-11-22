@@ -7,12 +7,13 @@ import androidx.recyclerview.widget.ListAdapter
 import ru.practicum.android.diploma.databinding.FilterIndustryElementBinding
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.ui.filtration.adapters.viewholders.IndustryViewHolder
+import ru.practicum.android.diploma.util.EMPTY_STRING
 
 class IndustryAdapter(
     private val listener: IndustryClickListener,
 ) : ListAdapter<Industry, IndustryViewHolder>(IndustryComparator()) {
 
-    private var checkedPosition = -1
+    private var checkedItemId: String = EMPTY_STRING
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IndustryViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -25,26 +26,34 @@ class IndustryAdapter(
         val item = currentList[position]
         holder.bind(item)
         holder.binding.rbIndustryButton.setOnClickListener {
-            manageListRadioButtons(clickedItemPosition = position)
+            manageListRadioButtons(item.id)
             listener.onIndustryClick(item)
         }
     }
 
-    private fun manageListRadioButtons(clickedItemPosition: Int) {
-        val updatedList: MutableList<Industry> = mutableListOf()
-        updatedList.addAll(currentList)
-        val previousSelected: Int
-        if (checkedPosition != clickedItemPosition) {
-            updatedList[clickedItemPosition] = updatedList[clickedItemPosition].copy(isSelected = true)
+    private fun manageListRadioButtons(clickedIndustryId: String) {
+        var copyList: MutableList<Industry> = mutableListOf()
+        val updateList: MutableList<Industry>
+        copyList.addAll(currentList)
+        val previousSelectedItemId: String
+        if (checkedItemId != clickedIndustryId) {
+            updateList = copyList.map { item ->
+                val newItem = if (item.id == clickedIndustryId) item.copy(isSelected = true) else item
+                newItem
+            }.toMutableList()
 
-            if (checkedPosition != -1) {
-                previousSelected = checkedPosition
-                updatedList[previousSelected] = updatedList[previousSelected].copy(isSelected = false)
-                checkedPosition = clickedItemPosition
+            if (checkedItemId != EMPTY_STRING) {
+                previousSelectedItemId = checkedItemId
+                copyList = updateList.map { item ->
+                    val newItem = if (item.id == previousSelectedItemId) item.copy(isSelected = false) else item
+                    newItem
+                }.toMutableList()
+                checkedItemId = clickedIndustryId
+                submitList(copyList)
             } else {
-                checkedPosition = clickedItemPosition
+                checkedItemId = clickedIndustryId
+                submitList(updateList)
             }
-            submitList(updatedList)
         }
     }
 
@@ -54,7 +63,7 @@ class IndustryAdapter(
         }
 
         override fun areContentsTheSame(oldItem: Industry, newItem: Industry): Boolean {
-            return oldItem.name == newItem.name && oldItem.isSelected == newItem.isSelected
+            return oldItem.id == newItem.id && oldItem.isSelected == newItem.isSelected
         }
     }
 
