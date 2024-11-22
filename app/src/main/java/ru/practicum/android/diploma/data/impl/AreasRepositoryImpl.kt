@@ -9,14 +9,14 @@ import ru.practicum.android.diploma.domain.repository.AreasRepository
 class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
     override suspend fun getAllCountries(search: String?): List<Area> {
         return AreaRoomToAreaMapper.map(
-            search?.let {
-                dao.areasByTypeAndName(
-                    AreaType.COUNTRY.type,
-                    search
-                )
-            } ?: run {
+            if (search.isNullOrBlank()) {
                 dao.areasByType(
                     AreaType.COUNTRY.type
+                )
+            } else {
+                dao.areasByTypeAndName(
+                    AreaType.COUNTRY.type,
+                    search.trim()
                 )
             }
         )
@@ -24,14 +24,14 @@ class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
 
     override suspend fun getAllRegions(search: String?): List<Area> {
         return AreaRoomToAreaMapper.map(
-            search?.let {
-                dao.areasByTypeAndName(
-                    AreaType.REGION.type,
-                    search
-                )
-            } ?: run {
+            if (search.isNullOrBlank()) {
                 dao.areasByType(
                     AreaType.REGION.type
+                )
+            } else {
+                dao.areasByTypeAndName(
+                    AreaType.REGION.type,
+                    search.trim()
                 )
             }
         )
@@ -39,14 +39,14 @@ class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
 
     override suspend fun getAllCities(search: String?): List<Area> {
         return AreaRoomToAreaMapper.map(
-            search?.let {
-                dao.areasByTypeAndName(
-                    AreaType.CITY.type,
-                    search
-                )
-            } ?: run {
+            if (search.isNullOrBlank()) {
                 dao.areasByType(
                     AreaType.CITY.type
+                )
+            } else {
+                dao.areasByTypeAndName(
+                    AreaType.CITY.type,
+                    search.trim()
                 )
             }
         )
@@ -54,14 +54,14 @@ class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
 
     override suspend fun getRegionsInCountry(countryId: String, search: String?): List<Area> {
         return AreaRoomToAreaMapper.map(
-            search?.let {
-                dao.areasByParentAndName(
-                    parentId = countryId.toInt(),
-                    search = search
-                )
-            } ?: run {
+            if (search.isNullOrBlank()) {
                 dao.areasByParent(
                     parentId = countryId.toInt()
+                )
+            } else {
+                dao.areasByParentAndName(
+                    parentId = countryId.toInt(),
+                    search = search.trim()
                 )
             }
         )
@@ -69,14 +69,14 @@ class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
 
     override suspend fun getCitiesInCountry(countryId: String, search: String?): List<Area> {
         return AreaRoomToAreaMapper.map(
-            search?.let {
-                dao.citiesInCountryByName(
-                    countryId = countryId.toInt(),
-                    search = search
-                )
-            } ?: run {
+            if (search.isNullOrBlank()) {
                 dao.citiesInCountry(
                     countryId = countryId.toInt()
+                )
+            } else {
+                dao.citiesInCountryByName(
+                    countryId = countryId.toInt(),
+                    search = search.trim()
                 )
             }
         )
@@ -84,14 +84,14 @@ class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
 
     override suspend fun getCitiesInRegion(regionId: String, search: String?): List<Area> {
         return AreaRoomToAreaMapper.map(
-            search?.let {
-                dao.areasByParentAndName(
-                    parentId = regionId.toInt(),
-                    search = search
-                )
-            } ?: run {
+            if (search.isNullOrBlank()) {
                 dao.areasByParent(
                     parentId = regionId.toInt()
+                )
+            } else {
+                dao.areasByParentAndName(
+                    parentId = regionId.toInt(),
+                    search = search.trim()
                 )
             }
         )

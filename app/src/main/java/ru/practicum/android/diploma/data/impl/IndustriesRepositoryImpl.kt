@@ -8,10 +8,10 @@ import ru.practicum.android.diploma.domain.repository.IndustriesRepository
 class IndustriesRepositoryImpl(private val dao: IndustriesDao) : IndustriesRepository {
     override suspend fun getAllIndustries(search: String?): List<Industry> {
         return IndustryRoomToIndustryMapper.map(
-            search?.let {
-                dao.getIndustriesByName(search)
-            } ?: run {
+            if (search.isNullOrBlank()) {
                 dao.getIndustries()
+            } else {
+                dao.getIndustriesByName(search.trim())
             }
         )
     }
