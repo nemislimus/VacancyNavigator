@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/appBackgroundColor"
-    tools:context="ru.practicum.android.diploma.ui.filtration.FiltrationFragment">
+    tools:context="ru.practicum.android.diploma.ui.filtration.fragments.FiltrationFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_border"
