@@ -99,30 +99,30 @@ class FirebaseRepositoryImpl(private val analytics: FirebaseAnalytics) : Firebas
                 }
 
                 // Параметров может быть не больше 25
-                if (validEventParams.size() in 1..N25) {
+                if (validEventParams.size() in 1..MAX_PARAMS_NUMBER) {
                     analytics.logEvent(eventName, validEventParams)
                 }
             }
         }
-    */
+     */
     private fun getKey(key: String): String {
         // Ключ должен быть не длинее 40 символов
         // соделжать только латинские буквы, цифры и подчеркивания
         // начинаться обазательно с буквы
         val clearString = notValidStartChars.replace(notValidChars.replace(key, ""), "")
-        return clearString.substring(0..min(N40, clearString.length - 1))
+        return clearString.substring(0..min(MAX_KEY_LENGTH, clearString.length - 1))
     }
 
     private fun getValue(value: String): String {
         // Значение должно быть не длинее 100 символов
 
-        return value.substring(0, min(N100, value.length - 1))
+        return value.substring(0, min(MAX_VALUE_LENGTH, value.length - 1))
     }
 
     companion object {
-        const val N25 = 25
-        const val N40 = 40
-        const val N100 = 100
+        const val MAX_PARAMS_NUMBER = 25
+        const val MAX_KEY_LENGTH = 40
+        const val MAX_VALUE_LENGTH = 100
         const val LOG_EVENT_NAME = "WWW"
         const val ERROR_EVENT_NAME = "ERROR_EVENT"
         const val SEARCH_VACANCY = "SEARCH_VACANCY"
