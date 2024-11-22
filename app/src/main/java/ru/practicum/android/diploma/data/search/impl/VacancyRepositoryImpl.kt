@@ -26,11 +26,11 @@ class VacancyRepositoryImpl(private val networkClient: NetworkClient, private va
                         Resource.Success(mapper.map(response as ApiResponse.VacancyResponse))
                     }
 
-                    ApiResponse.NO_CONNECTION_CODE -> {
+                    ApiResponse.NO_CONNECTION_ERROR_CODE -> {
                         Resource.ConnectionError("check connection")
                     }
 
-                    ApiResponse.NOT_FOUND_CODE -> Resource.NotFoundError("404 - not founded")
+                    ApiResponse.NOT_FOUND_ERROR_CODE -> Resource.NotFoundError("404 - not founded")
                     else -> Resource.ServerError("error code - ${response.resultCode}")
                 }
             )
@@ -45,8 +45,8 @@ class VacancyRepositoryImpl(private val networkClient: NetworkClient, private va
                         mapper.map(response as ApiResponse.VacancyDetailedResponse)
                     )
 
-                    ApiResponse.NO_CONNECTION_CODE -> Resource.ConnectionError(Resource.CHECK_CONNECTION)
-                    ApiResponse.NOT_FOUND_CODE -> Resource.NotFoundError(Resource.NOT_FOUND)
+                    ApiResponse.NO_CONNECTION_ERROR_CODE -> Resource.ConnectionError(Resource.CHECK_CONNECTION)
+                    ApiResponse.NOT_FOUND_ERROR_CODE -> Resource.NotFoundError(Resource.NOT_FOUND)
                     else -> Resource.ServerError(
                         "${Resource.SERVER_ERROR} - ${response.resultCode}"
                     )

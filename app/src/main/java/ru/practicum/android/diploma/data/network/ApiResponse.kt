@@ -48,12 +48,12 @@ sealed class ApiResponse {
     data class AreaResponse(val areas: ArrayList<AreaDto>) : ApiResponse()
 
     companion object {
-        const val NO_CONNECTION_CODE = -1
+        const val NO_CONNECTION_ERROR_CODE = -1
         const val SUCCESSFUL_RESPONSE_CODE = 200
         const val INCORRECT_PARAM_ERROR_CODE = 400
-        const val CAPTCHA_REQUIRED_ERROR = 403
-        const val NOT_FOUND_CODE = 404
+        const val CAPTCHA_REQUIRED_ERROR_CODE = 403
+        const val NOT_FOUND_ERROR_CODE = 404
         const val INTERNAL_SERV_ERROR_CODE = 500
-        const val BAD_GATEWAY_CODE = 502
+        const val BAD_GATEWAY_ERROR_CODE = 502
     }
 }

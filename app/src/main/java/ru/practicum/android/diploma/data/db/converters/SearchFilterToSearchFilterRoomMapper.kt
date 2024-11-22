@@ -8,8 +8,6 @@ import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.domain.models.SearchFilter
 
 object SearchFilterToSearchFilterRoomMapper {
-    private const val EMPTY_STRING = ""
-
     data class DetektArea(
         val id: Int,
         val name: String,
@@ -22,21 +20,17 @@ object SearchFilterToSearchFilterRoomMapper {
         val parentId: Int
     )
 
-    private fun help(area: Area?): DetektArea {
-        return DetektArea(
-            id = area?.id?.toInt() ?: 0,
-            name = area?.name ?: EMPTY_STRING,
-            parentId = area?.parentId?.toInt() ?: 0
-        )
-    }
+    private fun help(area: Area?): DetektArea = DetektArea(
+        id = area?.id?.toInt() ?: 0,
+        name = area?.name.orEmpty(),
+        parentId = area?.parentId?.toInt() ?: 0
+    )
 
-    private fun help(industry: Industry?): DetektIndustry {
-        return DetektIndustry(
-            id = industry?.id ?: "",
-            name = industry?.name ?: EMPTY_STRING,
-            parentId = industry?.parentId?.toInt() ?: 0
-        )
-    }
+    private fun help(industry: Industry?): DetektIndustry = DetektIndustry(
+        id = industry?.id ?: "",
+        name = industry?.name.orEmpty(),
+        parentId = industry?.parentId?.toInt() ?: 0
+    )
 
     fun map(filter: SearchFilter): SearchFilterRoom {
         val country = help(filter.country)
