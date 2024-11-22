@@ -7,12 +7,12 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import ru.practicum.android.diploma.data.network.ApiRequest
 import ru.practicum.android.diploma.data.network.ApiResponse
-import ru.practicum.android.diploma.data.network.ApiResponse.Companion.BAD_GATEWAY_CODE
-import ru.practicum.android.diploma.data.network.ApiResponse.Companion.CAPTCHA_REQUIRED_ERROR
+import ru.practicum.android.diploma.data.network.ApiResponse.Companion.BAD_GATEWAY_ERROR_CODE
+import ru.practicum.android.diploma.data.network.ApiResponse.Companion.CAPTCHA_REQUIRED_ERROR_CODE
 import ru.practicum.android.diploma.data.network.ApiResponse.Companion.INCORRECT_PARAM_ERROR_CODE
 import ru.practicum.android.diploma.data.network.ApiResponse.Companion.INTERNAL_SERV_ERROR_CODE
-import ru.practicum.android.diploma.data.network.ApiResponse.Companion.NOT_FOUND_CODE
-import ru.practicum.android.diploma.data.network.ApiResponse.Companion.NO_CONNECTION_CODE
+import ru.practicum.android.diploma.data.network.ApiResponse.Companion.NOT_FOUND_ERROR_CODE
+import ru.practicum.android.diploma.data.network.ApiResponse.Companion.NO_CONNECTION_ERROR_CODE
 import ru.practicum.android.diploma.data.network.ApiResponse.Companion.SUCCESSFUL_RESPONSE_CODE
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
@@ -30,8 +30,8 @@ class RetrofitNetworkClient(
 
         when {
             !connectionChecker.isConnected() -> {
-                netLog("[$NO_CONNECTION_CODE] - no connection")
-                resultResponse = ApiResponse.BadResponse().apply { resultCode = NO_CONNECTION_CODE }
+                netLog("[$NO_CONNECTION_ERROR_CODE] - no connection")
+                resultResponse = ApiResponse.BadResponse().apply { resultCode = NO_CONNECTION_ERROR_CODE }
             }
         }
 
@@ -70,19 +70,19 @@ class RetrofitNetworkClient(
                 incorrectParamResponse()
             }
 
-            CAPTCHA_REQUIRED_ERROR -> {
-                netLog("[$CAPTCHA_REQUIRED_ERROR] - captcha required error\n$message")
-                ApiResponse.BadResponse().apply { resultCode = CAPTCHA_REQUIRED_ERROR }
+            CAPTCHA_REQUIRED_ERROR_CODE -> {
+                netLog("[$CAPTCHA_REQUIRED_ERROR_CODE] - captcha required error\n$message")
+                ApiResponse.BadResponse().apply { resultCode = CAPTCHA_REQUIRED_ERROR_CODE }
             }
 
-            NOT_FOUND_CODE -> {
-                netLog("[$NOT_FOUND_CODE] - page not found\n$message")
-                ApiResponse.BadResponse().apply { resultCode = NOT_FOUND_CODE }
+            NOT_FOUND_ERROR_CODE -> {
+                netLog("[$NOT_FOUND_ERROR_CODE] - page not found\n$message")
+                ApiResponse.BadResponse().apply { resultCode = NOT_FOUND_ERROR_CODE }
             }
 
-            BAD_GATEWAY_CODE -> {
-                netLog("[$BAD_GATEWAY_CODE] - bad gateway\n$message")
-                ApiResponse.BadResponse().apply { resultCode = BAD_GATEWAY_CODE }
+            BAD_GATEWAY_ERROR_CODE -> {
+                netLog("[$BAD_GATEWAY_ERROR_CODE] - bad gateway\n$message")
+                ApiResponse.BadResponse().apply { resultCode = BAD_GATEWAY_ERROR_CODE }
             }
 
             else -> {
