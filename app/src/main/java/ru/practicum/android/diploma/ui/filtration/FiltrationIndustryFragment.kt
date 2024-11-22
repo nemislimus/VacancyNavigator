@@ -19,31 +19,6 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
 
     private val listAdapter = IndustryAdapter { clickOnIndustry(it) }
 
-    private val mockList = listOf(
-        Industry("5.461", "Авиаперевозки", null),
-        Industry("5.462", "Автомобильные перевозки", null),
-        Industry("5.463", "Железнодорожные перевозки", null),
-        Industry("5.465", "Транспортно-логистические комплексы, порты (воздушный, водный, железнодорожный)", null),
-        Industry("5.467", "Курьерская, почтовая доставка", null),
-        Industry("7.538", "Интернет-провайдер", null),
-        Industry(
-            "7.539",
-            "Системная интеграция,  автоматизации технологических и бизнес-процессов предприятия," +
-                " ИТ-консалтинг",
-            null
-        ),
-        Industry("7.540", "Разработка программного обеспечения", null),
-        Industry(
-            "7.541",
-            "Интернет-компания (поисковики, платежные системы, соц.сети, " +
-                "информационно-познавательные и развлекательные ресурсы, продвижение сайтов и прочее)",
-            null
-        ),
-        Industry("9.399", "Мобильная связь", null),
-        Industry("11", "СМИ, маркетинг, реклама, BTL, PR, дизайн, продюсирование", null),
-        Industry("11.453", "Производство мультимедиа, контента, редакторская деятельность", null),
-    )
-
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -53,7 +28,6 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        listAdapter.submitList(mockList)
 
         with(binding) {
             tbIndustryToolBar.setOnClickListener { findNavController().navigateUp() }
