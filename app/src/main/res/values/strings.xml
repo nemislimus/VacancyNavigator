@@ -52,4 +52,7 @@
     <string name="cant_add_to_favorite">Невозможно сохранить в избранное</string>
     <string name="no_apps_for_text_sending">На устройстве нет приложений для отправки текста!</string>
     <string name="cant_share">Невозможно поделиться вакансией</string>
+    <string name="industry_select">Выбор отрасли</string>
+    <string name="select">Выбрать</string>
+    <string name="enter_industry_query">Введите отрасль</string>
 </resources>
