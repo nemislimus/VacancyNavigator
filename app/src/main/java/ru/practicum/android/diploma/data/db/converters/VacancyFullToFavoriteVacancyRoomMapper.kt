@@ -76,7 +76,7 @@ object VacancyFullToFavoriteVacancyRoomMapper {
         return null
     }
 
-    fun toShort(vacancy: FavoriteVacancyRoom): VacancyShort {
+    private fun toShort(vacancy: FavoriteVacancyRoom): VacancyShort {
         with(vacancy) {
             return VacancyShort(
                 id = id.toString(),
@@ -95,17 +95,17 @@ object VacancyFullToFavoriteVacancyRoomMapper {
     }
 
     private fun help(salary: Salary?): DetektSalary {
-        var ds = DetektSalary()
+        var detektSalary = DetektSalary()
         salary?.let { sal ->
-            sal.to?.let {
-                ds = ds.copy(to = it)
+            sal.to?.let { salaryLevel ->
+                detektSalary = detektSalary.copy(to = salaryLevel)
             }
-            sal.from?.let {
-                ds = ds.copy(from = it)
+            sal.from?.let { salaryLevel ->
+                detektSalary = detektSalary.copy(from = salaryLevel)
             }
-            ds = ds.copy(currency = sal.currency)
+            detektSalary = detektSalary.copy(currency = sal.currency)
         }
-        return ds
+        return detektSalary
     }
 
     private fun help(geolocation: Geolocation?): DetektGeolocation {
