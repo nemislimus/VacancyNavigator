@@ -40,7 +40,6 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
                 setSearchIcon(s.isNullOrBlank())
             }
         }
-
     }
 
     private fun setSearchIcon(queryIsEmpty: Boolean) {

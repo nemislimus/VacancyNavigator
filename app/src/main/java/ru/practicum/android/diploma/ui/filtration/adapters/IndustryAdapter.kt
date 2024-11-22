@@ -31,19 +31,20 @@ class IndustryAdapter(
     }
 
     private fun manageListRadioButtons(clickedItemPosition: Int) {
+        val updatedList: MutableList<Industry> = mutableListOf()
+        updatedList.addAll(currentList)
         val previousSelected: Int
         if (checkedPosition != clickedItemPosition) {
-            currentList[clickedItemPosition].isSelected = true
-            notifyItemChanged(clickedItemPosition)
+            updatedList[clickedItemPosition] = updatedList[clickedItemPosition].copy(isSelected = true)
 
             if (checkedPosition != -1) {
                 previousSelected = checkedPosition
-                currentList[previousSelected].isSelected = false
+                updatedList[previousSelected] = updatedList[previousSelected].copy(isSelected = false)
                 checkedPosition = clickedItemPosition
-                notifyItemChanged(previousSelected)
             } else {
                 checkedPosition = clickedItemPosition
             }
+            submitList(updatedList)
         }
     }
 
@@ -53,7 +54,7 @@ class IndustryAdapter(
         }
 
         override fun areContentsTheSame(oldItem: Industry, newItem: Industry): Boolean {
-            return oldItem.name == newItem.name
+            return (oldItem.name == newItem.name && oldItem.isSelected == newItem.isSelected)
         }
     }
 
