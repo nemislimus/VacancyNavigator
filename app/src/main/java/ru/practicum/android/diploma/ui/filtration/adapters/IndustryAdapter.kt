@@ -54,7 +54,7 @@ class IndustryAdapter(
         }
 
         override fun areContentsTheSame(oldItem: Industry, newItem: Industry): Boolean {
-            return (oldItem.name == newItem.name && oldItem.isSelected == newItem.isSelected)
+            return oldItem.name == newItem.name && oldItem.isSelected == newItem.isSelected
         }
     }
 
