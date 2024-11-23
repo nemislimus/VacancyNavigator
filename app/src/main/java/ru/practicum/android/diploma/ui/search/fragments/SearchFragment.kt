@@ -80,6 +80,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
                         if (pos >= listAdapter.itemCount - 1) {
                             viewModel.onLastItemReached()
                         }
+                        viewModel.setNoScrollOnViewCreated()
                     }
                 }
             })
@@ -89,9 +90,10 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             when (searchResult) {
                 SearchState.IsLoading -> showLoading()
                 SearchState.IsLoadingNextPage -> showLoadingNextPage()
-                is SearchState.Content -> showContent(searchResult.pageData, searchResult.vacanciesCount)
-                SearchState.ConnectionError -> showConnectionError()
+                is SearchState.Content -> showContent(searchResult.pageData, searchResult.listNeedsScrollTop)
+                is SearchState.ConnectionError -> showConnectionError(searchResult.replaceVacancyList)
                 SearchState.NotFoundError -> showNotFoundError()
+                is SearchState.VacanciesCount -> setResultInfo(searchResult.vacanciesCount, R.string.search_result_info)
             }
         }
     }
@@ -122,8 +124,8 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         }
     }
 
-    private fun showConnectionError() {
-        if (listAdapter.itemCount > 1) {
+    private fun showConnectionError(replaceVacancyList: Boolean) {
+        if (!replaceVacancyList) {
             binding.pbNextPageProgress.isVisible = false
             showToast(R.string.no_internet)
         } else {
@@ -159,14 +161,13 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         }
     }
 
-    private fun showContent(searchData: List<VacancyShort>, vacanciesCount: Int) {
+    private fun showContent(searchData: List<VacancyShort>, listNeedsScrollTop: Boolean) {
         with(binding) {
             rvVacancyList.isVisible = true
-            setResultInfo(vacanciesCount, R.string.search_result_info)
         }
         clearPlaceholders()
         closeKeyboard()
-        if (searchData.size <= PER_PAGE) {
+        if (listNeedsScrollTop) {
             listAdapter.submitList(searchData) {
                 binding.rvVacancyList.scrollToPosition(0)
             }
@@ -230,9 +231,5 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
                 )
             }
         }
-    }
-
-    companion object {
-        const val PER_PAGE = 20
     }
 }

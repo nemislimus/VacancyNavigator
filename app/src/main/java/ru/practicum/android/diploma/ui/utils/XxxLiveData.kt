@@ -51,4 +51,14 @@ class XxxLiveData<T : Any> : MutableLiveData<T>() {
         pending.set(true)
         super.setValue(value)
     }
+
+    // удалить какое-то одно значение
+    fun deleteValue(value: T) {
+        classMap.remove(value::class.java)
+    }
+
+    // удалить все значения
+    fun clear() {
+        classMap.clear()
+    }
 }
