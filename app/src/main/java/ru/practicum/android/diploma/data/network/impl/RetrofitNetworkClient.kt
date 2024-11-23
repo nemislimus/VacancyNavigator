@@ -14,14 +14,14 @@ import ru.practicum.android.diploma.data.network.ApiResponse.Companion.INTERNAL_
 import ru.practicum.android.diploma.data.network.ApiResponse.Companion.NOT_FOUND_ERROR_CODE
 import ru.practicum.android.diploma.data.network.ApiResponse.Companion.NO_CONNECTION_ERROR_CODE
 import ru.practicum.android.diploma.data.network.ApiResponse.Companion.SUCCESSFUL_RESPONSE_CODE
-import ru.practicum.android.diploma.data.network.api.HhSearchApi
+import ru.practicum.android.diploma.data.network.HhSearchApiProvider
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
 import ru.practicum.android.diploma.domain.repository.NetworkConnectionCheckerRepository
 import java.io.IOException
 
 class RetrofitNetworkClient(
-    private val hhSearchApi: HhSearchApi,
+    private val apiProvider: HhSearchApiProvider,
     private val connectionChecker: NetworkConnectionCheckerRepository,
     private val mapper: NetworkMapper,
 ) : NetworkClient {
@@ -53,6 +53,8 @@ class RetrofitNetworkClient(
     }
 
     private suspend fun sendValidRequest(dto: ApiRequest): ApiResponse {
+        val hhSearchApi = apiProvider.getApi()
+
         return when (dto) {
             is ApiRequest.Area -> hhSearchApi.getAreasByCountry(dto.parentAreaId)
             is ApiRequest.AreasAll -> hhSearchApi.getAreas()
