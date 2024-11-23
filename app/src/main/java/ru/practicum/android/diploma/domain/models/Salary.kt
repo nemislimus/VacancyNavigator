@@ -30,7 +30,7 @@ data class Salary(
                     FULL_SALARY -> "от ${formatterSalary(salary.from)} до ${formatterSalary(salary.to)} " +
                         getCurrencySymbol(salary.currency)
                     JUST_FROM -> "от ${formatterSalary(salary.from)} ${getCurrencySymbol(salary.currency)}"
-                    else -> "${formatterSalary(salary.to)} ${getCurrencySymbol(salary.currency)}"
+                    else -> "до ${formatterSalary(salary.to)} ${getCurrencySymbol(salary.currency)}"
                 }
             }
         }

@@ -10,12 +10,14 @@ import ru.practicum.android.diploma.data.impl.IndustriesRepositoryImpl
 import ru.practicum.android.diploma.data.impl.SetSearchFilterRepositoryImpl
 import ru.practicum.android.diploma.data.impl.SystemRepositoryImpl
 import ru.practicum.android.diploma.data.impl.UpdateDbOnAppStartRepositoryImpl
+import ru.practicum.android.diploma.data.network.impl.NetworkConnectionCheckerRepositoryImpl
 import ru.practicum.android.diploma.data.search.impl.VacancyRepositoryImpl
 import ru.practicum.android.diploma.domain.repository.AreasRepository
 import ru.practicum.android.diploma.domain.repository.FavoriteVacancyRepository
 import ru.practicum.android.diploma.domain.repository.FirebaseRepository
 import ru.practicum.android.diploma.domain.repository.GetSearchFilterRepository
 import ru.practicum.android.diploma.domain.repository.IndustriesRepository
+import ru.practicum.android.diploma.domain.repository.NetworkConnectionCheckerRepository
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterRepository
 import ru.practicum.android.diploma.domain.repository.SystemRepository
 import ru.practicum.android.diploma.domain.repository.UpdateDbOnAppStartRepository
@@ -72,5 +74,13 @@ val repositoryModule = module {
 
     factory<SystemRepository> {
         SystemRepositoryImpl(context = androidContext())
+    }
+
+    single<NetworkConnectionCheckerRepository> {
+        NetworkConnectionCheckerRepositoryImpl(
+            connectivityManager = get(),
+            scope = get(),
+            networkStateFlow = get()
+        )
     }
 }
