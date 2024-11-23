@@ -68,6 +68,10 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
                                     renderState(SearchState.Content(vacanciesList, currentPage == 0), true)
                                     renderState(SearchState.VacanciesCount(found))
                                     ++currentPage
+                                } else if (currentPage == 0) {
+                                    renderState(SearchState.NotFoundError, true)
+                                } else {
+                                    // nothing to do
                                 }
                             }
                         }

@@ -4,6 +4,9 @@ import android.content.Context
 import android.net.ConnectivityManager
 import androidx.room.Room
 import com.google.firebase.analytics.FirebaseAnalytics
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -24,8 +27,6 @@ import ru.practicum.android.diploma.data.db.dao.IndustriesDao
 import ru.practicum.android.diploma.data.db.dao.SearchFilterDao
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
-import ru.practicum.android.diploma.data.network.api.NetworkConnectionChecker
-import ru.practicum.android.diploma.data.network.impl.NetworkConnectionCheckerImpl
 import ru.practicum.android.diploma.data.network.impl.RetrofitNetworkClient
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
 import ru.practicum.android.diploma.data.sharing.ExternalNavigatorImpl
@@ -67,10 +68,12 @@ val dataModule = module {
         androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 
-    single<NetworkConnectionChecker> {
-        NetworkConnectionCheckerImpl(
-            connectivityManager = get()
-        )
+    single<MutableStateFlow<Boolean>> {
+        MutableStateFlow(false)
+    }
+
+    single<CoroutineScope> {
+        CoroutineScope(Dispatchers.IO)
     }
 
     single<NetworkMapper> {

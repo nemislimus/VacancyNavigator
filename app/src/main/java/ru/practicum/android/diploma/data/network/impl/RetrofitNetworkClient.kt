@@ -16,13 +16,13 @@ import ru.practicum.android.diploma.data.network.ApiResponse.Companion.NO_CONNEC
 import ru.practicum.android.diploma.data.network.ApiResponse.Companion.SUCCESSFUL_RESPONSE_CODE
 import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
-import ru.practicum.android.diploma.data.network.api.NetworkConnectionChecker
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
+import ru.practicum.android.diploma.domain.repository.NetworkConnectionCheckerRepository
 import java.io.IOException
 
 class RetrofitNetworkClient(
     private val hhSearchApi: HhSearchApi,
-    private val connectionChecker: NetworkConnectionChecker,
+    private val connectionChecker: NetworkConnectionCheckerRepository,
     private val mapper: NetworkMapper,
 ) : NetworkClient {
     override suspend fun doRequest(dto: ApiRequest): ApiResponse {
