@@ -8,12 +8,14 @@ import androidx.room.PrimaryKey
     tableName = "areas_temp",
     indices = [
         Index(value = ["type"]),
-        Index(value = ["parentId"])
+        Index(value = ["parentId"]),
+        Index(value = ["nestingLevel"])
     ]
 )
-data class AreaRoomTemp(
+data class AreaRoomTemp @JvmOverloads constructor(
     @PrimaryKey val id: Int,
     val name: String, // Москва, Воронеж, Сочи
     val type: String, // country, region, city
-    val parentId: Int
+    val parentId: Int,
+    val nestingLevel: Int // уровень вложенности в выдаче API hh.ru
 )
