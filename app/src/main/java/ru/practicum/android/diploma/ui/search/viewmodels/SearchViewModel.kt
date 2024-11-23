@@ -127,7 +127,7 @@ class SearchViewModel(
                 _searchState.setSingleEventValue(SearchState.ConnectionError(false))
             }
             searchDelayJob = viewModelScope.launch {
-                // поток жде пока появится сеть
+                // поток ждет пока появится сеть
                 networkChecker.onStateChange().filter { it }.first()
                 // потом выполняется эта функция
                 searchVacancies(searchText)
