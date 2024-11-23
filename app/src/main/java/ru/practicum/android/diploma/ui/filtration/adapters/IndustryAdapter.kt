@@ -7,14 +7,10 @@ import androidx.recyclerview.widget.ListAdapter
 import ru.practicum.android.diploma.databinding.FilterIndustryElementBinding
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.ui.filtration.adapters.viewholders.IndustryViewHolder
-import ru.practicum.android.diploma.util.EMPTY_STRING
 
 class IndustryAdapter(
     private val listener: IndustryClickListener,
 ) : ListAdapter<Industry, IndustryViewHolder>(IndustryComparator()) {
-
-    private var checkedItemId: String = EMPTY_STRING
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IndustryViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return IndustryViewHolder(
@@ -32,29 +28,13 @@ class IndustryAdapter(
     }
 
     private fun manageListRadioButtons(clickedIndustryId: String) {
-        var copyList: MutableList<Industry> = mutableListOf()
-        val updateList: MutableList<Industry>
-        copyList.addAll(currentList)
-        val previousSelectedItemId: String
-        if (checkedItemId != clickedIndustryId) {
-            updateList = copyList.map { item ->
-                val newItem = if (item.id == clickedIndustryId) item.copy(isSelected = true) else item
-                newItem
-            }.toMutableList()
-
-            if (checkedItemId != EMPTY_STRING) {
-                previousSelectedItemId = checkedItemId
-                copyList = updateList.map { item ->
-                    val newItem = if (item.id == previousSelectedItemId) item.copy(isSelected = false) else item
-                    newItem
-                }.toMutableList()
-                checkedItemId = clickedIndustryId
-                submitList(copyList)
-            } else {
-                checkedItemId = clickedIndustryId
-                submitList(updateList)
-            }
+        val updateList: MutableList<Industry> = currentList.toMutableList()
+        updateList.forEachIndexed { index, industry ->
+            updateList[index] = industry.copy(
+                isSelected = industry.id == clickedIndustryId
+            )
         }
+        submitList(updateList)
     }
 
     private class IndustryComparator : DiffUtil.ItemCallback<Industry>() {

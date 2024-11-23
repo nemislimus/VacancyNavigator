@@ -49,7 +49,9 @@ class FiltrationIndustryViewModel(
 
     fun setIndustry(industry: Industry) {
         selectedIndustry = industry.copy(isSelected = false)
+    }
 
+    fun saveIndustryFilter() {
         viewModelScope.launch {
             filterSetter.saveIndustry(selectedIndustry)
             liveData.postValue(FiltrationIndustryData.GoBack)
