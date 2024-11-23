@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.data.search.impl
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -19,7 +20,11 @@ class VacancyRepositoryImpl(private val networkClient: NetworkClient, private va
     override suspend fun searchVacancy(searchOptions: SearchVacancyOptions): Flow<Resource<VacancyList>> =
         flow {
             val request = ApiRequest.Vacancy(searchOptions = searchOptions)
-            val response = networkClient.doRequest(request)
+            var response = networkClient.doRequest(request)
+            if (response.resultCode == ApiResponse.INTERNAL_SERV_ERROR_CODE) {
+                delay(DELAY_ON_INTERVAL_ERROR)
+                response = networkClient.doRequest(request)
+            }
             emit(
                 when (response.resultCode) {
                     ApiResponse.SUCCESSFUL_RESPONSE_CODE -> {
@@ -53,4 +58,8 @@ class VacancyRepositoryImpl(private val networkClient: NetworkClient, private va
                 }
             )
         }.flowOn(Dispatchers.IO)
+
+    companion object {
+        const val DELAY_ON_INTERVAL_ERROR = 1000L
+    }
 }
