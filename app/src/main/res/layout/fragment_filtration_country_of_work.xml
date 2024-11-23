@@ -8,63 +8,42 @@
     tools:context="ru.practicum.android.diploma.ui.filtration.fragments.FiltrationFragment">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/left_border"
+        android:id="@+id/glLeftBorder_16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="@dimen/margin_16" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/right_border"
+        android:id="@+id/glRightBorder_16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="@dimen/margin_16" />
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tbPlaceWorkToolBar"
+        android:id="@+id/tbCountryWorkToolBar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_64dp"
         app:buttonGravity="center_vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/PlaceWork"
+        app:title="@string/CoutryWork"
         app:navigationIcon="@drawable/arrow_back"
         app:titleTextAppearance="@style/TextMedium_22size_500weight"
         app:titleTextColor="?attr/elementColor_black_white" />
 
-    <include
-        android:id="@+id/clCountryValue"
-        layout="@layout/filter_element"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvIndustryist"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_16"
-        app:layout_constraintStart_toStartOf="@id/left_border"
-        app:layout_constraintEnd_toEndOf="@id/right_border"
-        app:layout_constraintTop_toBottomOf="@id/tbPlaceWorkToolBar"/>
-
-    <include
-        android:id="@+id/clIndustryValue"
-        layout="@layout/filter_element"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/left_border"
-        app:layout_constraintEnd_toEndOf="@id/right_border"
-        app:layout_constraintTop_toBottomOf="@id/clCountryValue"/>
-
-    <TextView
-        android:id="@+id/btnApplyFilter"
-        android:textAppearance="@style/TextMedium_16size_500weight"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/weight_height_60"
-        android:layout_marginBottom="@dimen/margin_24"
-        android:text="@string/apply"
-        android:background="@drawable/field_for_result_text"
-        android:gravity="center"
-        android:textColor="@color/white"
+        android:layout_height="0dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/right_border"
-        app:layout_constraintStart_toStartOf="@+id/left_border"/>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_marginTop="@dimen/margin_8"
+        tools:listitem="@layout/filter_element"
+        app:layout_constraintStart_toStartOf="@id/glLeftBorder_16"
+        app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/tbCountryWorkToolBar"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
