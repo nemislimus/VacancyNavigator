@@ -33,7 +33,7 @@ class FiltrationIndustryViewModel(
 
     fun getIndustries(search: String? = null) {
         viewModelScope.launch {
-            (industriesGetter.getAllIndustries(search) as MutableList<Industry>).let { industries ->
+            industriesGetter.getAllIndustries(search).toMutableList().let { industries ->
                 selectedIndustry?.let {
                     industries.forEachIndexed { index, industry ->
                         if (selectedIndustry == industry) {
@@ -49,7 +49,9 @@ class FiltrationIndustryViewModel(
 
     fun setIndustry(industry: Industry) {
         selectedIndustry = industry.copy(isSelected = false)
+    }
 
+    fun saveIndustryFilter() {
         viewModelScope.launch {
             filterSetter.saveIndustry(selectedIndustry)
             liveData.postValue(FiltrationIndustryData.GoBack)

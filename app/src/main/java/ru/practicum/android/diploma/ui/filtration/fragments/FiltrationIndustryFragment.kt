@@ -21,7 +21,6 @@ import ru.practicum.android.diploma.util.EMPTY_STRING
 class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBinding>() {
     private val listAdapter = IndustryAdapter { clickOnIndustry(it) }
     private val vModel: FiltrationIndustryViewModel by viewModel()
-    private var selectedIndustry: Industry? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -46,9 +45,7 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
             }
 
             btnSelectIndustry.setOnClickListener {
-                selectedIndustry?.let { industry ->
-                    vModel.setIndustry(industry)
-                }
+                vModel.saveIndustryFilter()
             }
         }
 
@@ -91,7 +88,7 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
     private fun clickOnIndustry(industry: Industry) {
         binding.btnSelectIndustry.isVisible = true
         // сохраняем значение в фильтр
-        selectedIndustry = industry
+        vModel.setIndustry(industry)
     }
 
     private fun goBack() {
