@@ -24,27 +24,18 @@ class UpdateDbOnAppStartRepositoryImpl(
     private var roomDb: CreateDbDao?
 ) : UpdateDbOnAppStartRepository {
 
-    private val types = mapOf(
-        0 to AreaType.COUNTRY,
-        1 to AreaType.REGION,
-        2 to AreaType.CITY
-    )
-
     private val db: SQLiteDatabase by lazy { sql.writableDatabase }
-    private val areasNoIndexes = "areas_no_indexes"
-    private val industryNoIndexes = "industry_no_indexes"
     private var time = System.currentTimeMillis()
+    private val countriesIds: MutableMap<String, Boolean> = mutableMapOf()
 
     override suspend fun update(): Boolean {
         logTime("roomDb -> " + roomDb?.version())
 
         roomDb = null
 
-        db.execSQL("CREATE TABLE IF NOT EXISTS $areasNoIndexes AS SELECT * FROM areas_temp LIMIT 0")
-        db.execSQL("CREATE TABLE IF NOT EXISTS $industryNoIndexes AS SELECT * FROM industry_temp LIMIT 0")
-        db.execSQL("DELETE FROM $areasNoIndexes")
-        db.execSQL("DELETE FROM $industryNoIndexes")
         clearTempTables()
+        db.execSQL("CREATE TABLE IF NOT EXISTS $AREAS_NO_INDEXES AS SELECT * FROM areas_temp LIMIT 0")
+        db.execSQL("CREATE TABLE IF NOT EXISTS $INDUSTRY_NO_INDEXES AS SELECT * FROM industry_temp LIMIT 0")
 
         try {
             getCountries()
@@ -67,8 +58,6 @@ class UpdateDbOnAppStartRepositoryImpl(
             logTime("таблицы в BD заменены")
 
             clearTempTables()
-            db.execSQL("DROP TABLE $areasNoIndexes")
-            db.execSQL("DROP TABLE $industryNoIndexes")
             sql.close()
         } catch (er: IllegalArgumentException) {
             Log.d("WWW", "$er")
@@ -84,20 +73,17 @@ class UpdateDbOnAppStartRepositoryImpl(
     private suspend fun clearTempTables() {
         db.execSQL("DELETE FROM areas_temp")
         db.execSQL("DELETE FROM industry_temp")
+        db.execSQL("DROP TABLE IF EXISTS $AREAS_NO_INDEXES")
+        db.execSQL("DROP TABLE IF EXISTS $INDUSTRY_NO_INDEXES")
     }
 
     private suspend fun getCountries() {
         when (val response = client.doRequest(ApiRequest.Country)) {
             is ApiResponse.CountryResponse -> {
                 logTime("страны загружены")
-                db.beginTransaction()
                 response.result.forEach { country ->
-                    insertArea(AreaDtoToTempAreaItemMapper.map(country))
+                    countriesIds[country.id] = true
                 }
-                db.execSQL("INSERT OR IGNORE INTO areas_temp SELECT * FROM $areasNoIndexes")
-                db.execSQL("DELETE FROM $areasNoIndexes")
-                db.setTransactionSuccessful()
-                db.endTransaction()
             }
 
             else -> throw IllegalArgumentException("Не удалось получить страны ${response.resultCode}")
@@ -112,7 +98,7 @@ class UpdateDbOnAppStartRepositoryImpl(
                 logTime("регионы загружены")
                 db.beginTransaction()
                 insertAreas(response.areas, 0)
-                db.execSQL("INSERT OR IGNORE INTO areas_temp SELECT * FROM $areasNoIndexes")
+                db.execSQL("INSERT OR IGNORE INTO areas_temp SELECT * FROM $AREAS_NO_INDEXES")
                 db.setTransactionSuccessful()
                 db.endTransaction()
             }
@@ -129,7 +115,7 @@ class UpdateDbOnAppStartRepositoryImpl(
                 logTime("индустрии загружены")
                 db.beginTransaction()
                 insertIndustries(response.result)
-                db.execSQL("INSERT OR IGNORE INTO industry_temp SELECT * FROM $industryNoIndexes")
+                db.execSQL("INSERT OR IGNORE INTO industry_temp SELECT * FROM $INDUSTRY_NO_INDEXES")
                 db.setTransactionSuccessful()
                 db.endTransaction()
             }
@@ -151,12 +137,21 @@ class UpdateDbOnAppStartRepositoryImpl(
             return false
         }
 
-        types[level]?.let { type ->
-            areas.forEach { area ->
-                insertArea(AreaDtoToTempAreaItemMapper.map(area, type = type))
-
-                insertAreas(area.areas, level + 1)
+        areas.forEach { area ->
+            val type = if (countriesIds[area.id] != null) {
+                AreaType.COUNTRY
+            } else if (countriesIds[area.parentId] != null) {
+                AreaType.REGION
+            } else {
+                AreaType.CITY
             }
+
+            insertArea(
+                area = AreaDtoToTempAreaItemMapper.map(area, type = type, nestingLevel = level),
+                addAlsoAsCity = type == AreaType.REGION && area.areas.isNullOrEmpty()
+            )
+
+            insertAreas(area.areas, level + 1)
         }
         return true
     }
@@ -171,22 +166,24 @@ class UpdateDbOnAppStartRepositoryImpl(
         }
     }
 
-    private fun insertArea(area: AreaRoomTemp) {
+    private fun insertArea(area: AreaRoomTemp, addAlsoAsCity: Boolean = false) {
         val contentValues = ContentValues()
         contentValues.put(ID, area.id)
         contentValues.put(NAME, area.name)
         contentValues.put(TYPE, area.type)
         contentValues.put(PARENT_ID, area.parentId)
-        db.insertWithOnConflict(areasNoIndexes, null, contentValues, CONFLICT_IGNORE)
+        contentValues.put(NESTING_LEVEL, area.nestingLevel)
+        db.insertWithOnConflict(AREAS_NO_INDEXES, null, contentValues, CONFLICT_IGNORE)
 
-        if (area.id == 1) {
-            // добавим Москву тоже в города
+        if (addAlsoAsCity) {
+            // добавим Москву и другие федеральные города тоже в города
             val contentValues = ContentValues()
-            contentValues.put(ID, -1)
+            contentValues.put(ID, -1 * area.id)
             contentValues.put(NAME, area.name)
             contentValues.put(TYPE, AreaType.CITY.type)
             contentValues.put(PARENT_ID, area.id)
-            db.insertWithOnConflict(areasNoIndexes, null, contentValues, CONFLICT_IGNORE)
+            contentValues.put(NESTING_LEVEL, area.nestingLevel + 1)
+            db.insertWithOnConflict(AREAS_NO_INDEXES, null, contentValues, CONFLICT_IGNORE)
         }
     }
 
@@ -195,7 +192,7 @@ class UpdateDbOnAppStartRepositoryImpl(
         contentValues.put(ID, industry.id)
         contentValues.put(NAME, industry.name)
         contentValues.put(PARENT_ID, industry.parentId)
-        db.insertWithOnConflict(industryNoIndexes, null, contentValues, CONFLICT_IGNORE)
+        db.insertWithOnConflict(INDUSTRY_NO_INDEXES, null, contentValues, CONFLICT_IGNORE)
     }
 
     companion object {
@@ -203,5 +200,8 @@ class UpdateDbOnAppStartRepositoryImpl(
         const val TYPE = "type"
         const val ID = "id"
         const val PARENT_ID = "parentId"
+        const val NESTING_LEVEL = "nestingLevel"
+        const val AREAS_NO_INDEXES = "areas_no_indexes"
+        const val INDUSTRY_NO_INDEXES = "industry_no_indexes"
     }
 }

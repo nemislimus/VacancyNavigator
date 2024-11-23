@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.ui.root
 
 import android.app.Application
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -49,14 +50,14 @@ class App : Application() {
                         isUpdating = true
                         runCatching {
                             isUpdateSuccess = dataUpdater()
-                            childScope.cancel()
-                        }.onSuccess {
                             firebaseLog.logEvent(FirebaseEvent.Log("Areas updated. DB is ok"))
-                            isUpdating = false
+                            Log.d("WWW", "DB updated")
+                            childScope.cancel()
                         }.onFailure { er ->
                             firebaseLog.logEvent(FirebaseEvent.Error("Start Update: $er"))
-                            childScope.cancel()
+                            Log.d("WWW", "DB update failed: $er")
                         }
+                        isUpdating = false
                     }
                 }
             }

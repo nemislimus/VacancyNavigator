@@ -3,14 +3,21 @@ package ru.practicum.android.diploma.ui.search.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.models.Resource
 import ru.practicum.android.diploma.domain.models.VacancyShort
+import ru.practicum.android.diploma.domain.repository.NetworkConnectionCheckerInteractor
 import ru.practicum.android.diploma.domain.search.api.SearchInteractor
 import ru.practicum.android.diploma.ui.utils.XxxLiveData
 import ru.practicum.android.diploma.util.debounce
 
-class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewModel() {
+class SearchViewModel(
+    private val searchInteractor: SearchInteractor,
+    private val networkChecker: NetworkConnectionCheckerInteractor
+) : ViewModel() {
 
     private var currentPage: Int = 0
     private var maxPages: Int = Int.MAX_VALUE
@@ -19,10 +26,11 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     private val _searchState: XxxLiveData<SearchState> = XxxLiveData()
     internal val searchState: LiveData<SearchState> get() = _searchState
+    private var searchDelayJob: Job? = null
 
     private val _searchDebounce: (String) -> Unit =
         debounce(true, viewModelScope, SEARCH_DEBOUNCE_DELAY) { searchText ->
-            searchVacancies(searchText)
+            searchVacanciesOnConnected(searchText)
         }
 
     private var lastSearchRequest: String = ""
@@ -103,7 +111,27 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     fun onLastItemReached() {
         if (!isNextPageLoading) {
             isNextPageLoading = true
-            searchVacancies(lastSearchRequest)
+            searchVacanciesOnConnected(lastSearchRequest)
+        }
+    }
+
+    private fun searchVacanciesOnConnected(searchText: String) {
+        searchDelayJob?.cancel()
+        searchDelayJob = null
+        if (networkChecker.isConnected()) {
+            searchVacancies(searchText)
+        } else {
+            if (currentPage == 0) {
+                renderState(SearchState.ConnectionError(true), true)
+            } else {
+                _searchState.setSingleEventValue(SearchState.ConnectionError(false))
+            }
+            searchDelayJob = viewModelScope.launch {
+                // поток ждет пока появится сеть
+                networkChecker.onStateChange().filter { it }.first()
+                // потом выполняется эта функция
+                searchVacancies(searchText)
+            }
         }
     }
 

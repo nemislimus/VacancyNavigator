@@ -40,6 +40,12 @@ android {
         viewBinding = true
         buildConfig = true
     }
+
+    kapt {
+        arguments {
+            arg("room.schemaLocation", "$projectDir/schemas".toString())
+        }
+    }
 }
 
 dependencies {

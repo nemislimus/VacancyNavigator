@@ -9,28 +9,16 @@ import ru.practicum.android.diploma.domain.repository.AreasRepository
 class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
     override suspend fun getAllCountries(search: String?): List<Area> {
         return AreaRoomToAreaMapper.map(
-            if (search.isNullOrBlank()) {
-                dao.areasByType(
-                    AreaType.COUNTRY.type
-                )
-            } else {
-                dao.areasByTypeAndName(
-                    AreaType.COUNTRY.type,
-                    search.trim()
-                )
-            }
+            dao.figmaCountries()
         )
     }
 
     override suspend fun getAllRegions(search: String?): List<Area> {
         return AreaRoomToAreaMapper.map(
             if (search.isNullOrBlank()) {
-                dao.areasByType(
-                    AreaType.REGION.type
-                )
+                dao.figmaRegions()
             } else {
-                dao.areasByTypeAndName(
-                    AreaType.REGION.type,
+                dao.figmaRegionsByName(
                     search.trim()
                 )
             }
