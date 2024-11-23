@@ -2,7 +2,7 @@ package ru.practicum.android.diploma.ui.search.rv
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.CenterInside
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.VacancyListItemBinding
 import ru.practicum.android.diploma.domain.models.Salary
@@ -23,7 +23,7 @@ class VacancyViewHolder(
             Glide.with(itemView)
                 .load(model.iconUrl)
                 .placeholder(R.drawable.ic_droid)
-                .transform(CenterCrop())
+                .transform(CenterInside())
                 .into(binding.ivItemLogo)
         }
     }

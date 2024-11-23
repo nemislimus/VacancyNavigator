@@ -17,16 +17,17 @@
 
         <ImageView
             android:id="@+id/ivItemLogo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:contentDescription="@string/vacancy_logo"
-            android:scaleType="centerCrop"
+            android:scaleType="centerInside"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_droid" />
 
         <View
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:background="@drawable/vacancy_logo_background" />
 
     </androidx.cardview.widget.CardView>

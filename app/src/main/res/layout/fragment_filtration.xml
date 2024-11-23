@@ -150,7 +150,7 @@
         android:gravity="center"
         android:visibility="visible"
         android:text="@string/reset"
-        android:textColor="?attr/elementColor_red_white"
+        android:textColor="@color/red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/right_border"
         app:layout_constraintStart_toStartOf="@+id/left_border" />
