@@ -37,7 +37,7 @@ val repositoryModule = module {
     }
 
     single<VacancyRepository> {
-        VacancyRepositoryImpl(networkClient = get(), mapper = get())
+        VacancyRepositoryImpl(networkClient = get(), mapper = get(), checker = get())
     }
 
     factory<UpdateDbOnAppStartRepository> {
