@@ -1,13 +1,13 @@
 package ru.practicum.android.diploma.ui.search.viewmodels
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.models.Resource
 import ru.practicum.android.diploma.domain.models.VacancyShort
 import ru.practicum.android.diploma.domain.search.api.SearchInteractor
+import ru.practicum.android.diploma.ui.utils.XxxLiveData
 import ru.practicum.android.diploma.util.debounce
 
 class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewModel() {
@@ -17,7 +17,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     private val vacanciesList: MutableList<VacancyShort> = mutableListOf()
     private var isNextPageLoading = false
 
-    private val _searchState: MutableLiveData<SearchState> = MutableLiveData()
+    private val _searchState: XxxLiveData<SearchState> = XxxLiveData()
     internal val searchState: LiveData<SearchState> get() = _searchState
 
     private val _searchDebounce: (String) -> Unit =
@@ -49,19 +49,25 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
             viewModelScope.launch {
                 searchInteractor.searchVacancy(searchQuery, currentPage).collect { result ->
                     when (result) {
-                        is Resource.ConnectionError -> renderState(SearchState.ConnectionError)
-                        is Resource.NotFoundError -> renderState(SearchState.NotFoundError)
-                        is Resource.ServerError -> renderState(SearchState.NotFoundError)
+                        is Resource.ConnectionError -> {
+                            if (currentPage == 0) {
+                                renderState(SearchState.ConnectionError(true), true)
+                            } else {
+                                _searchState.setSingleEventValue(SearchState.ConnectionError(false))
+                            }
+                        }
+
+                        is Resource.NotFoundError -> renderState(SearchState.NotFoundError, true)
+                        is Resource.ServerError -> renderState(SearchState.NotFoundError, true)
                         is Resource.Success -> {
                             with(result.data) {
-                                ++currentPage
                                 isNextPageLoading = false
                                 maxPages = pages
                                 if (found > 0) {
                                     vacanciesList.addAll(items)
-                                    renderState(SearchState.Content(vacanciesList, found))
-                                } else {
-                                    renderState(SearchState.NotFoundError)
+                                    renderState(SearchState.Content(vacanciesList, currentPage == 0), true)
+                                    renderState(SearchState.VacanciesCount(found))
+                                    ++currentPage
                                 }
                             }
                         }
@@ -71,16 +77,23 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
         }
     }
 
+    fun setNoScrollOnViewCreated() {
+        _searchState.setStartValue(SearchState.Content(vacanciesList, false))
+    }
+
     private fun renderLoadingState() {
         if (currentPage == 0) {
-            renderState(SearchState.IsLoading)
+            renderState(SearchState.IsLoading, true)
         } else {
-            renderState(SearchState.IsLoadingNextPage)
+            _searchState.setSingleEventValue(SearchState.IsLoadingNextPage)
         }
     }
 
-    private fun renderState(newState: SearchState) {
-        _searchState.value = newState
+    private fun renderState(newState: SearchState, clearOtherStates: Boolean = false) {
+        if (clearOtherStates) {
+            _searchState.clear()
+        }
+        _searchState.setValue(newState)
     }
 
     fun onLastItemReached() {
