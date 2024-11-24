@@ -8,13 +8,13 @@ data class Area(
 ) {
     override fun equals(other: Any?): Boolean {
         return if (other is Area) {
-            return id == other.id
+            return id == other.id && parentId == other.parentId
         } else {
             false
         }
     }
 
     override fun hashCode(): Int {
-        return id.hashCode()
+        return id.hashCode() + parentId.hashCode()
     }
 }
