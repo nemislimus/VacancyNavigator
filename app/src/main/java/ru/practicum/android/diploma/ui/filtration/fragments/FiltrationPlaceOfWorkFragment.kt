@@ -1,11 +1,9 @@
 package ru.practicum.android.diploma.ui.filtration.fragments
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFiltrationPlaceOfWorkBinding
@@ -32,11 +30,11 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
     }
 
     private fun manageFilterElementClick() {
-       with(binding){
-           clRegionValue.ivElementButton.setOnClickListener{
-               findNavController().navigate(R.id.action_filtrationPlaceOfWorkFragment_to_filtrationRegionFragment)
-           }
-       }
+        with(binding) {
+            clRegionValue.ivElementButton.setOnClickListener {
+                findNavController().navigate(R.id.action_filtrationPlaceOfWorkFragment_to_filtrationRegionFragment)
+            }
+        }
     }
 
     private fun setFilterFieldUiValues() {
