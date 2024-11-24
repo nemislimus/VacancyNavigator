@@ -3,45 +3,57 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/search_container_background"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/etSearchQueryText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="start|center_vertical"
+        android:layout_marginVertical="@dimen/margin_18"
+        android:layout_marginStart="@dimen/margin_16"
         android:layout_weight="1"
         android:background="@android:color/transparent"
+        android:ellipsize="end"
+        android:gravity="start|center_vertical"
         android:hint="@string/enter_the_query"
-        android:textColorHint="?attr/elementColor_gray_white"
-        android:textColor="@color/black"
         android:inputType="text"
         android:singleLine="true"
-        android:ellipsize="end"
-        android:textCursorDrawable="@drawable/text_cursor"
         android:textAppearance="@style/TextRegular_16size_400weight"
-        android:layout_marginVertical="@dimen/margin_18"
-        android:layout_marginStart="@dimen/margin_16" />
+        android:textColor="@color/black"
+        android:textColorHint="?attr/elementColor_gray_white"
+        android:textCursorDrawable="@drawable/text_cursor" />
 
-    <ImageView
+    <FrameLayout
         android:id="@+id/ivSearchIcon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_16"
-        android:layout_marginStart="@dimen/margin_8"
-        android:contentDescription="@string/search_icon_description"
-        android:src="@drawable/search"
-        android:visibility="visible"/>
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
-    <ImageView
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_8"
+            android:layout_marginEnd="@dimen/margin_16"
+            android:contentDescription="@string/search_icon_description"
+            android:src="@drawable/search" />
+    </FrameLayout>
+
+    <FrameLayout
         android:id="@+id/ivClearIcon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_16"
-        android:layout_marginStart="@dimen/margin_8"
-        android:contentDescription="@string/clear_icon_description"
-        android:src="@drawable/clear"
-        android:visibility="gone"/>
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_8"
+            android:layout_marginEnd="@dimen/margin_16"
+            android:contentDescription="@string/clear_icon_description"
+            android:src="@drawable/clear" />
+    </FrameLayout>
 
 </LinearLayout>

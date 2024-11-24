@@ -138,13 +138,6 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         }
     }
 
-    private fun clearScreen() {
-        listAdapter.submitList(emptyList())
-        binding.rvVacancyList.isVisible = false
-        binding.tvResultInfo.isVisible = false
-        clearPlaceholders()
-    }
-
     private fun clearPlaceholders() {
         with(binding) {
             clPlaceholder.root.isVisible = false
@@ -200,6 +193,14 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         binding.ivIntroPicture.isVisible = queryIsEmpty
     }
 
+    private fun clearScreen() {
+        listAdapter.submitList(emptyList())
+        binding.rvVacancyList.isVisible = false
+        binding.tvResultInfo.isVisible = false
+        clearPlaceholders()
+        viewModel.cancelSearch()
+    }
+
     private fun clearQuery() {
         with(binding) {
             llSearchFieldContainer.etSearchQueryText.setText(EMPTY_STRING)
@@ -208,6 +209,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         }
         listAdapter.submitList(emptyList())
         closeKeyboard()
+        viewModel.cancelSearch()
     }
 
     private fun goToFilter() {
