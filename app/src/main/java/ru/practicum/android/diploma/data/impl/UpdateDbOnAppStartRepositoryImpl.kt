@@ -142,8 +142,10 @@ class UpdateDbOnAppStartRepositoryImpl(
                 AreaType.COUNTRY
             } else if (countriesIds[area.parentId] != null) {
                 AreaType.REGION
-            } else {
+            } else if (area.parentId != null) {
                 AreaType.CITY
+            } else {
+                AreaType.COUNTRY // это другие регионы
             }
 
             insertArea(

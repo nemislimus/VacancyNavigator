@@ -9,10 +9,10 @@ interface AreasDao {
     @Query("SELECT * FROM areas WHERE nestingLevel=0")
     suspend fun figmaCountries(): List<AreaRoom>
 
-    @Query("SELECT * FROM areas WHERE nestingLevel=1")
+    @Query("SELECT * FROM areas WHERE nestingLevel=1 AND type!='country'")
     suspend fun figmaRegions(): List<AreaRoom>
 
-    @Query("SELECT * FROM areas WHERE nestingLevel=1 AND name LIKE '%' || :search || '%'")
+    @Query("SELECT * FROM areas WHERE nestingLevel=1 AND type!='country' AND name LIKE '%' || :search || '%'")
     suspend fun figmaRegionsByName(search: String): List<AreaRoom>
 
     @Query("SELECT * FROM areas WHERE type=:type")
