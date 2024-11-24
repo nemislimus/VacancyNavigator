@@ -54,12 +54,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
 
     private fun manageFilterElementClick() {
         binding.clCountryValue.ivElementButton.setOnClickListener {
-            with(binding.clCountryValue) {
-                tvHint.isVisible = true
-                ivElementButton.isVisible = false
-                ivClearElementButton.isVisible = true
-                tvValue.setTextColor(valuesThemeColor)
-            }
+            findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
         }
 
         binding.clIndustryValue.ivElementButton.setOnClickListener {
@@ -70,15 +65,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
 
         binding.clCountryValue.ivClearElementButton.setOnClickListener {
             with(binding.clCountryValue) {
-                tvHint.isVisible = false
-                ivElementButton.isVisible = true
-                ivClearElementButton.isVisible = false
-                tvValue.setTextColor(requireContext().getColor(R.color.gray))
-            }
-        }
-
-        binding.clIndustryValue.ivClearElementButton.setOnClickListener {
-            with(binding.clIndustryValue) {
                 tvHint.isVisible = false
                 ivElementButton.isVisible = true
                 ivClearElementButton.isVisible = false
