@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.domain.models.Resource
@@ -30,6 +31,7 @@ class SearchViewModel(
         }
 
     private var lastSearchRequest: String = ""
+    private var searchJob: Job? = null
 
     fun searchDebounce(searchQuery: String) {
         if (searchQuery == lastSearchRequest) {
@@ -50,7 +52,8 @@ class SearchViewModel(
     private fun searchVacancies(searchQuery: String) {
         if (searchQuery.isNotEmpty() && currentPage < maxPages) {
             renderLoadingState()
-            viewModelScope.launch {
+            searchJob?.cancel()
+            searchJob = viewModelScope.launch {
                 searchInteractor.searchVacancy(searchQuery, currentPage).collect { result ->
                     withContext(Dispatchers.Main) {
                         when (result) {
