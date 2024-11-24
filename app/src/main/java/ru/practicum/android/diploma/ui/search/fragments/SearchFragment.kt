@@ -167,12 +167,16 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         }
         clearPlaceholders()
         closeKeyboard()
+        /*
+         * searchData.toMutableList() поставлен специально
+         * подробности тут https://stackoverflow.com/questions/49726385/listadapter-not-updating-item-in-recyclerview
+         * */
         if (listNeedsScrollTop) {
-            listAdapter.submitList(searchData) {
+            listAdapter.submitList(searchData.toMutableList()) {
                 binding.rvVacancyList.scrollToPosition(0)
             }
         } else {
-            listAdapter.submitList(searchData)
+            listAdapter.submitList(searchData.toMutableList())
         }
     }
 

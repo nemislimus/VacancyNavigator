@@ -34,6 +34,9 @@ class HhSearchApiProvider(
 
     /** Сетевой клиент
      * @author Ячменев И.
+     * описание проблемы которую решает код ниже можно прочитать тут
+     * https://stackoverflow.com/questions/37885391/okhttp-sslprotocolexception-ssl-handshake-terminated
+     * https://stackoverflow.com/questions/36455656/java-net-sockettimeoutexception-timeout
      * */
     fun getApi(): HhSearchApi {
         api?.let { actualApi ->

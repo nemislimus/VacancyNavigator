@@ -3,20 +3,17 @@ package ru.practicum.android.diploma.ui.search.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.domain.models.Resource
 import ru.practicum.android.diploma.domain.models.VacancyShort
-import ru.practicum.android.diploma.domain.repository.NetworkConnectionCheckerInteractor
 import ru.practicum.android.diploma.domain.search.api.SearchInteractor
 import ru.practicum.android.diploma.ui.utils.XxxLiveData
 import ru.practicum.android.diploma.util.debounce
 
 class SearchViewModel(
-    private val searchInteractor: SearchInteractor,
-    private val networkChecker: NetworkConnectionCheckerInteractor
+    private val searchInteractor: SearchInteractor
 ) : ViewModel() {
 
     private var currentPage: Int = 0
@@ -26,11 +23,10 @@ class SearchViewModel(
 
     private val _searchState: XxxLiveData<SearchState> = XxxLiveData()
     internal val searchState: LiveData<SearchState> get() = _searchState
-    private var searchDelayJob: Job? = null
 
     private val _searchDebounce: (String) -> Unit =
         debounce(true, viewModelScope, SEARCH_DEBOUNCE_DELAY) { searchText ->
-            searchVacanciesOnConnected(searchText)
+            searchVacancies(searchText)
         }
 
     private var lastSearchRequest: String = ""
@@ -56,30 +52,32 @@ class SearchViewModel(
             renderLoadingState()
             viewModelScope.launch {
                 searchInteractor.searchVacancy(searchQuery, currentPage).collect { result ->
-                    when (result) {
-                        is Resource.ConnectionError -> {
-                            if (currentPage == 0) {
-                                renderState(SearchState.ConnectionError(true), true)
-                            } else {
-                                _searchState.setSingleEventValue(SearchState.ConnectionError(false))
-                            }
-                        }
-
-                        is Resource.NotFoundError -> renderState(SearchState.NotFoundError, true)
-                        is Resource.ServerError -> renderState(SearchState.NotFoundError, true)
-                        is Resource.Success -> {
-                            with(result.data) {
-                                isNextPageLoading = false
-                                maxPages = pages
-                                if (found > 0) {
-                                    vacanciesList.addAll(items)
-                                    renderState(SearchState.Content(vacanciesList, currentPage == 0), true)
-                                    renderState(SearchState.VacanciesCount(found))
-                                    ++currentPage
-                                } else if (currentPage == 0) {
-                                    renderState(SearchState.NotFoundError, true)
+                    withContext(Dispatchers.Main) {
+                        when (result) {
+                            is Resource.ConnectionError -> {
+                                if (currentPage == 0) {
+                                    renderState(SearchState.ConnectionError(true), true)
                                 } else {
-                                    // nothing to do
+                                    _searchState.setSingleEventValue(SearchState.ConnectionError(false))
+                                }
+                            }
+
+                            is Resource.NotFoundError -> renderState(SearchState.NotFoundError, true)
+                            is Resource.ServerError -> renderState(SearchState.NotFoundError, true)
+                            is Resource.Success -> {
+                                with(result.data) {
+                                    isNextPageLoading = false
+                                    maxPages = pages
+                                    if (found > 0) {
+                                        vacanciesList.addAll(items)
+                                        renderState(SearchState.Content(vacanciesList, currentPage == 0), true)
+                                        renderState(SearchState.VacanciesCount(found))
+                                        ++currentPage
+                                    } else if (currentPage == 0) {
+                                        renderState(SearchState.NotFoundError, true)
+                                    } else {
+                                        // nothing to do
+                                    }
                                 }
                             }
                         }
@@ -111,27 +109,7 @@ class SearchViewModel(
     fun onLastItemReached() {
         if (!isNextPageLoading) {
             isNextPageLoading = true
-            searchVacanciesOnConnected(lastSearchRequest)
-        }
-    }
-
-    private fun searchVacanciesOnConnected(searchText: String) {
-        searchDelayJob?.cancel()
-        searchDelayJob = null
-        if (networkChecker.isConnected()) {
-            searchVacancies(searchText)
-        } else {
-            if (currentPage == 0) {
-                renderState(SearchState.ConnectionError(true), true)
-            } else {
-                _searchState.setSingleEventValue(SearchState.ConnectionError(false))
-            }
-            searchDelayJob = viewModelScope.launch {
-                // поток ждет пока появится сеть
-                networkChecker.onStateChange().filter { it }.first()
-                // потом выполняется эта функция
-                searchVacancies(searchText)
-            }
+            searchVacancies(lastSearchRequest)
         }
     }
 
