@@ -25,6 +25,13 @@ class VacancyRepositoryImpl(
     VacancyRepository {
     override suspend fun searchVacancy(searchOptions: SearchVacancyOptions): Flow<Resource<VacancyList>> =
         flow {
+            if (!checker.isConnected()) {
+                // если нет соединения сразу отправляем ошибку нет сети
+                emit(Resource.ConnectionError("check connection"))
+                // ждем пока появится сеть
+                checker.onStateChange().filter { it }.first()
+                // когда сеть появилась выполняем запрос и возвращаем результат
+            }
             val request = ApiRequest.Vacancy(searchOptions = searchOptions)
             val response = networkClient.doRequest(request)
             emit(
