@@ -59,14 +59,10 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
             when (it) {
                 FiltrationRegionData.GoBack -> goBack()
                 FiltrationRegionData.NotFound -> showNotFound()
-                FiltrationRegionData.NotSuchRegion -> shoNotSuchRegion()
+                FiltrationRegionData.NotSuchRegion -> {}
                 is FiltrationRegionData.Regions -> showRegions(it.regions)
             }
         }
-
-    }
-
-    private fun shoNotSuchRegion() {
 
     }
 
