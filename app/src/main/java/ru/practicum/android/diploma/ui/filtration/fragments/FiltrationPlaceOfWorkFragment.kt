@@ -20,9 +20,10 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setFilterFieldUiValues()
-        manageFilterElementClick()
 
+        setFilterFieldUiValues()
+
+        manageFilterElementClick()
 
         binding.tbPlaceWorkToolBar.setOnClickListener {
             findNavController().navigateUp()

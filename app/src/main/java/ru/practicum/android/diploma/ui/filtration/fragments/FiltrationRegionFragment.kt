@@ -39,9 +39,7 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         binding.llSearchRegionField.etSearchQueryText.hint = requireContext().getText(R.string.enter_region_query)
-
 
         with(binding) {
             tbRegionToolBar.setOnClickListener { goBack() }
@@ -69,7 +67,7 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
     }
 
     private fun shoNotSuchRegion() {
-        TODO()
+
     }
 
     private fun showRegions(regions: List<Area>) {
@@ -122,7 +120,7 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
 
     private fun goBack() {
         findNavController().navigateUp()
-        //TODO("Здесь передать результат предыдущему фрагменту")
+        // Здесь передать результат предыдущему фрагменту
     }
 
     companion object {
