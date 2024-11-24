@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settings_button_share"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/weight_height_60"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tvValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:textAppearance="@style/TextRegular_16size_400weight"
+        android:textColor="?attr/elementColor_black_white"
+        tools:text="ВрядлиБудетРегионСТакимДлиннымНазванием" />
+
+    <ImageView
+        android:id="@+id/ivArrowForward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginVertical="@dimen/margin_18"
+        android:contentDescription="@null"
+        android:src="@drawable/arrow_forward" />
+</FrameLayout>

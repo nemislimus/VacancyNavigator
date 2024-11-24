@@ -57,4 +57,8 @@
     <string name="industry_select">Выбор отрасли</string>
     <string name="select">Выбрать</string>
     <string name="enter_industry_query">Введите отрасль</string>
+    <string name="country">Страна</string>
+    <string name="region">Регион</string>
+    <string name="region_select">Выбор региона</string>
+    <string name="enter_region_query">Введите регион</string>
 </resources>
