@@ -116,6 +116,11 @@ class SearchViewModel(
         }
     }
 
+    fun cancelSearch() {
+        searchJob?.cancel()
+        _searchState.clear()
+    }
+
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
