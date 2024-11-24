@@ -171,7 +171,7 @@ class UpdateDbOnAppStartRepositoryImpl(
     private fun insertArea(area: AreaRoomTemp, addAlsoAsCity: Boolean = false) {
         val contentValues = ContentValues()
         contentValues.put(ID, area.id)
-        contentValues.put(NAME, area.name)
+        contentValues.put(NAME, SPACE + area.name)
         contentValues.put(TYPE, area.type)
         contentValues.put(PARENT_ID, area.parentId)
         contentValues.put(NESTING_LEVEL, area.nestingLevel)
@@ -181,7 +181,7 @@ class UpdateDbOnAppStartRepositoryImpl(
             // добавим Москву и другие федеральные города тоже в города
             val contentValues = ContentValues()
             contentValues.put(ID, -1 * area.id)
-            contentValues.put(NAME, area.name)
+            contentValues.put(NAME, SPACE + area.name)
             contentValues.put(TYPE, AreaType.CITY.type)
             contentValues.put(PARENT_ID, area.id)
             contentValues.put(NESTING_LEVEL, area.nestingLevel + 1)
@@ -205,5 +205,6 @@ class UpdateDbOnAppStartRepositoryImpl(
         const val NESTING_LEVEL = "nestingLevel"
         const val AREAS_NO_INDEXES = "areas_no_indexes"
         const val INDUSTRY_NO_INDEXES = "industry_no_indexes"
+        const val SPACE = " "
     }
 }

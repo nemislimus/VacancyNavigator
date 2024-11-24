@@ -8,7 +8,7 @@ import kotlin.math.abs
 object AreaRoomToAreaMapper {
     fun map(area: AreaRoom): Area = Area(
         id = abs(area.id).toString(),
-        name = area.name,
+        name = area.name.trim(),
         type = AreaType.find(area.type),
         parentId = if (area.parentId > 0) area.parentId.toString() else null
     )
