@@ -9,7 +9,6 @@ import ru.practicum.android.diploma.domain.repository.AreasInteractor
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterInteractor
 import ru.practicum.android.diploma.ui.utils.XxxLiveData
 
-
 class FiltrationRegionViewModel(
     private val regionsGetter: AreasInteractor,
     private val filterSetter: SetSearchFilterInteractor,
