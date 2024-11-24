@@ -27,7 +27,7 @@ class VacancyRepositoryImpl(
         flow {
             if (!checker.isConnected()) {
                 // если нет соединения сразу отправляем ошибку нет сети
-                emit(Resource.ConnectionError("check connection"))
+                emit(Resource.ConnectionError(NO_INTERNET_ERROR_MESSAGE))
                 // ждем пока появится сеть
                 checker.onStateChange().filter { it }.first()
                 // когда сеть появилась выполняем запрос и возвращаем результат
@@ -41,7 +41,7 @@ class VacancyRepositoryImpl(
                     }
 
                     ApiResponse.NO_CONNECTION_ERROR_CODE -> {
-                        Resource.ConnectionError("check connection")
+                        Resource.ConnectionError(NO_INTERNET_ERROR_MESSAGE)
                     }
 
                     ApiResponse.NOT_FOUND_ERROR_CODE -> Resource.NotFoundError("404 - not founded")
@@ -53,7 +53,7 @@ class VacancyRepositoryImpl(
     override suspend fun getVacancyDetails(id: String): Flow<Resource<VacancyFull>> =
         flow {
             if (!checker.isConnected()) {
-                emit(Resource.ConnectionError("check connection"))
+                emit(Resource.ConnectionError(NO_INTERNET_ERROR_MESSAGE))
                 checker.onStateChange().filter { it }.first()
             }
             val response = networkClient.doRequest(ApiRequest.VacancyDetail(vacancyId = id))
@@ -71,4 +71,8 @@ class VacancyRepositoryImpl(
                 }
             )
         }.flowOn(Dispatchers.IO)
+
+    companion object {
+        const val NO_INTERNET_ERROR_MESSAGE = "Network is unavailable. Check connection!"
+    }
 }
