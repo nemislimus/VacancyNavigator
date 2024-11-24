@@ -45,7 +45,7 @@
         app:layout_constraintTop_toBottomOf="@id/tbPlaceWorkToolBar"/>
 
     <include
-        android:id="@+id/clIndustryValue"
+        android:id="@+id/clRegionValue"
         layout="@layout/filter_element"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
