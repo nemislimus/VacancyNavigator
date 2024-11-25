@@ -75,12 +75,12 @@
         android:id="@+id/filtrationCountryFragment"
         android:name="ru.practicum.android.diploma.ui.filtration.fragments.FiltrationCountryFragment"
         android:label="FiltrationCountryFragment"
-        tools:layout="@layout/fragment_filtration_select" />
+        tools:layout="@layout/fragment_filtration_countries" />
 
     <fragment
         android:id="@+id/filtrationRegionFragment"
         android:name="ru.practicum.android.diploma.ui.filtration.fragments.FiltrationRegionFragment"
         android:label="FiltrationRegionFragment"
-        tools:layout="@layout/fragment_filtration_select" />
+        tools:layout="@layout/fragment_filtration_countries" />
 
 </navigation>
