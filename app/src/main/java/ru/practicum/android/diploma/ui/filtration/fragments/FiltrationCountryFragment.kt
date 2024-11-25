@@ -20,7 +20,7 @@ class FiltrationCountryFragment : BindingFragment<FragmentFiltrationSelectBindin
         super.onViewCreated(view, savedInstanceState)
     }
 
-    //** Раскоментировать при работе. Закомментриовал из-за detekt **/
+    // Раскоментировать при работе. Закомментриовал из-за detekt
 //    private fun countrySelected(area: Area) {
 //        setFragmentResult(RESULT_COUNTRY_KEY, bundleOf(RESULT_COUNTRY_KEY to Gson().toJson(area)))
 //    }

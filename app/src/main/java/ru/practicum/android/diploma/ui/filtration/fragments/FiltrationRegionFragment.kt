@@ -31,7 +31,7 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
     }
 
     private val listAdapter = RegionAdapter {
-        //viewModel.saveRegion(it)
+        // viewModel.saveRegion(it)
         regionSelected(it)
     }
 
