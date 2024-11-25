@@ -8,20 +8,24 @@
     android:foreground="?attr/selectableItemBackground">
 
     <TextView
-        android:id="@+id/tvValue"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvRegion"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
+        android:layout_marginEnd="@dimen/margin_44"
         android:textAppearance="@style/TextRegular_16size_400weight"
         android:textColor="?attr/elementColor_black_white"
-        tools:text="ВрядлиБудетРегионСТакимДлиннымНазванием" />
+        tools:text="ВрядлиБудетРегионСТакимДлиннымНазванием"
+        android:maxLines="1"
+        android:ellipsize="end"/>
 
     <ImageView
         android:id="@+id/ivArrowForward"
+        android:layout_gravity="end|center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|center_vertical"
-        android:layout_marginVertical="@dimen/margin_18"
-        android:contentDescription="@null"
+        android:layout_marginStart="@dimen/margin_20"
+        android:contentDescription="@string/element_arrow"
         android:src="@drawable/arrow_forward" />
+
 </FrameLayout>
