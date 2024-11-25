@@ -179,12 +179,18 @@ class UpdateDbOnAppStartRepositoryImpl(
 
         if (addAlsoAsCity) {
             // добавим Москву и другие федеральные города тоже в города
+            val parentId = if (area.nestingLevel < 2) {
+                area.id
+            } else {
+                area.parentId
+            }
+            val nestingLevel = area.nestingLevel + if (area.nestingLevel < 2) 1 else 0
             val contentValues = ContentValues()
             contentValues.put(ID, -1 * area.id)
             contentValues.put(NAME, SPACE + area.name)
             contentValues.put(TYPE, AreaType.CITY.type)
-            contentValues.put(PARENT_ID, area.id)
-            contentValues.put(NESTING_LEVEL, area.nestingLevel + 1)
+            contentValues.put(PARENT_ID, parentId)
+            contentValues.put(NESTING_LEVEL, nestingLevel)
             db.insertWithOnConflict(AREAS_NO_INDEXES, null, contentValues, CONFLICT_IGNORE)
         }
     }
