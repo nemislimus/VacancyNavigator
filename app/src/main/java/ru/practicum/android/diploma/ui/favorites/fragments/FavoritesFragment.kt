@@ -12,19 +12,18 @@ import ru.practicum.android.diploma.databinding.FragmentFavoritesBinding
 import ru.practicum.android.diploma.domain.models.VacancyShort
 import ru.practicum.android.diploma.ui.favorites.viewmodels.FavoritesState
 import ru.practicum.android.diploma.ui.favorites.viewmodels.FavoritesViewModel
-import ru.practicum.android.diploma.ui.search.rv.VacancyListAdapter
 import ru.practicum.android.diploma.ui.utils.BindingFragment
 import ru.practicum.android.diploma.ui.vacancy.VacancyFragment
 
 class FavoritesFragment : BindingFragment<FragmentFavoritesBinding>() {
 
-    private val listAdapter = VacancyListAdapter { clickOnVacancy(it) }
+    private val listAdapter = FavoritesAdapter{clickOnVacancy(it)}
 
     private val viewModel: FavoritesViewModel by viewModel()
 
     override fun createBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
     ): FragmentFavoritesBinding {
         return FragmentFavoritesBinding.inflate(inflater, container, false)
     }
