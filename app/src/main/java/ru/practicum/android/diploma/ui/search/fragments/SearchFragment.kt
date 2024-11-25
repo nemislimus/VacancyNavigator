@@ -19,7 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
 import ru.practicum.android.diploma.domain.models.VacancyShort
-import ru.practicum.android.diploma.ui.search.rv.DeleteVacancyListAdapter
+import ru.practicum.android.diploma.ui.search.rv.VacancyListAdapter
 import ru.practicum.android.diploma.ui.search.viewmodels.SearchState
 import ru.practicum.android.diploma.ui.search.viewmodels.SearchViewModel
 import ru.practicum.android.diploma.ui.utils.MenuBindingFragment
@@ -29,13 +29,13 @@ import ru.practicum.android.diploma.util.declension
 
 class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
-    private val listAdapter = DeleteVacancyListAdapter { clickOnVacancy(it) }
+    private val listAdapter = VacancyListAdapter { clickOnVacancy(it) }
 
     private val viewModel: SearchViewModel by viewModel()
 
     override fun createBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
     ): FragmentSearchBinding {
         return FragmentSearchBinding.inflate(inflater, container, false)
     }
@@ -160,17 +160,8 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         }
         clearPlaceholders()
         closeKeyboard()
-        /*
-         * searchData.toMutableList() поставлен специально
-         * подробности тут https://stackoverflow.com/questions/49726385/listadapter-not-updating-item-in-recyclerview
-         * */
-        if (listNeedsScrollTop) {
-            listAdapter.submitList(searchData.toMutableList()) {
-                binding.rvVacancyList.scrollToPosition(0)
-            }
-        } else {
-            listAdapter.submitList(searchData.toMutableList())
-        }
+
+        showFoundVacancies(vacancies = searchData, scrollToTop = listNeedsScrollTop)
     }
 
     private fun setResultInfo(vacanciesCount: Int = -1, messageId: Int) {
@@ -194,7 +185,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
     }
 
     private fun clearScreen() {
-        listAdapter.submitList(emptyList())
+        showFoundVacancies()
         binding.rvVacancyList.isVisible = false
         binding.tvResultInfo.isVisible = false
         clearPlaceholders()
@@ -207,7 +198,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             rvVacancyList.isVisible = false
             pbSearchProgress.isVisible = false
         }
-        listAdapter.submitList(emptyList())
+        showFoundVacancies()
         closeKeyboard()
         viewModel.cancelSearch()
     }
@@ -238,4 +229,18 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             }
         }
     }
+
+    private fun showFoundVacancies(vacancies: List<VacancyShort>? = null, scrollToTop: Boolean = false) {
+        listAdapter.vacancies.clear()
+        /*
+         * searchData.toMutableList() поставлен специально
+         * подробности тут https://stackoverflow.com/questions/49726385/listadapter-not-updating-item-in-recyclerview
+         * */
+        vacancies?.let { listAdapter.vacancies.addAll(vacancies.toMutableList()) }
+        listAdapter.notifyDataSetChanged()
+        if (scrollToTop) {
+            binding.rvVacancyList.scrollToPosition(0)
+        }
+    }
+
 }
