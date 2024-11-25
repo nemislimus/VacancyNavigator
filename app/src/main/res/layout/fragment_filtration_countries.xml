@@ -38,7 +38,7 @@
         android:id="@+id/rvCountryList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_marginTop="@dimen/margin_8"
         tools:listitem="@layout/filter_element"
