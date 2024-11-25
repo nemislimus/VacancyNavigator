@@ -47,6 +47,6 @@ val viewModelModule = module {
         )
     }
 
-    viewModel { FiltrationPlaceOfWorkViewModel() }
+    viewModel { FiltrationPlaceOfWorkViewModel(interactor = get()) }
 
 }
