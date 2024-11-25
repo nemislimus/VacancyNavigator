@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.databinding.FilterElementBinding
 import ru.practicum.android.diploma.databinding.FragmentFiltrationPlaceOfWorkBinding
 import ru.practicum.android.diploma.domain.models.Area
 import ru.practicum.android.diploma.ui.filtration.model.WorkPlace
@@ -59,14 +60,11 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
 
     private fun setFilterFieldUiValues() {
         with(binding) {
-            clCountryValue.tvValue.text = requireContext().getText(R.string.country)
-            clCountryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
             clCountryValue.tvHint.text = requireContext().getText(R.string.country)
-
-            clRegionValue.tvValue.text = requireContext().getText(R.string.region)
-            clRegionValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
             clRegionValue.tvHint.text = requireContext().getText(R.string.region)
         }
+        showEmptyCountry()
+        showEmptyRegion()
     }
 
     private fun countryStartSelection() {
@@ -109,12 +107,35 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
     }
 
     private fun fillWorkplaceData(workPlace: WorkPlace) {
-        binding.clCountryValue.tvValue.text = workPlace.country?.name ?: ""
-        binding.clRegionValue.tvValue.text = workPlace.region?.name ?: ""
+        workPlace.country?.let {
+            showFillElement(binding.clCountryValue, it.name)
+        } ?: { showEmptyCountry() }
+        workPlace.region?.let {
+            showFillElement(binding.clRegionValue, it.name)
+        } ?: { showEmptyRegion() }
+    }
+
+    private fun showFillElement(element: FilterElementBinding, text: String) {
+        element.tvValue.text = text
+        element.tvValue.setTextColor(requireContext().getColor(R.color.white))
     }
 
     private fun onConfirm(workPlace: WorkPlace) {
         setFragmentResult(PLACE_OF_WORK_RESULT_KEY, bundleOf(PLACE_OF_WORK_RESULT_KEY to Gson().toJson(workPlace)))
+    }
+
+    private fun showEmptyCountry() {
+        with(binding) {
+            clCountryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
+            clCountryValue.tvValue.text = requireContext().getText(R.string.country)
+        }
+    }
+
+    private fun showEmptyRegion() {
+        with(binding) {
+            clRegionValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
+            clRegionValue.tvValue.text = requireContext().getText(R.string.region)
+        }
     }
 
     companion object {

@@ -13,11 +13,13 @@ class FiltrationPlaceOfWorkViewModel : StateViewModel<FiltrationPlaceOfWorkState
 
     fun countryChange(country: Area) {
         currentCountry = country
+        currentRegion = null
         renderContent()
     }
 
     fun regionChange(region: Area) {
         currentRegion = region
+        renderContent()
     }
 
     fun confirmWorkplace() {

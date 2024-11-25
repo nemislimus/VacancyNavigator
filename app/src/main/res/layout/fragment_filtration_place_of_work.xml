@@ -29,8 +29,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/PlaceWork"
         app:navigationIcon="@drawable/arrow_back"
+        app:title="@string/PlaceWork"
         app:titleTextAppearance="@style/TextMedium_22size_500weight"
         app:titleTextColor="?attr/elementColor_black_white" />
 
@@ -40,32 +40,32 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_16"
-        app:layout_constraintStart_toStartOf="@id/left_border"
         app:layout_constraintEnd_toEndOf="@id/right_border"
-        app:layout_constraintTop_toBottomOf="@id/tbPlaceWorkToolBar"/>
+        app:layout_constraintStart_toStartOf="@id/left_border"
+        app:layout_constraintTop_toBottomOf="@id/tbPlaceWorkToolBar" />
 
     <include
         android:id="@+id/clRegionValue"
         layout="@layout/filter_element"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/left_border"
         app:layout_constraintEnd_toEndOf="@id/right_border"
-        app:layout_constraintTop_toBottomOf="@id/clCountryValue"/>
+        app:layout_constraintStart_toStartOf="@id/left_border"
+        app:layout_constraintTop_toBottomOf="@id/clCountryValue" />
 
     <TextView
         android:id="@+id/btnApplyPlaceWork"
-        android:textAppearance="@style/TextMedium_16size_500weight"
         android:layout_width="0dp"
         android:layout_height="@dimen/weight_height_60"
         android:layout_marginBottom="@dimen/margin_24"
-        android:text="@string/apply"
         android:background="@drawable/field_for_result_text"
         android:gravity="center"
+        android:text="@string/apply"
+        android:textAppearance="@style/TextMedium_16size_500weight"
         android:textColor="@color/white"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/right_border"
-        app:layout_constraintStart_toStartOf="@+id/left_border"/>
+        app:layout_constraintStart_toStartOf="@+id/left_border" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
