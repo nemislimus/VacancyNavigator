@@ -2,15 +2,17 @@ package ru.practicum.android.diploma.ui.filtration.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import ru.practicum.android.diploma.databinding.FilterIndustryElementBinding
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.ui.filtration.adapters.viewholders.IndustryViewHolder
 
 class IndustryAdapter(
     private val listener: IndustryClickListener,
-) : ListAdapter<Industry, IndustryViewHolder>(IndustryComparator()) {
+) : RecyclerView.Adapter<IndustryViewHolder>() {
+
+    private val industries = ArrayList<Industry>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IndustryViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return IndustryViewHolder(
@@ -18,8 +20,10 @@ class IndustryAdapter(
         )
     }
 
+    override fun getItemCount(): Int = industries.size
+
     override fun onBindViewHolder(holder: IndustryViewHolder, position: Int) {
-        val item = currentList[position]
+        val item = industries[position]
         holder.bind(item)
         holder.binding.rbIndustryButton.setOnClickListener {
             manageListRadioButtons(item.id)
@@ -28,22 +32,14 @@ class IndustryAdapter(
     }
 
     private fun manageListRadioButtons(clickedIndustryId: String) {
-        val updateList: MutableList<Industry> = currentList.toMutableList()
-        updateList.forEachIndexed { index, industry ->
-            updateList[index] = industry.copy(
-                isSelected = industry.id == clickedIndustryId
-            )
-        }
-        submitList(updateList)
-    }
+        industries.forEachIndexed { index, industry ->
 
-    private class IndustryComparator : DiffUtil.ItemCallback<Industry>() {
-        override fun areItemsTheSame(oldItem: Industry, newItem: Industry): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Industry, newItem: Industry): Boolean {
-            return oldItem.id == newItem.id && oldItem.isSelected == newItem.isSelected
+            if (industry.isSelected != (industry.id == clickedIndustryId)) {
+                industries[index] = industry.copy(
+                    isSelected = industry.id == clickedIndustryId
+                )
+                notifyItemChanged(index)
+            }
         }
     }
 
