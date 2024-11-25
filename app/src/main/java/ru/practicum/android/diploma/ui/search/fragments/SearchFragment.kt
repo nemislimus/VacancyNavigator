@@ -236,7 +236,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
          * searchData.toMutableList() поставлен специально
          * подробности тут https://stackoverflow.com/questions/49726385/listadapter-not-updating-item-in-recyclerview
          * */
-        vacancies?.let { listAdapter.vacancies.addAll(vacancies.toMutableList()) }
+        vacancies?.let { list -> listAdapter.vacancies.addAll(list.toMutableList()) }
         listAdapter.notifyDataSetChanged()
         if (scrollToTop) {
             binding.rvVacancyList.scrollToPosition(0)
