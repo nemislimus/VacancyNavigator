@@ -69,7 +69,7 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
     private fun showRegions(regions: List<Area>) {
         setPlaceholdersVisibility(false)
         binding.rvRegionList.isVisible = true
-        listAdapter.submitList(regions)
+        showNewList(regions)
     }
 
     private fun setPlaceholdersVisibility(isVisible: Boolean) {
@@ -77,7 +77,7 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
     }
 
     private fun showNotFound() {
-        listAdapter.submitList(emptyList())
+        showNewList()
         setPlaceholdersVisibility(true)
         with(binding) {
             rvRegionList.isVisible = false
@@ -119,6 +119,12 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
     private fun goBack() {
         findNavController().navigateUp()
         // Здесь передать результат предыдущему фрагменту
+    }
+
+    private fun showNewList(areas: List<Area>? = null) {
+        listAdapter.areas.clear()
+        areas?.let { list -> listAdapter.areas.addAll(list) }
+        listAdapter.notifyDataSetChanged()
     }
 
     companion object {
