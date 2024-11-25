@@ -12,5 +12,4 @@ abstract class StateViewModel<T> : ViewModel() {
     protected fun renderState(state: T) {
         stateLiveData.postValue(state)
     }
-
 }

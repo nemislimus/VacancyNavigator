@@ -4,17 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.clearFragmentResultListener
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFiltrationPlaceOfWorkBinding
 import ru.practicum.android.diploma.domain.models.Area
+import ru.practicum.android.diploma.ui.filtration.model.WorkPlace
+import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationPlaceOfWorkState
+import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationPlaceOfWorkViewModel
 import ru.practicum.android.diploma.ui.utils.BindingFragment
 
 class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfWorkBinding>() {
+
+    private val viewModel by viewModel<FiltrationPlaceOfWorkViewModel>()
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -33,6 +41,13 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
         binding.tbPlaceWorkToolBar.setOnClickListener {
             findNavController().navigateUp()
         }
+
+        binding.btnApplyPlaceWork.setOnClickListener { viewModel.confirmWorkplace() }
+
+        viewModel.stateObserver().observe(viewLifecycleOwner) { state ->
+            render(state)
+        }
+
     }
 
     private fun manageFilterElementClick() {
@@ -65,8 +80,7 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
     }
 
     private fun countrySelected(country: Area) {
-        binding.clCountryValue.tvValue.text = country.name
-        binding.clCountryValue.tvValue.isVisible = true
+        viewModel.countryChange(country)
         clearFragmentResultListener(FiltrationCountryFragment.RESULT_COUNTRY_KEY)
     }
 
@@ -81,9 +95,26 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
     }
 
     private fun regionSelected(region: Area) {
-        binding.clRegionValue.tvValue.text = region.name
-        binding.clRegionValue.tvValue.isVisible = true
+        viewModel.regionChange(region)
         clearFragmentResultListener(FiltrationRegionFragment.RESULT_REGION_KEY)
+    }
+
+    private fun render(state: FiltrationPlaceOfWorkState) {
+        fillWorkplaceData(state.workPlace)
+        when (state) {
+            is FiltrationPlaceOfWorkState.Modified -> binding.btnApplyPlaceWork.isVisible = true
+            is FiltrationPlaceOfWorkState.Unmodified -> binding.btnApplyPlaceWork.isVisible = false
+            is FiltrationPlaceOfWorkState.Confirm -> onConfirm(state.workPlace)
+        }
+    }
+
+    private fun fillWorkplaceData(workPlace: WorkPlace) {
+        binding.clCountryValue.tvValue.text = workPlace.country?.name ?: ""
+        binding.clRegionValue.tvValue.text = workPlace.region?.name ?: ""
+    }
+
+    private fun onConfirm(workPlace: WorkPlace) {
+        setFragmentResult(PLACE_OF_WORK_RESULT_KEY, bundleOf(PLACE_OF_WORK_RESULT_KEY to Gson().toJson(workPlace)))
     }
 
     companion object {
