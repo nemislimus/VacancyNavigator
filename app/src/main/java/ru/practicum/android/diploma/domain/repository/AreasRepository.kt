@@ -20,4 +20,6 @@ interface AreasRepository {
     suspend fun countCitiesInRegion(regionId: String): Int
 
     suspend fun countRegionsInCountry(countryId: String): Int
+
+    suspend fun getCountry(parentId: String): Area?
 }

@@ -27,4 +27,10 @@ interface SearchFilterDao {
 
     @Query("DELETE FROM search_filter WHERE filterId=1")
     suspend fun deleteFilter()
+
+    @Query("SELECT * FROM search_filter WHERE filterId IN(2,1) ORDER BY filterId DESC LIMIT 1")
+    fun getTempFilterFlow(): Flow<SearchFilterRoom?>
+
+    @Query("DELETE FROM search_filter WHERE filterId=2")
+    suspend fun deleteTempFilter()
 }

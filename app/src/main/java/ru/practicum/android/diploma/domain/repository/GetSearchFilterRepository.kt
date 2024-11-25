@@ -9,4 +9,6 @@ interface GetSearchFilterRepository {
     suspend fun isFilterExists(): Flow<Boolean>
 
     suspend fun getFilterForNetworkClient(page: Int): SearchFilter?
+
+    suspend fun getTempFilter(): Flow<SearchFilter?>
 }
