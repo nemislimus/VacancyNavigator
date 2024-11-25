@@ -100,8 +100,12 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
                 regionSelected(region)
             }
         }
-        findNavController().navigate(R.id.action_filtrationPlaceOfWorkFragment_to_filtrationRegionFragment,
-            viewModel.getCurrentCountry()?.let { FiltrationRegionFragment.createArgs(it) })
+        findNavController().navigate(
+            R.id.action_filtrationPlaceOfWorkFragment_to_filtrationRegionFragment,
+            viewModel.getCurrentCountry()?.let {
+                FiltrationRegionFragment.createArgs(it)
+            }
+        )
     }
 
     private fun regionSelected(region: Area) {
