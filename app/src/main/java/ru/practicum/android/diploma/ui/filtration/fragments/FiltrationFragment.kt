@@ -11,10 +11,11 @@ import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFiltrationBinding
+import ru.practicum.android.diploma.domain.models.SearchFilter
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationData
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationViewModel
 import ru.practicum.android.diploma.ui.utils.BindingFragment
-import ru.practicum.android.diploma.util.EMPTY_STRING
+
 
 open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
 
@@ -41,7 +42,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
 
             vModel.saveSalary(
                 salary = s.toString().replace(
-                    regex = Regex("""[^0-9_]""", RegexOption.IGNORE_CASE),
+                    regex = Regex("""[^0-9]""", RegexOption.IGNORE_CASE),
                     replacement = ""
                 ).toInt()
             )
@@ -68,9 +69,36 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
             )
         }
 
+        binding.btnApplyFilter.setOnClickListener {
+            vModel.goBack(
+                applyBeforeExiting = true
+            )
+        }
+
+        binding.btnResetFilter.setOnClickListener {
+            vModel.resetFilter()
+        }
+
         vModel.getLiveData().observe(viewLifecycleOwner) {
             when (it) {
-                is FiltrationData.Filter -> TODO()
+                is FiltrationData.Filter -> {
+                    with(binding) {
+                        clCountryValue.tvValue.text = concatAreasNames(it.filter)
+
+                        it.filter.industry?.let { industry ->
+                            clIndustryValue.tvValue.text = industry.name
+                        }
+
+                        it.filter.salary?.let { salary ->
+                            etSalaryEditText.setText(salary.toString())
+                        } ?: run {
+                            etSalaryEditText.setText("0")
+                        }
+
+                        ckbSalaryCheckbox.isChecked = it.filter.onlyWithSalary
+                    }
+                }
+
                 is FiltrationData.GoBack -> {
                     if (it.applyBeforeExiting) {
                         // apply filter before exiting
@@ -78,9 +106,24 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
                     findNavController().navigateUp()
                 }
 
-                is FiltrationData.IsFilterChanged -> TODO()
+                is FiltrationData.IsFilterChanged -> {
+                    with(binding) {
+                        btnApplyFilter.isVisible = it.isChanged
+                        btnResetFilter.isVisible = it.isChanged
+                    }
+                }
             }
         }
+    }
+
+    private fun concatAreasNames(filter: SearchFilter): String {
+        val names = mutableListOf<String>()
+        filter.let {
+            if (it.country != null) names.add(it.country.name)
+            if (it.region != null) names.add(it.region.name)
+            if (it.city != null) names.add(it.city.name)
+        }
+        return names.joinToString(", ")
     }
 
     private fun manageFilterElementClick() {
@@ -126,7 +169,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
     }
 
     private fun clearSalary() {
-        binding.etSalaryEditText.setText(EMPTY_STRING)
+        binding.etSalaryEditText.setText("0")
         if (!binding.etSalaryEditText.isFocused) binding.tvSalaryHint.setTextColor(salaryThemeColor)
     }
 
