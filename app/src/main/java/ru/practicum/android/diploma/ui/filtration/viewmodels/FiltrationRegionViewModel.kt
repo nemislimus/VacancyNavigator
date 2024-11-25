@@ -44,7 +44,7 @@ class FiltrationRegionViewModel(
     fun saveRegion(region: Area) {
         viewModelScope.launch {
             filterSetter.saveAreaTempValue(region)
-            _liveData.setSingleEventValue(FiltrationRegionData.GoBack)
+            _liveData.setSingleEventValue(FiltrationRegionData.GoBack(region))
         }
     }
 

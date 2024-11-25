@@ -31,8 +31,7 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
     }
 
     private val listAdapter = RegionAdapter {
-        // viewModel.saveRegion(it)
-        regionSelected(it)
+        viewModel.saveRegion(it)
     }
 
     override fun createBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentFiltrationRegionBinding {
@@ -60,7 +59,11 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
 
         viewModel.liveData.observe(viewLifecycleOwner) {
             when (it) {
-                FiltrationRegionData.GoBack -> goBack()
+                is FiltrationRegionData.GoBack -> {
+                    it.region?.let { region -> regionSelected(region) }
+                    goBack()
+                }
+
                 FiltrationRegionData.NotFound -> showNotFound()
                 FiltrationRegionData.NotSuchRegion -> {}
                 is FiltrationRegionData.Regions -> showRegions(it.regions)
@@ -131,7 +134,6 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
 
     private fun regionSelected(region: Area) {
         setFragmentResult(RESULT_REGION_KEY, bundleOf(RESULT_REGION_KEY to Gson().toJson(region)))
-        goBack()
     }
 
     companion object {
