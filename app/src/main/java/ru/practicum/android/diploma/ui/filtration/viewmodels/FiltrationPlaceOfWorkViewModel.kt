@@ -11,6 +11,8 @@ class FiltrationPlaceOfWorkViewModel : StateViewModel<FiltrationPlaceOfWorkState
     private var currentCountry: Area? = null
     private var currentRegion: Area? = null
 
+    fun getCurrentCountry() = currentCountry
+
     fun countryChange(country: Area?) {
         currentCountry = country
         currentCountry?.let { currentRegion = null }
