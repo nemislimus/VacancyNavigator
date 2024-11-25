@@ -11,7 +11,7 @@ class IndustryAdapter(
     private val listener: IndustryClickListener,
 ) : RecyclerView.Adapter<IndustryViewHolder>() {
 
-    private val industries = ArrayList<Industry>()
+    val industries = ArrayList<Industry>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IndustryViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)

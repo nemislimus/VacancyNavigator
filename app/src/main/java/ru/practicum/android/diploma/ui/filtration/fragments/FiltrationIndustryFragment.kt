@@ -24,7 +24,7 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
 
     override fun createBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
     ): FragmentFiltrationIndustryBinding {
         return FragmentFiltrationIndustryBinding.inflate(inflater, container, false)
     }
@@ -52,7 +52,11 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
         vModel.getLiveData().observe(viewLifecycleOwner) {
             when (it) {
                 FiltrationIndustryData.GoBack -> goBack()
-                is FiltrationIndustryData.Industries -> listAdapter.submitList(it.industries)
+                is FiltrationIndustryData.Industries -> {
+                    listAdapter.industries.clear()
+                    listAdapter.industries.addAll(it.industries)
+                    listAdapter.notifyDataSetChanged()
+                }
             }
         }
     }
