@@ -4,11 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
-import com.google.gson.Gson
 import ru.practicum.android.diploma.databinding.FragmentFiltrationSelectBinding
-import ru.practicum.android.diploma.domain.models.Area
 import ru.practicum.android.diploma.ui.utils.BindingFragment
 
 class FiltrationCountryFragment : BindingFragment<FragmentFiltrationSelectBinding>() {
