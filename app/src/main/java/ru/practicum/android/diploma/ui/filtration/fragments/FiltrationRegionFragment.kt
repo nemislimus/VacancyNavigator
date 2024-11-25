@@ -81,7 +81,9 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
         setPlaceholdersVisibility(true)
         with(binding) {
             rvRegionList.isVisible = false
-            clPlaceholderRegion.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_filter_region_list_not_found)
+            clPlaceholderRegion.ivPlaceholderPicture.setImageResource(
+                R.drawable.placeholder_filter_region_list_not_found
+            )
             clPlaceholderRegion.tvPlaceholderText.text = requireContext().getText(R.string.not_found_regions)
         }
     }
