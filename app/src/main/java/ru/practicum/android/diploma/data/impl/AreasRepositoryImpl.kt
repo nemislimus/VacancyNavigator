@@ -96,4 +96,15 @@ class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
     override suspend fun countRegionsInCountry(countryId: String): Int {
         return dao.countAreasInParent(countryId.toInt())
     }
+
+    override suspend fun getCountry(parentId: String): Area? {
+        var country: Area? = null
+        var areaId = parentId.toInt()
+        while (true) {
+            val area = dao.getParentArea(areaId) ?: break
+            areaId = area.parentId
+            country = AreaRoomToAreaMapper.map(area)
+        }
+        return country
+    }
 }

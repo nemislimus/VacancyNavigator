@@ -7,12 +7,15 @@ import ru.practicum.android.diploma.data.db.dao.SearchFilterDao
 import ru.practicum.android.diploma.domain.models.SearchFilter
 import ru.practicum.android.diploma.domain.repository.GetSearchFilterRepository
 
-class GetSearchFilterRepositoryImpl(private val dao: SearchFilterDao) : GetSearchFilterRepository {
+class GetSearchFilterRepositoryImpl(
+    private val dao: SearchFilterDao
+) : GetSearchFilterRepository {
     private var activeFilter: SearchFilter? = null
     private var hasActiveFilter: Boolean = false
     private val mapper = SearchFilterToSearchFilterRoomMapper
 
     override suspend fun getFilter(): Flow<SearchFilter?> {
+        dao.deleteTempFilter()
         return dao.getFilterFlow().map { mapper.map(it) }
     }
 
@@ -32,5 +35,9 @@ class GetSearchFilterRepositoryImpl(private val dao: SearchFilterDao) : GetSearc
         hasActiveFilter = true
 
         return activeFilter
+    }
+
+    override suspend fun getTempFilter(): Flow<SearchFilter?> {
+        return dao.getTempFilterFlow().map { mapper.map(it) }
     }
 }
