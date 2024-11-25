@@ -115,27 +115,31 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
         } ?: { showEmptyRegion() }
     }
 
-    private fun showFillElement(element: FilterElementBinding, text: String) {
-        element.tvValue.text = text
-        element.tvValue.setTextColor(requireContext().getColor(R.color.white))
-    }
-
     private fun onConfirm(workPlace: WorkPlace) {
         setFragmentResult(PLACE_OF_WORK_RESULT_KEY, bundleOf(PLACE_OF_WORK_RESULT_KEY to Gson().toJson(workPlace)))
     }
 
     private fun showEmptyCountry() {
         with(binding) {
-            clCountryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
             clCountryValue.tvValue.text = requireContext().getText(R.string.country)
+            showEmptyElement(clCountryValue)
         }
     }
 
     private fun showEmptyRegion() {
         with(binding) {
-            clRegionValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
             clRegionValue.tvValue.text = requireContext().getText(R.string.region)
+            showEmptyElement(clCountryValue)
         }
+    }
+
+    private fun showFillElement(element: FilterElementBinding, text: String) {
+        element.tvValue.text = text
+        element.tvValue.setTextColor(requireContext().getColor(R.color.white))
+    }
+
+    private fun showEmptyElement(element: FilterElementBinding) {
+        element.tvValue.setTextColor(requireContext().getColor(R.color.gray))
     }
 
     companion object {
