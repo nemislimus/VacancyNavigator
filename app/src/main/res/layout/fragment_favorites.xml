@@ -4,20 +4,138 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ru.practicum.android.diploma.ui.favorites.FavoritesFragment">
+    tools:context="ru.practicum.android.diploma.ui.favorites.fragments.FavoritesFragment">
 
-    <!--    Удалить при реализации-->
-    <TextView
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glLeftBorder_16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Избранное"
-        android:textAlignment="center"
-        android:textColor="?attr/elementColor_black_white"
-        android:textSize="46sp"
-        android:textStyle="bold"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glRightBorder_16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/margin_16" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tbFavoritesToolBar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/size_64dp"
+        android:layout_marginEnd="@dimen/margin_10"
+        app:buttonGravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/favourites"
+        app:titleTextAppearance="@style/TextMedium_22size_500weight"
+        app:titleTextColor="?attr/elementColor_black_white" />
+
+    <ProgressBar
+        android:id="@+id/pbFavoritesProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/tbFavoritesToolBar" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clEmptyState"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
+        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/tbFavoritesToolBar">
+
+        <ImageView
+            android:id="@+id/ivFavoritesEmpty"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/intro_search_picture"
+            android:scaleType="fitCenter"
+            android:src="@drawable/placeholder_favorite_empty"
+            android:visibility="visible"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="@string/pictures_ratio"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            style="@style/TextMedium_22size_500weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_8"
+            android:gravity="center"
+            android:text="@string/list_empty"
+            android:textColor="?attr/elementColor_black_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivFavoritesEmpty" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clDbErrorState"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
+        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/tbFavoritesToolBar">
+
+        <ImageView
+            android:id="@+id/ivPlaceholderPicture"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/placeholder_picture"
+            android:scaleType="fitCenter"
+            android:src="@drawable/placeholder_not_found_picture"
+            android:visibility="visible"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintDimensionRatio="@string/pictures_ratio"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTag="phPicture"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvPlaceholderText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_30"
+            android:layout_marginTop="@dimen/margin_16"
+            android:gravity="center"
+            android:text="@string/not_found_vacancies"
+            android:textAppearance="@style/TextMedium_22size_500weight"
+            android:textColor="?attr/elementColor_black_white"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTag="phText"
+            app:layout_constraintTop_toBottomOf="@id/ivPlaceholderPicture" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
+        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/tbFavoritesToolBar"
+        tools:itemCount="1"
+        tools:listitem="@layout/vacancy_list_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -1,24 +1,40 @@
 package ru.practicum.android.diploma.ui.search.fragments
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
-import ru.practicum.android.diploma.domain.search.model.Vacancy
-import ru.practicum.android.diploma.ui.search.VacancyListAdapter
+import ru.practicum.android.diploma.domain.models.VacancyShort
+import ru.practicum.android.diploma.ui.search.rv.VacancyListAdapter
+import ru.practicum.android.diploma.ui.search.viewmodels.SearchState
+import ru.practicum.android.diploma.ui.search.viewmodels.SearchViewModel
 import ru.practicum.android.diploma.ui.utils.MenuBindingFragment
+import ru.practicum.android.diploma.ui.vacancy.VacancyFragment
 import ru.practicum.android.diploma.util.EMPTY_STRING
+import ru.practicum.android.diploma.util.declension
 
 class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
     private val listAdapter = VacancyListAdapter { clickOnVacancy(it) }
+
+    private val viewModel: SearchViewModel by viewModel()
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -42,16 +58,136 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        listAdapter.setGapONListTop()
+        with(binding) {
+            rvVacancyList.adapter = listAdapter
+            llSearchFieldContainer.ivClearIcon.setOnClickListener {
+                clearQuery()
+            }
 
-        binding.rvVacancyList.adapter = listAdapter
+            llSearchFieldContainer.etSearchQueryText.addTextChangedListener { s ->
+                if (s.isNullOrBlank()) {
+                    clearScreen()
+                }
+                viewModel.searchDebounce(s.toString())
+                setSearchIcon(s.isNullOrBlank())
+                showIntro(s.isNullOrBlank())
+            }
+            rvVacancyList.addOnScrollListener(object : OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
 
-        binding.llSearchFieldContainer.ivClearIcon.setOnClickListener {
-            clearQuery()
+                    if (dy > 0) {
+                        val pos =
+                            (binding.rvVacancyList.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                        if (pos >= listAdapter.itemCount - 1) {
+                            viewModel.onLastItemReached()
+                        }
+                    }
+                }
+            })
         }
 
-        binding.llSearchFieldContainer.etSearchQueryText.addTextChangedListener { s ->
-            setSearchIcon(s.isNullOrBlank())
-            showIntro(s.isNullOrBlank())
+        viewModel.searchState.observe(viewLifecycleOwner) { searchResult ->
+            when (searchResult) {
+                SearchState.IsLoading -> {
+                    listAdapter.submitList(emptyList())
+                    showLoading()
+                    closeKeyboard()
+                }
+
+                SearchState.IsLoadingNextPage -> showLoadingNextPage()
+                is SearchState.Content -> showContent(searchResult.pageData, searchResult.vacanciesCount)
+                SearchState.ConnectionError -> showConnectionError()
+                SearchState.NotFoundError -> showNotFoundError()
+            }
+        }
+    }
+
+    private fun showLoadingNextPage() {
+        binding.pbNextPageProgress.isVisible = true
+    }
+
+    private fun showErrorBase() {
+        with(binding) {
+            pbSearchProgress.isVisible = false
+            pbNextPageProgress.isVisible = false
+            rvVacancyList.isVisible = false
+            clPlaceholder.root.isVisible = true
+        }
+    }
+
+    private fun showToast(message: Int) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showNotFoundError() {
+        setResultInfo(messageId = R.string.no_query_vacancies)
+        showErrorBase()
+        with(binding) {
+            clPlaceholder.tvPlaceholderText.text = getString(R.string.not_found_vacancies)
+            clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_not_found_picture)
+        }
+    }
+
+    private fun showConnectionError() {
+        if (listAdapter.itemCount > 1) {
+            binding.pbNextPageProgress.isVisible = false
+            showToast(R.string.no_internet)
+        } else {
+            showErrorBase()
+            with(binding) {
+                clPlaceholder.tvPlaceholderText.text = getString(R.string.no_internet)
+                clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_no_internet_picture)
+                tvResultInfo.isVisible = false
+            }
+        }
+    }
+
+    private fun clearScreen() {
+        listAdapter.submitList(emptyList())
+        binding.rvVacancyList.isVisible = false
+        binding.tvResultInfo.isVisible = false
+        clearPlaceholders()
+    }
+
+    private fun clearPlaceholders() {
+        with(binding) {
+            clPlaceholder.root.isVisible = false
+            pbSearchProgress.isVisible = false
+            pbNextPageProgress.isVisible = false
+        }
+    }
+
+    private fun showLoading() {
+        with(binding) {
+            clPlaceholder.root.isVisible = false
+            pbSearchProgress.isVisible = true
+            tvResultInfo.isVisible = false
+        }
+    }
+
+    private fun showContent(searchData: List<VacancyShort>, vacanciesCount: Int) {
+        with(binding) {
+            rvVacancyList.isVisible = true
+            setResultInfo(vacanciesCount, R.string.search_result_info)
+        }
+        clearPlaceholders()
+        listAdapter.submitList(searchData)
+        if (searchData.size <= PER_PAGE) {
+            lifecycleScope.launch {
+                delay(DELAY)
+                binding.rvVacancyList.scrollToPosition(0)
+            }
+        }
+    }
+
+    private fun setResultInfo(vacanciesCount: Int = -1, messageId: Int) {
+        binding.tvResultInfo.isVisible = true
+        if (vacanciesCount != -1) {
+            binding.tvResultInfo.text = declension(vacanciesCount, getString(messageId))
+        } else {
+            binding.tvResultInfo.text = getString(messageId)
         }
     }
 
@@ -67,7 +203,11 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
     }
 
     private fun clearQuery() {
-        binding.llSearchFieldContainer.etSearchQueryText.setText(EMPTY_STRING)
+        with(binding) {
+            llSearchFieldContainer.etSearchQueryText.setText(EMPTY_STRING)
+            rvVacancyList.isVisible = false
+            pbSearchProgress.isVisible = false
+        }
     }
 
     private fun goToFilter() {
@@ -76,10 +216,29 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         )
     }
 
-    private fun clickOnVacancy(vacancy: Vacancy) {
+    private fun clickOnVacancy(vacancy: VacancyShort) {
         findNavController().navigate(
-            R.id.action_searchFragment_to_vacancyFragment
+            R.id.action_searchFragment_to_vacancyFragment,
+            VacancyFragment.createArgs(vacancy.id)
         )
     }
 
+    private fun closeKeyboard() {
+        activity?.let {
+            it.currentFocus?.let { view ->
+                val manager = requireActivity().baseContext.getSystemService(
+                    INPUT_METHOD_SERVICE
+                ) as InputMethodManager
+                manager.hideSoftInputFromWindow(
+                    view.windowToken,
+                    0
+                )
+            }
+        }
+    }
+
+    companion object {
+        const val PER_PAGE = 20
+        const val DELAY = 200L
+    }
 }

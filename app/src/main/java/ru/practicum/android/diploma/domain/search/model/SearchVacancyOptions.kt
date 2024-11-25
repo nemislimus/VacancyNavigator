@@ -1,10 +1,15 @@
 package ru.practicum.android.diploma.domain.search.model
 
-class SearchVacancyOptions(
-    var text: String,
-    var page: Int = 0,
-    var areaId: String? = null,
-    var industryId: String? = null,
-    var salary: Int? = null,
-    var onlyWithSalary: Boolean? = null,
+import ru.practicum.android.diploma.domain.models.SearchFilter
+
+/** Параметры поиска
+ * @param text - Наименование вакансии или ещё часть
+ * @param page - Страница списка
+ * @param filter - Фильтр вакансий [SearchFilter]
+ * @author Ячменев И.
+ * */
+data class SearchVacancyOptions(
+    val text: String,
+    val page: Int = 0,
+    val filter: SearchFilter? = null
 )

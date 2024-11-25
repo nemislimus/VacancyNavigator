@@ -3,6 +3,8 @@
     <attr name="elementColor_black_white" format="color"/>
     <attr name="elementColor_lightgray_gray" format="color"/>
     <attr name="elementColor_gray_white" format="color"/>
+    <attr name="elementColor_red_white" format="color"/>
+    <attr name="elementColor_white2_black2" format="color"/>
 
     <!-- Base application theme. -->
     <style name="Base.Theme.PracticumAndroidDiploma" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -15,6 +17,8 @@
         <item name="elementColor_black_white">@color/black</item>
         <item name="elementColor_lightgray_gray">@color/light_gray</item>
         <item name="elementColor_gray_white">@color/gray</item>
+        <item name="elementColor_red_white">@color/red</item>
+        <item name="elementColor_white2_black2">@color/white_2</item>
     </style>
 
     <style name="Theme.PracticumAndroidDiploma" parent="Base.Theme.PracticumAndroidDiploma" />
@@ -52,5 +56,11 @@
         <item name="android:textSize">@dimen/text_size_12</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="bottom_navigation_panel" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconTint">@color/switch_navigation_item_color</item>
+        <item name="itemTextColor">@color/switch_navigation_item_color</item>
+        <item name="android:background">?attr/appBackgroundColor</item>
     </style>
 </resources>

@@ -48,7 +48,7 @@
             tools:text="Android-разработчик, Москва" />
 
         <TextView
-            android:id="@+id/tvEmployer"
+            android:id="@+id/tvEmployerName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
