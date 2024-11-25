@@ -5,5 +5,4 @@ import ru.practicum.android.diploma.domain.models.Area
 
 interface FiltrationPlaceOfWorkInteractor {
     suspend fun getCountryByRegionId(regionId: String): Flow<Area?>
-    suspend fun getAreaById(id:String): Flow<Area?>
 }

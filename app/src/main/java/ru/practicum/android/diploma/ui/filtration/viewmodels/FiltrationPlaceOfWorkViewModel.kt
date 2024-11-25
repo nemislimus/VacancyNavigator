@@ -10,7 +10,7 @@ import ru.practicum.android.diploma.ui.utils.StateViewModel
 
 class FiltrationPlaceOfWorkViewModel(
     private val interactor: FiltrationPlaceOfWorkInteractor,
-    private val previousAreaId: String?
+    private val previousArea: Area?
 ) :
     StateViewModel<FiltrationPlaceOfWorkState>() {
 
@@ -20,18 +20,14 @@ class FiltrationPlaceOfWorkViewModel(
     private var initCountryJob: Job? = null
 
     init {
-        previousAreaId?.let {
+        previousArea?.let { area ->
             viewModelScope.launch {
-                interactor.getAreaById(previousAreaId).collect {
-                    it?.let { area ->
-                        interactor.getCountryByRegionId(area.id).collect { country ->
-                            country?.let {
-                                currentCountry = country
-                                currentRegion = area
-                            } ?: let { currentCountry = area }
-                            renderContent()
-                        }
-                    }
+                interactor.getCountryByRegionId(area.id).collect { country ->
+                    country?.let {
+                        currentCountry = country
+                        currentRegion = area
+                    } ?: let { currentCountry = area }
+                    renderContent()
                 }
             }
         }
@@ -68,11 +64,10 @@ class FiltrationPlaceOfWorkViewModel(
     }
 
     private fun renderContent() {
-
-        val modify = when (previousAreaId) {
+        val modify = when (previousArea) {
             null -> currentCountry != null || currentRegion != null
-            else -> currentRegion?.let { previousAreaId != it.id }
-                ?: let { currentCountry?.let { previousAreaId != it.id } } ?: true
+            else -> currentRegion?.let { previousArea.id != it.id }
+                ?: let { currentCountry?.let { previousArea.id != it.id } } ?: true
         }
 
         val workPlace = currentWorkPlace()
@@ -84,7 +79,6 @@ class FiltrationPlaceOfWorkViewModel(
             }
         )
     }
-
 
     private fun currentWorkPlace(): WorkPlace = WorkPlace(currentCountry, currentRegion)
 
