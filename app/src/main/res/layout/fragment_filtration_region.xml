@@ -35,7 +35,7 @@
 
     <include
         android:id="@+id/llSearchRegionField"
-        layout="@layout/search_field_industry"
+        layout="@layout/search_field_region"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/margin_8"
@@ -44,11 +44,11 @@
         app:layout_constraintTop_toBottomOf="@id/tbRegionToolBar" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvIndustryist"
+        android:id="@+id/rvRegionList"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/margin_8"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
@@ -56,8 +56,19 @@
         app:layout_constraintTop_toBottomOf="@id/llSearchRegionField"
         tools:listitem="@layout/rv_item_region" />
 
+    <ProgressBar
+        android:id="@+id/pbRegionProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llSearchRegionField" />
+
     <include
-        android:id="@+id/clPlaceholder"
+        android:id="@+id/clPlaceholderRegion"
         layout="@layout/placeholder"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

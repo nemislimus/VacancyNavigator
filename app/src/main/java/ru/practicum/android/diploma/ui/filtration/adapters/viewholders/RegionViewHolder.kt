@@ -9,6 +9,6 @@ class RegionViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: Area) {
-        binding.tvValue.text = model.name
+        binding.tvRegion.text = model.name
     }
 }

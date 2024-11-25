@@ -35,7 +35,7 @@
         app:titleTextColor="?attr/elementColor_black_white" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvIndustryist"
+        android:id="@+id/rvCountryList"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="visible"
@@ -46,4 +46,16 @@
         app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
         app:layout_constraintTop_toBottomOf="@id/tbCountryWorkToolBar"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ProgressBar
+        android:id="@+id/pbProgressCountry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tbCountryWorkToolBar" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

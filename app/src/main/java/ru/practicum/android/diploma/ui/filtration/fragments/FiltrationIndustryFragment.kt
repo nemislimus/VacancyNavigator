@@ -34,12 +34,12 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
 
         with(binding) {
             tbIndustryToolBar.setOnClickListener { goBack() }
-            rvIndustryist.adapter = listAdapter
+            rvIndustryList.adapter = listAdapter
             llSearchIndustryField.ivClearIcon.setOnClickListener {
                 clearQuery()
             }
 
-            llSearchIndustryField.etSearchQueryText.addTextChangedListener { s ->
+            llSearchIndustryField.etSearchIndustryQuery.addTextChangedListener { s ->
                 setSearchIcon(s.isNullOrBlank())
                 vModel.getIndustries(s.toString())
             }
@@ -66,7 +66,7 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
 
     private fun clearQuery() {
         with(binding) {
-            llSearchIndustryField.etSearchQueryText.setText(EMPTY_STRING)
+            llSearchIndustryField.etSearchIndustryQuery.setText(EMPTY_STRING)
         }
         closeKeyboard()
     }
