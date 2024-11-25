@@ -242,5 +242,4 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
             binding.rvVacancyList.scrollToPosition(0)
         }
     }
-
 }

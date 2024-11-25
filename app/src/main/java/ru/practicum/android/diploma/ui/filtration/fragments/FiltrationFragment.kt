@@ -8,12 +8,17 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFiltrationBinding
+import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationData
+import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationViewModel
 import ru.practicum.android.diploma.ui.utils.BindingFragment
 import ru.practicum.android.diploma.util.EMPTY_STRING
 
 open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
+
+    private val vModel: FiltrationViewModel by viewModel()
 
     private var salaryThemeColor = 0
     private var valuesThemeColor = 0
@@ -33,6 +38,13 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
 
         binding.etSalaryEditText.addTextChangedListener { s ->
             showClearSalaryIcon(s.isNullOrBlank())
+
+            vModel.saveSalary(
+                salary = s.toString().replace(
+                    regex = Regex("""[^0-9_]""", RegexOption.IGNORE_CASE),
+                    replacement = ""
+                ).toInt()
+            )
         }
 
         binding.etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
@@ -40,7 +52,9 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
         }
 
         binding.tbFilterToolBar.setOnClickListener {
-            findNavController().navigateUp()
+            vModel.goBack(
+                applyBeforeExiting = false
+            )
         }
 
         binding.ivClearSalary.setOnClickListener {
@@ -49,6 +63,23 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
 
         binding.ckbSalaryCheckbox.setOnClickListener {
             binding.etSalaryEditText.clearFocus()
+            vModel.setOnlyWithSalary(
+                withSalary = binding.ckbSalaryCheckbox.isChecked
+            )
+        }
+
+        vModel.getLiveData().observe(viewLifecycleOwner) {
+            when (it) {
+                is FiltrationData.Filter -> TODO()
+                is FiltrationData.GoBack -> {
+                    if (it.applyBeforeExiting) {
+                        // apply filter before exiting
+                    }
+                    findNavController().navigateUp()
+                }
+
+                is FiltrationData.IsFilterChanged -> TODO()
+            }
         }
     }
 
