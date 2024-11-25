@@ -11,13 +11,13 @@ class FiltrationPlaceOfWorkViewModel : StateViewModel<FiltrationPlaceOfWorkState
     private var currentCountry: Area? = null
     private var currentRegion: Area? = null
 
-    fun countryChange(country: Area) {
+    fun countryChange(country: Area?) {
         currentCountry = country
-        currentRegion = null
+        currentCountry?.let { currentRegion = null }
         renderContent()
     }
 
-    fun regionChange(region: Area) {
+    fun regionChange(region: Area?) {
         currentRegion = region
         renderContent()
     }

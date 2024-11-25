@@ -54,7 +54,9 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
     private fun manageFilterElementClick() {
         with(binding) {
             clCountryValue.ivElementButton.setOnClickListener { countryStartSelection() }
+            clCountryValue.ivClearElementButton.setOnClickListener { viewModel.countryChange(null) }
             clRegionValue.ivElementButton.setOnClickListener { regionStartSelection() }
+            clRegionValue.ivClearElementButton.setOnClickListener { viewModel.regionChange(null) }
         }
     }
 
@@ -109,10 +111,10 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
     private fun fillWorkplaceData(workPlace: WorkPlace) {
         workPlace.country?.let {
             showFillElement(binding.clCountryValue, it.name)
-        } ?: { showEmptyCountry() }
+        } ?: showEmptyCountry()
         workPlace.region?.let {
             showFillElement(binding.clRegionValue, it.name)
-        } ?: { showEmptyRegion() }
+        } ?: showEmptyRegion()
     }
 
     private fun onConfirm(workPlace: WorkPlace) {
@@ -129,17 +131,21 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
     private fun showEmptyRegion() {
         with(binding) {
             clRegionValue.tvValue.text = requireContext().getText(R.string.region)
-            showEmptyElement(clCountryValue)
+            showEmptyElement(clRegionValue)
         }
     }
 
     private fun showFillElement(element: FilterElementBinding, text: String) {
         element.tvValue.text = text
         element.tvValue.setTextColor(requireContext().getColor(R.color.white))
+        element.ivClearElementButton.isVisible = true
+        element.ivElementButton.isVisible = false
     }
 
     private fun showEmptyElement(element: FilterElementBinding) {
         element.tvValue.setTextColor(requireContext().getColor(R.color.gray))
+        element.ivClearElementButton.isVisible = false
+        element.ivElementButton.isVisible = true
     }
 
     companion object {
