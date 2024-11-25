@@ -4,7 +4,7 @@ import ru.practicum.android.diploma.domain.models.Area
 import ru.practicum.android.diploma.domain.models.Geolocation
 import ru.practicum.android.diploma.domain.models.Industry
 
-interface SetSearchFilterInteractor {
+interface   SetSearchFilterInteractor {
 
     suspend fun saveIndustry(industry: Industry?)
 

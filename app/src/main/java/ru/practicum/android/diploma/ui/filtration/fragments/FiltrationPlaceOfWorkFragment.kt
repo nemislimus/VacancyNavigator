@@ -12,6 +12,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FilterElementBinding
 import ru.practicum.android.diploma.databinding.FragmentFiltrationPlaceOfWorkBinding
@@ -23,7 +24,9 @@ import ru.practicum.android.diploma.ui.utils.BindingFragment
 
 class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfWorkBinding>() {
 
-    private val viewModel by viewModel<FiltrationPlaceOfWorkViewModel>()
+    private val viewModel by viewModel<FiltrationPlaceOfWorkViewModel> {
+        parametersOf(arguments?.getString(CURRENT_AREA_KEY))
+    }
 
     private var valuesThemeColor = 0
 
@@ -156,6 +159,8 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
 
     companion object {
         const val PLACE_OF_WORK_RESULT_KEY = "place_of_work"
+        private const val CURRENT_AREA_KEY = "current_area"
+        fun createArgs(areaId: String) = bundleOf(CURRENT_AREA_KEY to areaId)
     }
 
 }

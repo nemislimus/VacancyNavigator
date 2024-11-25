@@ -8,15 +8,34 @@ import ru.practicum.android.diploma.domain.models.Area
 import ru.practicum.android.diploma.ui.filtration.model.WorkPlace
 import ru.practicum.android.diploma.ui.utils.StateViewModel
 
-class FiltrationPlaceOfWorkViewModel(private val interactor: FiltrationPlaceOfWorkInteractor) :
+class FiltrationPlaceOfWorkViewModel(
+    private val interactor: FiltrationPlaceOfWorkInteractor,
+    private val previousAreaId: String?
+) :
     StateViewModel<FiltrationPlaceOfWorkState>() {
-
-    private val previousArea: Area? = null
 
     private var currentCountry: Area? = null
     private var currentRegion: Area? = null
 
     private var initCountryJob: Job? = null
+
+    init {
+        previousAreaId?.let {
+            viewModelScope.launch {
+                interactor.getAreaById(previousAreaId).collect {
+                    it?.let { area ->
+                        interactor.getCountryByRegionId(area.id).collect { country ->
+                            country?.let {
+                                currentCountry = country
+                                currentRegion = area
+                            } ?: let { currentCountry = area }
+                            renderContent()
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     fun getCurrentCountry() = currentCountry
 
@@ -49,7 +68,13 @@ class FiltrationPlaceOfWorkViewModel(private val interactor: FiltrationPlaceOfWo
     }
 
     private fun renderContent() {
-        val modify = previousArea?.id != currentRegion?.id
+
+        val modify = when (previousAreaId) {
+            null -> currentCountry != null || currentRegion != null
+            else -> currentRegion?.let { previousAreaId != it.id }
+                ?: let { currentCountry?.let { previousAreaId != it.id } } ?: true
+        }
+
         val workPlace = currentWorkPlace()
         renderState(
             if (modify) {
@@ -59,6 +84,7 @@ class FiltrationPlaceOfWorkViewModel(private val interactor: FiltrationPlaceOfWo
             }
         )
     }
+
 
     private fun currentWorkPlace(): WorkPlace = WorkPlace(currentCountry, currentRegion)
 

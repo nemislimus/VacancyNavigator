@@ -47,6 +47,6 @@ val viewModelModule = module {
         )
     }
 
-    viewModel { FiltrationPlaceOfWorkViewModel(interactor = get()) }
+    viewModel { (areaId: String?) -> FiltrationPlaceOfWorkViewModel(interactor = get(), previousAreaId = areaId) }
 
 }
