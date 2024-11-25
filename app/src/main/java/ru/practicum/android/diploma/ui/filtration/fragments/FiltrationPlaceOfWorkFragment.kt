@@ -125,7 +125,8 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
     }
 
     private fun onConfirm(workPlace: WorkPlace) {
-        setFragmentResult(PLACE_OF_WORK_RESULT_KEY, bundleOf(PLACE_OF_WORK_RESULT_KEY to Gson().toJson(workPlace)))
+        val resultId = workPlace.region?.id ?: let { workPlace.country?.id }
+        setFragmentResult(PLACE_OF_WORK_RESULT_KEY, bundleOf(PLACE_OF_WORK_RESULT_KEY to resultId))
     }
 
     private fun showEmptyCountry() {
