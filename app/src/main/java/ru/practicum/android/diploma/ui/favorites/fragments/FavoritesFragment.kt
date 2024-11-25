@@ -17,7 +17,7 @@ import ru.practicum.android.diploma.ui.vacancy.VacancyFragment
 
 class FavoritesFragment : BindingFragment<FragmentFavoritesBinding>() {
 
-    private val listAdapter = FavoritesAdapter{clickOnVacancy(it)}
+    private val listAdapter = FavoritesAdapter { clickOnVacancy(it) }
 
     private val viewModel: FavoritesViewModel by viewModel()
 
