@@ -39,16 +39,16 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.llSearchRegionField.etSearchQueryText.hint = requireContext().getText(R.string.enter_region_query)
+        binding.llSearchRegionField.etSearchRegionQuery.hint = requireContext().getText(R.string.enter_region_query)
 
         with(binding) {
             tbRegionToolBar.setOnClickListener { goBack() }
-            rvIndustryist.adapter = listAdapter
+            rvRegionList.adapter = listAdapter
             llSearchRegionField.ivClearIcon.setOnClickListener {
                 clearQuery()
             }
 
-            llSearchRegionField.etSearchQueryText.addTextChangedListener { s ->
+            llSearchRegionField.etSearchRegionQuery.addTextChangedListener { s ->
                 setSearchIcon(s.isNullOrBlank())
                 viewModel.getRegions(s.toString())
             }
@@ -68,21 +68,21 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
 
     private fun showRegions(regions: List<Area>) {
         setPlaceholdersVisibility(false)
-        binding.rvIndustryist.isVisible = true
+        binding.rvRegionList.isVisible = true
         listAdapter.submitList(regions)
     }
 
     private fun setPlaceholdersVisibility(isVisible: Boolean) {
-        binding.clPlaceholder.root.isVisible = isVisible
+        binding.clPlaceholderRegion.root.isVisible = isVisible
     }
 
     private fun showNotFound() {
         listAdapter.submitList(emptyList())
         setPlaceholdersVisibility(true)
         with(binding) {
-            rvIndustryist.isVisible = false
-            clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_filter_region_list_not_found)
-            clPlaceholder.tvPlaceholderText.text = requireContext().getText(R.string.not_found_regions)
+            rvRegionList.isVisible = false
+            clPlaceholderRegion.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_filter_region_list_not_found)
+            clPlaceholderRegion.tvPlaceholderText.text = requireContext().getText(R.string.not_found_regions)
         }
     }
 
@@ -95,7 +95,7 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
 
     private fun clearQuery() {
         with(binding) {
-            llSearchRegionField.etSearchQueryText.setText(EMPTY_STRING)
+            llSearchRegionField.etSearchRegionQuery.setText(EMPTY_STRING)
         }
         closeKeyboard()
     }
