@@ -9,7 +9,9 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
+import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import ru.practicum.android.diploma.R
@@ -57,7 +59,11 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
 
         viewModel.liveData.observe(viewLifecycleOwner) {
             when (it) {
-                FiltrationRegionData.GoBack -> goBack()
+                is FiltrationRegionData.GoBack -> {
+                    it.region?.let { region -> regionSelected(region) }
+                    goBack()
+                }
+
                 FiltrationRegionData.NotFound -> showNotFound()
                 FiltrationRegionData.NotSuchRegion -> {}
                 is FiltrationRegionData.Regions -> showRegions(it.regions)
@@ -117,8 +123,7 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
     }
 
     private fun goBack() {
-        findNavController().navigateUp()
-        // Здесь передать результат предыдущему фрагменту
+        findNavController().popBackStack()
     }
 
     private fun showNewList(areas: List<Area>? = null) {
@@ -127,13 +132,18 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
         listAdapter.notifyDataSetChanged()
     }
 
+    private fun regionSelected(region: Area) {
+        setFragmentResult(RESULT_REGION_KEY, bundleOf(RESULT_REGION_KEY to Gson().toJson(region)))
+    }
+
     companion object {
 
-        const val COUNTRY_ID_KEY = "country id key"
+        const val RESULT_REGION_KEY = "selected_region_key"
 
-        fun setParams(countryId: String): Bundle {
-            return bundleOf(COUNTRY_ID_KEY to countryId)
-        }
+        const val COUNTRY_ID_KEY = "country_id_key"
+
+        fun createArgs(country: Area) = bundleOf(COUNTRY_ID_KEY to country.id)
+
     }
 
 }
