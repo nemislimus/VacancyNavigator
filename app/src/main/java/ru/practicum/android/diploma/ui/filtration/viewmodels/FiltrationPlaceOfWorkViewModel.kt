@@ -25,7 +25,9 @@ class FiltrationPlaceOfWorkViewModel(
                 interactor.getCountryByRegionId(area.id).collect { country ->
                     country?.let {
                         currentCountry = country
-                        currentRegion = area
+                        if (country != area) {
+                            currentRegion = area
+                        }
                     } ?: let { currentCountry = area }
                     renderContent()
                 }
