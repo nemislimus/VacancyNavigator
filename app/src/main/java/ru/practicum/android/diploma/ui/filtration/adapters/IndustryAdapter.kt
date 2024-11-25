@@ -11,7 +11,14 @@ class IndustryAdapter(
     private val listener: IndustryClickListener,
 ) : RecyclerView.Adapter<IndustryViewHolder>() {
 
-    val industries = ArrayList<Industry>()
+    private val industries = ArrayList<Industry>()
+    private var selectedIndex: Int? = null
+
+    fun setIndustries(newIndustries: List<Industry>) {
+        selectedIndex = null
+        industries.clear()
+        industries.addAll(newIndustries)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IndustryViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -24,23 +31,27 @@ class IndustryAdapter(
 
     override fun onBindViewHolder(holder: IndustryViewHolder, position: Int) {
         val item = industries[position]
+
         holder.bind(item)
         holder.binding.rbIndustryButton.setOnClickListener {
-            manageListRadioButtons(item.id)
+            manageListRadioButtons(position)
             listener.onIndustryClick(item)
         }
+
+        if (item.isSelected) {
+            selectedIndex = position.toInt()
+        }
+
     }
 
-    private fun manageListRadioButtons(clickedIndustryId: String) {
-        industries.forEachIndexed { index, industry ->
-
-            if (industry.isSelected != (industry.id == clickedIndustryId)) {
-                industries[index] = industry.copy(
-                    isSelected = industry.id == clickedIndustryId
-                )
-                notifyItemChanged(index)
-            }
+    private fun manageListRadioButtons(position: Int) {
+        selectedIndex?.let {
+            industries[it] = industries[it].copy(isSelected = false)
+            notifyItemChanged(it)
         }
+        industries[position] = industries[position].copy(isSelected = true)
+        notifyItemChanged(position)
+
     }
 
     fun interface IndustryClickListener {

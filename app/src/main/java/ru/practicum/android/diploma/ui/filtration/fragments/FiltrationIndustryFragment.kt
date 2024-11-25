@@ -53,8 +53,7 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
             when (it) {
                 FiltrationIndustryData.GoBack -> goBack()
                 is FiltrationIndustryData.Industries -> {
-                    listAdapter.industries.clear()
-                    listAdapter.industries.addAll(it.industries)
+                    listAdapter.setIndustries(it.industries)
                     listAdapter.notifyDataSetChanged()
                 }
             }
