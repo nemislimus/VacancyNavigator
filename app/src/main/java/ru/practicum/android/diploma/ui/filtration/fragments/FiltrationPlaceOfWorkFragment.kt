@@ -25,6 +25,8 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
 
     private val viewModel by viewModel<FiltrationPlaceOfWorkViewModel>()
 
+    private var valuesThemeColor = 0
+
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -64,6 +66,7 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
         with(binding) {
             clCountryValue.tvHint.text = requireContext().getText(R.string.country)
             clRegionValue.tvHint.text = requireContext().getText(R.string.region)
+            valuesThemeColor = clCountryValue.tvValue.currentTextColor
         }
         showEmptyCountry()
         showEmptyRegion()
@@ -138,15 +141,17 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
 
     private fun showFillElement(element: FilterElementBinding, text: String) {
         element.tvValue.text = text
-        element.tvValue.setTextColor(requireContext().getColor(R.color.white))
+        element.tvValue.setTextColor(valuesThemeColor)
         element.ivClearElementButton.isVisible = true
         element.ivElementButton.isVisible = false
+        element.tvHint.isVisible = true
     }
 
     private fun showEmptyElement(element: FilterElementBinding) {
         element.tvValue.setTextColor(requireContext().getColor(R.color.gray))
         element.ivClearElementButton.isVisible = false
         element.ivElementButton.isVisible = true
+        element.tvHint.isVisible = false
     }
 
     companion object {
