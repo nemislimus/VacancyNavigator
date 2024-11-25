@@ -25,7 +25,6 @@ class FavoritesAdapter(
         holder.itemView.setOnClickListener { itemClickListener.onItemClick(item) }
     }
 
-
     private class ItemComparator : DiffUtil.ItemCallback<VacancyShort>() {
         override fun areItemsTheSame(oldItem: VacancyShort, newItem: VacancyShort): Boolean {
             return oldItem.id == newItem.id
