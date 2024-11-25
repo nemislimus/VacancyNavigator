@@ -19,7 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
 import ru.practicum.android.diploma.domain.models.VacancyShort
-import ru.practicum.android.diploma.ui.search.rv.VacancyListAdapter
+import ru.practicum.android.diploma.ui.search.rv.DeleteVacancyListAdapter
 import ru.practicum.android.diploma.ui.search.viewmodels.SearchState
 import ru.practicum.android.diploma.ui.search.viewmodels.SearchViewModel
 import ru.practicum.android.diploma.ui.utils.MenuBindingFragment
@@ -29,7 +29,7 @@ import ru.practicum.android.diploma.util.declension
 
 class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
-    private val listAdapter = VacancyListAdapter { clickOnVacancy(it) }
+    private val listAdapter = DeleteVacancyListAdapter { clickOnVacancy(it) }
 
     private val viewModel: SearchViewModel by viewModel()
 

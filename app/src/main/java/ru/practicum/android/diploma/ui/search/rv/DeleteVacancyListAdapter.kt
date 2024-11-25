@@ -2,19 +2,25 @@ package ru.practicum.android.diploma.ui.search.rv
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.VacancyListGapBinding
 import ru.practicum.android.diploma.databinding.VacancyListItemBinding
 import ru.practicum.android.diploma.domain.models.VacancyShort
 
-class VacancyListAdapter(private val itemClickListener: ItemClickListener) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DeleteVacancyListAdapter(
+    private val itemClickListener: ItemClickListener,
+) : ListAdapter<VacancyShort, RecyclerView.ViewHolder>(ItemComparator()) {
     private var gapONListTop: Int = 0
-    val vacancies = ArrayList<VacancyShort>()
 
     fun setGapONListTop() {
         gapONListTop = 1
+    }
+
+    override fun getItemCount(): Int {
+        return currentList.size + gapONListTop
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -36,7 +42,7 @@ class VacancyListAdapter(private val itemClickListener: ItemClickListener) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is VacancyViewHolder -> {
-                val item = vacancies[position - gapONListTop]
+                val item = currentList[position - gapONListTop]
                 holder.bind(item)
                 holder.itemView.setOnClickListener { itemClickListener.onItemClick(item) }
             }
@@ -49,7 +55,15 @@ class VacancyListAdapter(private val itemClickListener: ItemClickListener) :
     override fun getItemViewType(position: Int): Int =
         if (gapONListTop > 0 && position == 0) GAP_ITEM else VACANCY_ITEM
 
-    override fun getItemCount(): Int = vacancies.size + gapONListTop
+    private class ItemComparator : DiffUtil.ItemCallback<VacancyShort>() {
+        override fun areItemsTheSame(oldItem: VacancyShort, newItem: VacancyShort): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: VacancyShort, newItem: VacancyShort): Boolean {
+            return oldItem == newItem
+        }
+    }
 
     fun interface ItemClickListener {
         fun onItemClick(item: VacancyShort)
