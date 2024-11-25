@@ -50,4 +50,8 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
         }
     }
 
+    companion object{
+        const val PLACE_OF_WORK_KEY = "place_of_work"
+    }
+
 }
