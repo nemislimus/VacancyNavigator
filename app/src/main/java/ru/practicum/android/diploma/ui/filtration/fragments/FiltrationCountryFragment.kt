@@ -1,6 +1,8 @@
 package ru.practicum.android.diploma.ui.filtration.fragments
 
+import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
@@ -18,9 +20,14 @@ class FiltrationCountryFragment : BindingFragment<FragmentFiltrationSelectBindin
         return FragmentFiltrationSelectBinding.inflate(inflater, container, false)
     }
 
-    private fun countrySelected(area: Area) {
-        setFragmentResult(RESULT_COUNTRY_KEY, bundleOf(RESULT_COUNTRY_KEY to Gson().toJson(area)))
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
+
+    //** Раскоментировать при работе. Закомментриовал из-за detekt **/
+//    private fun countrySelected(area: Area) {
+//        setFragmentResult(RESULT_COUNTRY_KEY, bundleOf(RESULT_COUNTRY_KEY to Gson().toJson(area)))
+//    }
 
     companion object {
         const val RESULT_COUNTRY_KEY = "selected_country"
