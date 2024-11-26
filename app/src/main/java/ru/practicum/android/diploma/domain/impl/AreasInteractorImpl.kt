@@ -44,4 +44,8 @@ class AreasInteractorImpl(private val repository: AreasRepository) : AreasIntera
     override suspend fun getCountry(parentId: String): Area? {
         return repository.getCountry(parentId)
     }
+
+    override suspend fun getAreaById(id: String): Area? {
+        return repository.getAreaById(id)
+    }
 }

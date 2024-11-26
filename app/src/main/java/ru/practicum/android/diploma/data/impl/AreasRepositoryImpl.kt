@@ -101,10 +101,15 @@ class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
         var country: Area? = null
         var areaId = parentId.toInt()
         while (true) {
-            val area = dao.getParentArea(areaId) ?: break
+            val area = dao.getAreaById(areaId) ?: break
             areaId = area.parentId
             country = AreaRoomToAreaMapper.map(area)
         }
         return country
+    }
+
+    override suspend fun getAreaById(id: String): Area? {
+        val area = dao.getAreaById(id.toInt())
+        return if (area != null) AreaRoomToAreaMapper.map(area) else null
     }
 }
