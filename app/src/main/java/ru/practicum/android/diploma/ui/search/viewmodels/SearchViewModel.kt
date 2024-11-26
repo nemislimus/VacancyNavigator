@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.ui.search.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -146,6 +145,5 @@ class SearchViewModel(
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private const val UNNECESSERY_DELAY = 1500L
     }
 }
