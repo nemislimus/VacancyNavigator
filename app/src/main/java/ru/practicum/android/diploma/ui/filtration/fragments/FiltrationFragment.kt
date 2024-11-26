@@ -35,6 +35,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         super.onViewCreated(view, savedInstanceState)
         detektHelper = FiltrationFragmentUiDetektHelper(requireContext(), binding)
         detektHelper?.onViewCreated()
+        detektHelper?.onResume()
         manageFilterElementClick()
         bindingNumberOne()
         bindingNumberTwo()
@@ -87,11 +88,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        detektHelper?.onResume()
     }
 
     private fun bindingNumberOne() {
