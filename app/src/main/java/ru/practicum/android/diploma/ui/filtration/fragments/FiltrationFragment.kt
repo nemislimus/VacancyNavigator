@@ -8,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
@@ -19,7 +21,6 @@ import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationData
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationViewModel
 import ru.practicum.android.diploma.ui.utils.BindingFragment
 import ru.practicum.android.diploma.util.NumDeclension
-
 
 open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), NumDeclension {
 
@@ -51,6 +52,13 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
 
                         it.filter.industry?.let { industry ->
                             clIndustryValue.tvValue.text = industry.name
+                        } ?: run {
+                            clIndustryValue.tvValue.text = requireContext().getText(R.string.industry)
+                        }
+
+                        with(binding.clIndustryValue) {
+                            ivElementButton.isVisible = it.filter.industry == null
+                            ivClearElementButton.isVisible = it.filter.industry != null
                         }
 
                         it.filter.salary?.let { salary ->
@@ -67,7 +75,10 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
 
                 is FiltrationData.GoBack -> {
                     if (it.applyBeforeExiting) {
-                        // apply filter before exiting
+                        setFragmentResult(
+                            RESULT_IS_FILTER_APPLIED_KEY,
+                            bundleOf(RESULT_IS_FILTER_APPLIED_KEY to "true")
+                        )
                     }
                     findNavController().navigateUp()
                 }
@@ -153,26 +164,53 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
             if (it.region != null) names.add(it.region.name)
             if (it.city != null) names.add(it.city.name)
         }
+        with(binding.clCountryValue) {
+            ivElementButton.isVisible = names.size == 0
+            ivClearElementButton.isVisible = names.size != 0
+        }
+        if (names.size == 0) {
+            return requireContext().getText(R.string.place_of_work).toString()
+        }
         return names.joinToString(", ")
     }
 
     private fun manageFilterElementClick() {
-        binding.clCountryValue.ivElementButton.setOnClickListener {
-            findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
-        }
 
-        binding.clIndustryValue.ivElementButton.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_filtrationFragment_to_filtrationIndustryFragment
-            )
-        }
+        with(binding) {
+            clCountryValue.tvValue.setOnClickListener {
+                findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
+            }
+            clCountryValue.ivElementButton.setOnClickListener {
+                findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
+            }
 
-        binding.clCountryValue.ivClearElementButton.setOnClickListener {
-            with(binding.clCountryValue) {
-                tvHint.isVisible = false
-                ivElementButton.isVisible = true
-                ivClearElementButton.isVisible = false
-                tvValue.setTextColor(requireContext().getColor(R.color.gray))
+            clIndustryValue.tvValue.setOnClickListener {
+                findNavController().navigate(
+                    R.id.action_filtrationFragment_to_filtrationIndustryFragment
+                )
+            }
+            clIndustryValue.ivElementButton.setOnClickListener {
+                findNavController().navigate(
+                    R.id.action_filtrationFragment_to_filtrationIndustryFragment
+                )
+            }
+            clIndustryValue.ivClearElementButton.setOnClickListener {
+                with(binding.clIndustryValue) {
+                    tvHint.isVisible = false
+                    ivElementButton.isVisible = true
+                    ivClearElementButton.isVisible = false
+                    tvValue.setTextColor(requireContext().getColor(R.color.gray))
+                }
+                vModel.resetIndustry()
+            }
+            clCountryValue.ivClearElementButton.setOnClickListener {
+                with(binding.clCountryValue) {
+                    tvHint.isVisible = false
+                    ivElementButton.isVisible = true
+                    ivClearElementButton.isVisible = false
+                    tvValue.setTextColor(requireContext().getColor(R.color.gray))
+                }
+                vModel.resetWorkplace()
             }
         }
     }
@@ -254,5 +292,10 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                 )
             }
         }
+    }
+
+    companion object {
+        const val RESULT_IS_FILTER_APPLIED_KEY = "IS_FILTER_APPLIED_KEY"
+        const val EMPTY_STRING = ""
     }
 }

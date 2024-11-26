@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
 import ru.practicum.android.diploma.domain.models.VacancyShort
+import ru.practicum.android.diploma.ui.filtration.fragments.FiltrationFragment
 import ru.practicum.android.diploma.ui.search.rv.VacancyListAdapter
 import ru.practicum.android.diploma.ui.search.viewmodels.SearchState
 import ru.practicum.android.diploma.ui.search.viewmodels.SearchViewModel
@@ -204,6 +206,11 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
     }
 
     private fun goToFilter() {
+        setFragmentResultListener(FiltrationFragment.RESULT_IS_FILTER_APPLIED_KEY) { key, bundle ->
+            bundle.getString(FiltrationFragment.RESULT_IS_FILTER_APPLIED_KEY)?.apply {
+                viewModel.searchAfterFilterApplied()
+            }
+        }
         findNavController().navigate(
             R.id.action_searchFragment_to_filtrationFragment
         )
@@ -241,5 +248,9 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
         if (scrollToTop) {
             binding.rvVacancyList.scrollToPosition(0)
         }
+    }
+
+    companion object {
+        const val RESULT_IS_FILTER_APPLIED_KEY = "IS_FILTER_APPLIED_KEY"
     }
 }

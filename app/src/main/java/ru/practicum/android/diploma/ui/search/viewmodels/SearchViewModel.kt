@@ -43,6 +43,14 @@ class SearchViewModel(
         _searchDebounce(searchQuery)
     }
 
+    fun searchAfterFilterApplied() {
+        if (lastSearchRequest.isNotBlank()) {
+            clearPagingHistory()
+            _searchState.clear()
+            _searchDebounce(lastSearchRequest)
+        }
+    }
+
     private fun clearPagingHistory() {
         vacanciesList.clear()
         maxPages = Integer.MAX_VALUE

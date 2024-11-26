@@ -15,7 +15,7 @@ interface SetSearchFilterRepository {
 
     suspend fun resetFilter()
 
-    suspend fun saveArea(area: Area, saveToTempFilter: Boolean = false)
+    suspend fun saveArea(area: Area?, saveToTempFilter: Boolean = false)
 
     suspend fun resetAreaTempValue()
 }

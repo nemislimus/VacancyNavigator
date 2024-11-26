@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.util
 
-
 interface NumDeclension {
     fun declension(
         num: Int,
@@ -52,6 +51,9 @@ interface NumDeclension {
 
     fun threeZeroFormat(salary: String): String {
         return salary.replace(
+            Regex("""[^0-9]"""),
+            ""
+        ).replace(
             Regex("""(\d{1,3}|\G\d{3})(?=(?:\d{3})+(?!\d))"""),
             "$1 "
         ).trim()
