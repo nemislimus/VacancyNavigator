@@ -217,9 +217,9 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                 tvHint.isVisible = true
                 tvValue.setTextColor(valuesThemeColor)
             } else {
+                tvHint.isVisible = false
                 tvValue.text = requireContext().getText(R.string.industry)
                 tvValue.setTextColor(requireContext().getColor(R.color.gray))
-                tvHint.isVisible = false
             }
         }
     }
@@ -233,9 +233,9 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
 //                tvHint.isVisible = true
 //                tvValue.setTextColor(valuesThemeColor)
 //            } else {
+//                tvHint.isVisible = false
 //                tvValue.text = requireContext().getText(R.string.place_of_work)
 //                tvValue.setTextColor(requireContext().getColor(R.color.gray))
-//                tvHint.isVisible = false
 //            }
 //        }
 //    }
