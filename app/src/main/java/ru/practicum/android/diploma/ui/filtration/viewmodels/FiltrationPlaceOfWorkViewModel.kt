@@ -10,9 +10,11 @@ import ru.practicum.android.diploma.ui.utils.StateViewModel
 
 class FiltrationPlaceOfWorkViewModel(
     private val interactor: FiltrationPlaceOfWorkInteractor,
-    private val previousArea: Area?
+    previousAreaId: String?,
 ) :
     StateViewModel<FiltrationPlaceOfWorkState>() {
+
+    private var previousArea: Area? = null
 
     private var currentCountry: Area? = null
     private var currentRegion: Area? = null
@@ -20,19 +22,28 @@ class FiltrationPlaceOfWorkViewModel(
     private var initCountryJob: Job? = null
 
     init {
-        previousArea?.let { area ->
+
+        previousAreaId?.let { id ->
             viewModelScope.launch {
-                interactor.getCountryByRegionId(area.id).collect { country ->
-                    country?.let {
-                        currentCountry = country
-                        if (country != area) {
-                            currentRegion = area
+                interactor.getAreaById(id).collect {
+                    previousArea = it
+                    previousArea?.let { area ->
+                        viewModelScope.launch {
+                            interactor.getCountryByRegionId(area.id).collect { country ->
+                                country?.let {
+                                    currentCountry = country
+                                    if (country != area) {
+                                        currentRegion = area
+                                    }
+                                } ?: let { currentCountry = area }
+                                renderContent()
+                            }
                         }
-                    } ?: let { currentCountry = area }
-                    renderContent()
+                    }
                 }
             }
         }
+
     }
 
     fun getCurrentCountry() = currentCountry
@@ -68,8 +79,8 @@ class FiltrationPlaceOfWorkViewModel(
     private fun renderContent() {
         val modify = when (previousArea) {
             null -> currentCountry != null || currentRegion != null
-            else -> currentRegion?.let { previousArea.id != it.id }
-                ?: let { currentCountry?.let { previousArea.id != it.id } } ?: true
+            else -> currentRegion?.let { previousArea?.id != it.id }
+                ?: let { currentCountry?.let { previousArea?.id != it.id } } ?: true
         }
 
         val workPlace = currentWorkPlace()
