@@ -58,26 +58,20 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                     } else {
                         clCountryValue.tvHint.isVisible = false
                     }
-
                     filtrationData.filter.industry?.let { industry ->
                         setIndustryFieldValueUi(industry.name)
                     } ?: run {
                         setIndustryFieldValueUi(null)
                     }
-
                     with(binding.clIndustryValue) {
                         ivElementButton.isVisible = filtrationData.filter.industry == null
                         ivClearElementButton.isVisible = filtrationData.filter.industry != null
                     }
-
                     filtrationData.filter.salary?.let { salary ->
-                        etSalaryEditText.setText(
-                            rubFormat(salary.toString())
-                        )
+                        etSalaryEditText.setText(rubFormat(salary.toString()))
                     } ?: run {
                         etSalaryEditText.text.clear()
                     }
-
                     ckbSalaryCheckbox.isChecked = filtrationData.filter.onlyWithSalary
                 }
             }
