@@ -1,13 +1,10 @@
 package ru.practicum.android.diploma.ui.filtration.fragments
 
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -16,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFiltrationBinding
-import ru.practicum.android.diploma.domain.models.SearchFilter
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationData
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationViewModel
 import ru.practicum.android.diploma.ui.utils.BindingFragment
@@ -25,10 +21,8 @@ import ru.practicum.android.diploma.util.NumDeclension
 open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), NumDeclension {
 
     private val vModel: FiltrationViewModel by viewModel()
-
-    private var salaryThemeColor = 0
-    private var valuesThemeColor = 0
     private var lastNormalSalary = 0
+    private lateinit var detektHelper: FiltrationFragmentUiDetektHelper
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -39,16 +33,17 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getAttrColors()
-        setFilterFieldUiValues()
+        detektHelper = FiltrationFragmentUiDetektHelper(requireContext(), binding)
+        detektHelper.onViewCreated()
         manageFilterElementClick()
-        addBindings()
+        bindingNumberOne()
+        bindingNumberTwo()
 
         vModel.getLiveData().observe(viewLifecycleOwner) {
             when (it) {
                 is FiltrationData.Filter -> {
                     with(binding) {
-                        clCountryValue.tvValue.text = concatAreasNames(it.filter)
+                        clCountryValue.tvValue.text = detektHelper.concatAreasNames(it.filter)
 
                         it.filter.industry?.let { industry ->
                             clIndustryValue.tvValue.text = industry.name
@@ -93,12 +88,13 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         }
     }
 
-    private fun addBindings() {
-        with(binding) {
-            ivEditSalaryBackground.setOnClickListener {
-                etSalaryEditText.requestFocus()
-            }
+    override fun onResume() {
+        super.onResume()
+        detektHelper.onResume()
+    }
 
+    private fun bindingNumberOne() {
+        with(binding) {
             etSalaryEditText.addTextChangedListener { s ->
                 showClearSalaryIcon(s.isNullOrBlank())
 
@@ -121,10 +117,13 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                     etSalaryEditText.setText("0")
                 }
             }
+        }
+    }
 
+    private fun bindingNumberTwo() {
+        with(binding) {
             etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
-                manageSalaryHintColor(hasFocus)
-                if (!hasFocus) closeKeyboard()
+                detektHelper.manageSalaryHintColor(hasFocus)
                 formatSalary(hasFocus)
             }
 
@@ -134,12 +133,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                 )
             }
 
-            ivClearSalary.setOnClickListener {
-                clearSalary()
-            }
-
             ckbSalaryCheckbox.setOnClickListener {
-                etSalaryEditText.clearFocus()
                 vModel.setOnlyWithSalary(
                     withSalary = ckbSalaryCheckbox.isChecked
                 )
@@ -155,23 +149,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                 vModel.resetFilter()
             }
         }
-    }
-
-    private fun concatAreasNames(filter: SearchFilter): String {
-        val names = mutableListOf<String>()
-        filter.let {
-            if (it.country != null) names.add(it.country.name)
-            if (it.region != null) names.add(it.region.name)
-            if (it.city != null) names.add(it.city.name)
-        }
-        with(binding.clCountryValue) {
-            ivElementButton.isVisible = names.size == 0
-            ivClearElementButton.isVisible = names.size != 0
-        }
-        if (names.size == 0) {
-            return requireContext().getText(R.string.place_of_work).toString()
-        }
-        return names.joinToString(", ")
     }
 
     private fun manageFilterElementClick() {
@@ -214,66 +191,19 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         }
     }
 
-    private fun getAttrColors() {
-        val themeValuesTextColor = TypedValue()
-        val themeSalaryHintTextColor = TypedValue()
-        requireContext().theme.resolveAttribute(R.attr.elementColor_black_white, themeValuesTextColor, true)
-        requireContext().theme.resolveAttribute(R.attr.elementColor_gray_white, themeSalaryHintTextColor, true)
-        valuesThemeColor = themeValuesTextColor.data
-        salaryThemeColor = themeSalaryHintTextColor.data
-    }
-
-    private fun setFilterFieldUiValues() {
-        with(binding) {
-            clCountryValue.tvValue.text = requireContext().getText(R.string.place_of_work)
-            clCountryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
-            clCountryValue.tvHint.text = requireContext().getText(R.string.place_of_work)
-
-            clIndustryValue.tvValue.text = requireContext().getText(R.string.industry)
-            clIndustryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
-            clIndustryValue.tvHint.text = requireContext().getText(R.string.industry)
-        }
-    }
-
-    private fun clearSalary() {
-        binding.etSalaryEditText.text.clear()
-        if (!binding.etSalaryEditText.isFocused) binding.tvSalaryHint.setTextColor(salaryThemeColor)
-    }
-
     private fun showClearSalaryIcon(salaryIsEmpty: Boolean) {
         with(binding) {
             ivClearSalary.isVisible = !salaryIsEmpty
         }
     }
 
-    private fun manageSalaryHintColor(hasFocus: Boolean) {
-        if (hasFocus) {
-            binding.tvSalaryHint.setTextColor(requireContext().getColor(R.color.blue))
-        } else {
-            if (binding.etSalaryEditText.text.isNullOrBlank()) {
-                binding.tvSalaryHint.setTextColor(salaryThemeColor)
-            } else {
-                binding.tvSalaryHint.setTextColor(requireContext().getColor(R.color.black))
-            }
-        }
-    }
-
-    private fun closeKeyboard() {
-        activity?.let {
-            it.currentFocus?.let { view ->
-                val manager = requireActivity().baseContext.getSystemService(
-                    INPUT_METHOD_SERVICE
-                ) as InputMethodManager
-                manager.hideSoftInputFromWindow(
-                    view.windowToken,
-                    0
-                )
-            }
-        }
-    }
-
     private fun rubFormat(salary: String): String {
-        return threeZeroFormat(salary) + " " + requireContext().getString(R.string.rub)
+        val rubString = threeZeroFormat(salary)
+        return rubString + if (rubString.isNotBlank()) {
+            " " + requireContext().getString(R.string.rub)
+        } else {
+            ""
+        }
     }
 
     private fun formatSalary(hasFocus: Boolean) {
@@ -295,6 +225,5 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
 
     companion object {
         const val RESULT_IS_FILTER_APPLIED_KEY = "IS_FILTER_APPLIED_KEY"
-        const val EMPTY_STRING = ""
     }
 }
