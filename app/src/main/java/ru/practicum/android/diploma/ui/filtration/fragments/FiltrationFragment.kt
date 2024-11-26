@@ -45,57 +45,59 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         bindingNumberTwo()
         getAttrColors()
 
-        vModel.getLiveData().observe(viewLifecycleOwner) {
-            when (it) {
-                is FiltrationData.Filter -> {
-                    with(binding) {
-                        clCountryValue.tvValue.text = detektHelper?.concatAreasNames(it.filter)
-                        if (clCountryValue.tvValue.text != requireContext().getString(R.string.place_of_work)) {
-                            clCountryValue.tvValue.setTextColor(valuesThemeColor)
-                        } else {
-                            clCountryValue.tvHint.isVisible = false
-                        }
+        vModel.getLiveData().observe(viewLifecycleOwner) { renderFiltrationData(it) }
+    }
 
-                        it.filter.industry?.let { industry ->
-                            setIndustryFieldValueUi(industry.name)
-                        } ?: run {
-                            setIndustryFieldValueUi(null)
-                        }
-
-                        with(binding.clIndustryValue) {
-                            ivElementButton.isVisible = it.filter.industry == null
-                            ivClearElementButton.isVisible = it.filter.industry != null
-                        }
-
-                        it.filter.salary?.let { salary ->
-                            etSalaryEditText.setText(
-                                rubFormat(salary.toString())
-                            )
-                        } ?: run {
-                            etSalaryEditText.text.clear()
-                        }
-
-                        ckbSalaryCheckbox.isChecked = it.filter.onlyWithSalary
+    private fun renderFiltrationData(filtrationData: FiltrationData) {
+        when (filtrationData) {
+            is FiltrationData.Filter -> {
+                with(binding) {
+                    clCountryValue.tvValue.text = detektHelper?.concatAreasNames(filtrationData.filter)
+                    if (clCountryValue.tvValue.text != requireContext().getString(R.string.place_of_work)) {
+                        clCountryValue.tvValue.setTextColor(valuesThemeColor)
+                    } else {
+                        clCountryValue.tvHint.isVisible = false
                     }
-                }
 
-                is FiltrationData.GoBack -> {
-                    if (it.applyBeforeExiting) {
-                        setFragmentResult(
-                            RESULT_IS_FILTER_APPLIED_KEY,
-                            bundleOf(RESULT_IS_FILTER_APPLIED_KEY to "true")
+                    filtrationData.filter.industry?.let { industry ->
+                        setIndustryFieldValueUi(industry.name)
+                    } ?: run {
+                        setIndustryFieldValueUi(null)
+                    }
+
+                    with(binding.clIndustryValue) {
+                        ivElementButton.isVisible = filtrationData.filter.industry == null
+                        ivClearElementButton.isVisible = filtrationData.filter.industry != null
+                    }
+
+                    filtrationData.filter.salary?.let { salary ->
+                        etSalaryEditText.setText(
+                            rubFormat(salary.toString())
                         )
+                    } ?: run {
+                        etSalaryEditText.text.clear()
                     }
-                    findNavController().navigateUp()
-                }
 
-                is FiltrationData.ApplyButton -> {
-                    binding.btnApplyFilter.isVisible = it.visible
+                    ckbSalaryCheckbox.isChecked = filtrationData.filter.onlyWithSalary
                 }
+            }
 
-                is FiltrationData.ResetButton -> {
-                    binding.btnResetFilter.isVisible = it.visible
+            is FiltrationData.GoBack -> {
+                if (filtrationData.applyBeforeExiting) {
+                    setFragmentResult(
+                        RESULT_IS_FILTER_APPLIED_KEY,
+                        bundleOf(RESULT_IS_FILTER_APPLIED_KEY to "true")
+                    )
                 }
+                findNavController().navigateUp()
+            }
+
+            is FiltrationData.ApplyButton -> {
+                binding.btnApplyFilter.isVisible = filtrationData.visible
+            }
+
+            is FiltrationData.ResetButton -> {
+                binding.btnResetFilter.isVisible = filtrationData.visible
             }
         }
     }
