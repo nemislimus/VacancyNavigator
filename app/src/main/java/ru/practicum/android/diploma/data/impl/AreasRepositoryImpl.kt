@@ -9,7 +9,11 @@ import ru.practicum.android.diploma.domain.repository.AreasRepository
 class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
     override suspend fun getAllCountries(search: String?): List<Area> {
         return AreaRoomToAreaMapper.map(
-            dao.figmaCountries()
+            dao.figmaCountries().let { country ->
+                val first = country.filter { it.hhPosition > 0 }
+                val second = country.filter { it.hhPosition < 0 }
+                first + second
+            }
         )
     }
 

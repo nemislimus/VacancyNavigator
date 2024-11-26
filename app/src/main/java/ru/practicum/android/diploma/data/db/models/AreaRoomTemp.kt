@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.data.db.models
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -17,5 +18,7 @@ data class AreaRoomTemp @JvmOverloads constructor(
     val name: String, // Москва, Воронеж, Сочи
     val type: String, // country, region, city
     val parentId: Int,
-    val nestingLevel: Int // уровень вложенности в выдаче API hh.ru
+    val nestingLevel: Int, // уровень вложенности в выдаче API hh.ru
+    @ColumnInfo(defaultValue = "0")
+    val hhPosition: Int // позиция в выдаче hh.ru
 )

@@ -27,6 +27,9 @@ class UpdateDbOnAppStartRepositoryImpl(
     private val db: SQLiteDatabase by lazy { sql.writableDatabase }
     private var time = System.currentTimeMillis()
     private val countriesIds: MutableMap<String, Boolean> = mutableMapOf()
+    private var countryCounter = 1
+    private var regionCounter = 1
+    private var cityCounter = 1
 
     override suspend fun update(): Boolean {
         logTime("roomDb -> " + roomDb?.version())
@@ -138,19 +141,26 @@ class UpdateDbOnAppStartRepositoryImpl(
         }
 
         areas.forEach { area ->
-            val type = if (countriesIds[area.id] != null) {
-                AreaType.COUNTRY
+            val type: AreaType
+            val hhPosition: Int
+            if (countriesIds[area.id] != null) {
+                type = AreaType.COUNTRY
+                hhPosition = countryCounter++
             } else if (countriesIds[area.parentId] != null) {
-                AreaType.REGION
+                type = AreaType.REGION
+                hhPosition = regionCounter++
             } else if (area.parentId != null) {
-                AreaType.CITY
+                type = AreaType.CITY
+                hhPosition = cityCounter++
             } else {
-                AreaType.COUNTRY // это другие регионы
+                type = AreaType.COUNTRY // это другие регионы
+                hhPosition = -countryCounter
             }
 
             insertArea(
                 area = AreaDtoToTempAreaItemMapper.map(area, type = type, nestingLevel = level),
-                addAlsoAsCity = type == AreaType.REGION && area.areas.isNullOrEmpty()
+                addAlsoAsCity = type == AreaType.REGION && area.areas.isNullOrEmpty(),
+                hhPosition = hhPosition
             )
 
             insertAreas(area.areas, level + 1)
@@ -168,13 +178,14 @@ class UpdateDbOnAppStartRepositoryImpl(
         }
     }
 
-    private fun insertArea(area: AreaRoomTemp, addAlsoAsCity: Boolean = false) {
+    private fun insertArea(area: AreaRoomTemp, addAlsoAsCity: Boolean = false, hhPosition: Int = 0) {
         val contentValues = ContentValues()
         contentValues.put(ID, area.id)
         contentValues.put(NAME, SPACE + area.name)
         contentValues.put(TYPE, area.type)
         contentValues.put(PARENT_ID, area.parentId)
         contentValues.put(NESTING_LEVEL, area.nestingLevel)
+        contentValues.put(HH_POSITION, hhPosition)
         db.insertWithOnConflict(AREAS_NO_INDEXES, null, contentValues, CONFLICT_IGNORE)
 
         if (addAlsoAsCity) {
@@ -191,6 +202,7 @@ class UpdateDbOnAppStartRepositoryImpl(
             contentValues.put(TYPE, AreaType.CITY.type)
             contentValues.put(PARENT_ID, parentId)
             contentValues.put(NESTING_LEVEL, nestingLevel)
+            contentValues.put(HH_POSITION, hhPosition)
             db.insertWithOnConflict(AREAS_NO_INDEXES, null, contentValues, CONFLICT_IGNORE)
         }
     }
@@ -211,6 +223,7 @@ class UpdateDbOnAppStartRepositoryImpl(
         const val NESTING_LEVEL = "nestingLevel"
         const val AREAS_NO_INDEXES = "areas_no_indexes"
         const val INDUSTRY_NO_INDEXES = "industry_no_indexes"
+        const val HH_POSITION = "hhPosition"
         const val SPACE = " "
     }
 }

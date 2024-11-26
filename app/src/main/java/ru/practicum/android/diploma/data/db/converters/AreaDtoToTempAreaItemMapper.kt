@@ -11,7 +11,8 @@ object AreaDtoToTempAreaItemMapper {
         name = country.name,
         type = AreaType.COUNTRY.type,
         parentId = 0,
-        nestingLevel = nestingLevel
+        nestingLevel = nestingLevel,
+        hhPosition = 0
     )
 
     fun map(area: AreaDto, type: AreaType, nestingLevel: Int): AreaRoomTemp = AreaRoomTemp(
@@ -19,6 +20,7 @@ object AreaDtoToTempAreaItemMapper {
         name = area.name,
         parentId = area.parentId?.toInt() ?: 0,
         type = type.type,
-        nestingLevel = nestingLevel
+        nestingLevel = nestingLevel,
+        hhPosition = 0
     )
 }
