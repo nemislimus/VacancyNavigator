@@ -53,20 +53,8 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
             is FiltrationData.Filter -> {
                 with(binding) {
                     clCountryValue.tvValue.text = detektHelper?.concatAreasNames(filtrationData.filter)
-                    if (clCountryValue.tvValue.text != requireContext().getString(R.string.place_of_work)) {
-                        clCountryValue.tvValue.setTextColor(valuesThemeColor)
-                    } else {
-                        clCountryValue.tvHint.isVisible = false
-                    }
-                    filtrationData.filter.industry?.let { industry ->
-                        setIndustryFieldValueUi(industry.name)
-                    } ?: run {
-                        setIndustryFieldValueUi(null)
-                    }
-                    with(binding.clIndustryValue) {
-                        ivElementButton.isVisible = filtrationData.filter.industry == null
-                        ivClearElementButton.isVisible = filtrationData.filter.industry != null
-                    }
+                    showCountryValue()
+                    showIndustryValue(filtrationData)
                     filtrationData.filter.salary?.let { salary ->
                         etSalaryEditText.setText(rubFormat(salary.toString()))
                     } ?: run {
@@ -92,6 +80,30 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
 
             is FiltrationData.ResetButton -> {
                 binding.btnResetFilter.isVisible = filtrationData.visible
+            }
+        }
+    }
+
+    private fun showCountryValue() {
+        with(binding) {
+            if (clCountryValue.tvValue.text != requireContext().getString(R.string.place_of_work)) {
+                clCountryValue.tvValue.setTextColor(valuesThemeColor)
+            } else {
+                clCountryValue.tvHint.isVisible = false
+            }
+        }
+    }
+
+    private fun showIndustryValue(filtrationData: FiltrationData.Filter) {
+        with(binding) {
+            filtrationData.filter.industry?.let { industry ->
+                setIndustryFieldValueUi(industry.name)
+            } ?: run {
+                setIndustryFieldValueUi(null)
+            }
+            with(binding.clIndustryValue) {
+                ivElementButton.isVisible = filtrationData.filter.industry == null
+                ivClearElementButton.isVisible = filtrationData.filter.industry != null
             }
         }
     }
