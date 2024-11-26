@@ -50,7 +50,8 @@ val viewModelModule = module {
     viewModel {
         FiltrationViewModel(
             filterSetter = get(),
-            filterGetter = get()
+            filterGetter = get(),
+            systemInt = get()
         )
     }
 }

@@ -5,6 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/appBackgroundColor"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="ru.practicum.android.diploma.ui.filtration.fragments.FiltrationFragment">
 
     <androidx.constraintlayout.widget.Guideline

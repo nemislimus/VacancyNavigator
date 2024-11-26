@@ -1,10 +1,13 @@
 package ru.practicum.android.diploma.ui.filtration.fragments
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
@@ -15,14 +18,16 @@ import ru.practicum.android.diploma.domain.models.SearchFilter
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationData
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationViewModel
 import ru.practicum.android.diploma.ui.utils.BindingFragment
+import ru.practicum.android.diploma.util.NumDeclension
 
 
-open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
+open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), NumDeclension {
 
     private val vModel: FiltrationViewModel by viewModel()
 
     private var salaryThemeColor = 0
     private var valuesThemeColor = 0
+    private var lastNormalSalary = 0
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -36,48 +41,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
         getAttrColors()
         setFilterFieldUiValues()
         manageFilterElementClick()
-
-        binding.etSalaryEditText.addTextChangedListener { s ->
-            showClearSalaryIcon(s.isNullOrBlank())
-
-            vModel.saveSalary(
-                salary = s.toString().replace(
-                    regex = Regex("""[^0-9]""", RegexOption.IGNORE_CASE),
-                    replacement = ""
-                ).toInt()
-            )
-        }
-
-        binding.etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
-            manageSalaryHintColor(hasFocus)
-        }
-
-        binding.tbFilterToolBar.setOnClickListener {
-            vModel.goBack(
-                applyBeforeExiting = false
-            )
-        }
-
-        binding.ivClearSalary.setOnClickListener {
-            clearSalary()
-        }
-
-        binding.ckbSalaryCheckbox.setOnClickListener {
-            binding.etSalaryEditText.clearFocus()
-            vModel.setOnlyWithSalary(
-                withSalary = binding.ckbSalaryCheckbox.isChecked
-            )
-        }
-
-        binding.btnApplyFilter.setOnClickListener {
-            vModel.goBack(
-                applyBeforeExiting = true
-            )
-        }
-
-        binding.btnResetFilter.setOnClickListener {
-            vModel.resetFilter()
-        }
+        addBindings()
 
         vModel.getLiveData().observe(viewLifecycleOwner) {
             when (it) {
@@ -90,9 +54,11 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
                         }
 
                         it.filter.salary?.let { salary ->
-                            etSalaryEditText.setText(salary.toString())
+                            etSalaryEditText.setText(
+                                rubFormat(salary.toString())
+                            )
                         } ?: run {
-                            etSalaryEditText.setText("0")
+                            etSalaryEditText.text.clear()
                         }
 
                         ckbSalaryCheckbox.isChecked = it.filter.onlyWithSalary
@@ -112,6 +78,70 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
                         btnResetFilter.isVisible = it.isChanged
                     }
                 }
+            }
+        }
+    }
+
+    private fun addBindings() {
+        with(binding) {
+            ivEditSalaryBackground.setOnClickListener {
+                etSalaryEditText.requestFocus()
+            }
+
+            etSalaryEditText.addTextChangedListener { s ->
+                showClearSalaryIcon(s.isNullOrBlank())
+
+                try {
+                    val salary: Long = longFromString(s.toString())
+
+                    if (salary < Integer.MAX_VALUE) {
+                        lastNormalSalary = salary.toInt()
+
+                        vModel.saveSalary(
+                            salary = lastNormalSalary
+                        )
+                    } else {
+                        etSalaryEditText.setText(lastNormalSalary.toString())
+
+                        vModel.showHighSalaryInfo(salary)
+                    }
+                } catch (er: NumberFormatException) {
+                    Log.d("WWW", "High salary $er")
+                    etSalaryEditText.setText("0")
+                }
+            }
+
+            etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
+                manageSalaryHintColor(hasFocus)
+                if (!hasFocus) closeKeyboard()
+                formatSalary(hasFocus)
+            }
+
+            tbFilterToolBar.setOnClickListener {
+                vModel.goBack(
+                    applyBeforeExiting = false
+                )
+            }
+
+            ivClearSalary.setOnClickListener {
+                clearSalary()
+            }
+
+            ckbSalaryCheckbox.setOnClickListener {
+                etSalaryEditText.clearFocus()
+                vModel.setOnlyWithSalary(
+                    withSalary = ckbSalaryCheckbox.isChecked
+                )
+            }
+
+            btnApplyFilter.setOnClickListener {
+                vModel.goBack(
+                    applyBeforeExiting = true
+                )
+            }
+
+            btnResetFilter.setOnClickListener {
+                vModel.resetFilter()
             }
         }
     }
@@ -169,7 +199,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
     }
 
     private fun clearSalary() {
-        binding.etSalaryEditText.setText("0")
+        binding.etSalaryEditText.text.clear()
         if (!binding.etSalaryEditText.isFocused) binding.tvSalaryHint.setTextColor(salaryThemeColor)
     }
 
@@ -187,6 +217,41 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
                 binding.tvSalaryHint.setTextColor(salaryThemeColor)
             } else {
                 binding.tvSalaryHint.setTextColor(requireContext().getColor(R.color.black))
+            }
+        }
+    }
+
+    private fun closeKeyboard() {
+        activity?.let {
+            it.currentFocus?.let { view ->
+                val manager = requireActivity().baseContext.getSystemService(
+                    INPUT_METHOD_SERVICE
+                ) as InputMethodManager
+                manager.hideSoftInputFromWindow(
+                    view.windowToken,
+                    0
+                )
+            }
+        }
+    }
+
+    private fun rubFormat(salary: String): String {
+        return threeZeroFormat(salary) + " " + requireContext().getString(R.string.rub)
+    }
+
+    private fun formatSalary(hasFocus: Boolean) {
+        with(binding) {
+            etSalaryEditText.let {
+                it.setText(
+                    if (!hasFocus) {
+                        rubFormat(it.text.toString())
+                    } else {
+                        it.text.toString().replace(
+                            Regex("""[^0-9 ]"""),
+                            ""
+                        ).trim()
+                    }
+                )
             }
         }
     }

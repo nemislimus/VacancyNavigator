@@ -25,9 +25,9 @@ import ru.practicum.android.diploma.ui.search.viewmodels.SearchViewModel
 import ru.practicum.android.diploma.ui.utils.MenuBindingFragment
 import ru.practicum.android.diploma.ui.vacancy.VacancyFragment
 import ru.practicum.android.diploma.util.EMPTY_STRING
-import ru.practicum.android.diploma.util.declension
+import ru.practicum.android.diploma.util.NumDeclension
 
-class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
+class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclension {
 
     private val listAdapter = VacancyListAdapter { clickOnVacancy(it) }
 
