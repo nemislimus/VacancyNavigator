@@ -45,6 +45,7 @@ class FiltrationFragmentUiDetektHelper(
         with(binding.clCountryValue) {
             ivElementButton.isVisible = names.size == 0
             ivClearElementButton.isVisible = names.size != 0
+            tvHint.isVisible = true
         }
         if (names.size == 0) {
             return context.getText(R.string.place_of_work).toString()

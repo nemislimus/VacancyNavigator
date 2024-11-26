@@ -50,6 +50,11 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                 is FiltrationData.Filter -> {
                     with(binding) {
                         clCountryValue.tvValue.text = detektHelper?.concatAreasNames(it.filter)
+                        if (clCountryValue.tvValue.text != requireContext().getString(R.string.place_of_work)) {
+                            clCountryValue.tvValue.setTextColor(valuesThemeColor)
+                        } else {
+                            clCountryValue.tvHint.isVisible = false
+                        }
 
                         it.filter.industry?.let { industry ->
                             setIndustryFieldValueUi(industry.name)
