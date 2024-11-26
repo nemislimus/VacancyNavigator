@@ -38,6 +38,11 @@ class IndustryAdapter(
             listener.onIndustryClick(item)
         }
 
+        holder.binding.tvIndustryValue.setOnClickListener {
+            manageListRadioButtons(position)
+            listener.onIndustryClick(item)
+        }
+
         if (item.isSelected) {
             selectedIndex = position.toInt()
         }
