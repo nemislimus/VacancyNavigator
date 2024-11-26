@@ -2,7 +2,6 @@ package ru.practicum.android.diploma.di
 
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import ru.practicum.android.diploma.domain.models.Area
 import ru.practicum.android.diploma.ui.favorites.viewmodels.FavoritesViewModel
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationCountriesViewModel
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationIndustryViewModel
@@ -50,11 +49,17 @@ val viewModelModule = module {
         )
     }
 
-    viewModel { (area: Area?) -> FiltrationPlaceOfWorkViewModel(interactor = get(), previousArea = area) }
+    viewModel {
+        FiltrationPlaceOfWorkViewModel(
+            filterGetter = get(),
+            filterSetter = get()
+        )
+    }
 
     viewModel {
         FiltrationCountriesViewModel(
             countryGetter = get(),
+            filterSetter = get()
         )
     }
 

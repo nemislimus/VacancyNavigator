@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.domain.models.Resource
@@ -40,6 +39,14 @@ class SearchViewModel(
     private var lastSearchRequest: String = ""
     private var searchJob: Job? = null
 
+    init {
+        viewModelScope.launch(Dispatchers.Main) {
+            filterGetter.isFilterExists().collect { existOrNotExist ->
+                _filterState.postValue(existOrNotExist)
+            }
+        }
+    }
+
     fun searchDebounce(searchQuery: String) {
         if (searchQuery == lastSearchRequest) {
             return
@@ -55,18 +62,6 @@ class SearchViewModel(
             clearPagingHistory()
             _searchState.clear()
             _searchDebounce(lastSearchRequest)
-        }
-    }
-
-    suspend fun getFilterExistingStatus() {
-        viewModelScope.launch {
-            val checkFilterJob = launch {
-                filterGetter.isFilterExists().collect { existOrNotExist ->
-                    _filterState.postValue(existOrNotExist)
-                }
-            }
-            delay(UNNECESSERY_DELAY)
-            checkFilterJob.cancel()
         }
     }
 
@@ -150,6 +145,5 @@ class SearchViewModel(
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private const val UNNECESSERY_DELAY = 1500L
     }
 }
