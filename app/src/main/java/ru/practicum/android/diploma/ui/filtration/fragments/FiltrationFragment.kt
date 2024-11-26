@@ -49,7 +49,8 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
             when (it) {
                 is FiltrationData.Filter -> {
                     with(binding) {
-                        clCountryValue.tvValue.text = detektHelper?.concatAreasNames(it.filter)
+                        val workPlaceValue = detektHelper?.concatAreasNames(it.filter)
+                        setWorkPlaceFieldValueUi(workPlaceValue)
 
                         it.filter.industry?.let { industry ->
                             setIndustryFieldValueUi(industry.name)
@@ -61,6 +62,11 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                             ivElementButton.isVisible = it.filter.industry == null
                             ivClearElementButton.isVisible = it.filter.industry != null
                         }
+
+//                        with(binding.clCountryValue) {
+//                            ivElementButton.isVisible =
+//                            ivClearElementButton.isVisible =
+//                        }
 
                         it.filter.salary?.let { salary ->
                             etSalaryEditText.setText(
@@ -125,7 +131,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
     private fun bindingNumberTwo() {
         with(binding) {
             etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
-                detektHelper?.manageSalaryHintColor(hasFocus)
                 formatSalary(hasFocus)
                 manageSalaryHintColor(hasFocus)
             }
@@ -159,6 +164,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
             clCountryValue.tvValue.setOnClickListener {
                 findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
             }
+
             clCountryValue.ivElementButton.setOnClickListener {
                 findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
             }
@@ -168,20 +174,17 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                     R.id.action_filtrationFragment_to_filtrationIndustryFragment
                 )
             }
+
             clIndustryValue.ivElementButton.setOnClickListener {
                 findNavController().navigate(
                     R.id.action_filtrationFragment_to_filtrationIndustryFragment
                 )
             }
+
             clIndustryValue.ivClearElementButton.setOnClickListener {
-                with(binding.clIndustryValue) {
-                    tvHint.isVisible = false
-                    ivElementButton.isVisible = true
-                    ivClearElementButton.isVisible = false
-                    tvValue.setTextColor(requireContext().getColor(R.color.gray))
-                }
                 vModel.resetIndustry()
             }
+
             clCountryValue.ivClearElementButton.setOnClickListener {
                 with(binding.clCountryValue) {
                     tvHint.isVisible = false
@@ -224,21 +227,20 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         }
     }
 
-    // Это метод для обработки состояния строки место работы, работает как тот что выше
-//    private fun setWorkPlaceFieldValueUi(value: String?) {
-//        with(binding.clCountryValue) {
-//            if (value != null) {
-//                tvHint.text = requireContext().getText(R.string.place_of_work)
-//                tvValue.text = value
-//                tvHint.isVisible = true
-//                tvValue.setTextColor(valuesThemeColor)
-//            } else {
-//                tvHint.isVisible = false
-//                tvValue.text = requireContext().getText(R.string.place_of_work)
-//                tvValue.setTextColor(requireContext().getColor(R.color.gray))
-//            }
-//        }
-//    }
+    private fun setWorkPlaceFieldValueUi(value: String?) {
+        with(binding.clCountryValue) {
+            if (value != null) {
+                tvHint.text = requireContext().getText(R.string.place_of_work)
+                tvValue.text = value
+                tvHint.isVisible = true
+                tvValue.setTextColor(valuesThemeColor)
+            } else {
+                tvHint.isVisible = false
+                tvValue.text = requireContext().getText(R.string.place_of_work)
+                tvValue.setTextColor(requireContext().getColor(R.color.gray))
+            }
+        }
+    }
 
     private fun getAttrColors() {
         val themeValuesTextColor = TypedValue()
