@@ -17,7 +17,6 @@ import ru.practicum.android.diploma.databinding.FragmentFiltrationBinding
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationData
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationViewModel
 import ru.practicum.android.diploma.ui.utils.DetektBindingFragment
-import ru.practicum.android.diploma.util.NumDeclension
 
 open class FiltrationFragment : DetektBindingFragment() {
 
@@ -209,15 +208,6 @@ open class FiltrationFragment : DetektBindingFragment() {
         }
     }
 
-    private fun rubFormat(salary: String): String {
-        val rubString = threeZeroFormat(salary)
-        return rubString + if (rubString.isNotBlank()) {
-            " " + requireContext().getString(R.string.rub)
-        } else {
-            ""
-        }
-    }
-
     private fun setIndustryFieldValueUi(value: String?) {
         with(binding.clIndustryValue) {
             if (value != null) {
@@ -250,23 +240,6 @@ open class FiltrationFragment : DetektBindingFragment() {
                 binding.tvSalaryHint.setTextColor(salaryThemeColor)
             } else {
                 binding.tvSalaryHint.setTextColor(requireContext().getColor(R.color.black))
-            }
-        }
-    }
-
-    private fun formatSalary(hasFocus: Boolean) {
-        with(binding) {
-            etSalaryEditText.let {
-                it.setText(
-                    if (!hasFocus) {
-                        rubFormat(it.text.toString())
-                    } else {
-                        it.text.toString().replace(
-                            Regex("""[^0-9 ]"""),
-                            ""
-                        ).trim()
-                    }
-                )
             }
         }
     }
