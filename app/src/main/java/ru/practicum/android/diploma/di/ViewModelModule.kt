@@ -50,13 +50,7 @@ val viewModelModule = module {
         )
     }
 
-    viewModel { (area: Area?) ->
-        FiltrationPlaceOfWorkViewModel(
-            interactor = get(),
-            filterSetter = get(),
-            previousArea = area
-        )
-    }
+    viewModel { (area: Area?) -> FiltrationPlaceOfWorkViewModel(interactor = get(), previousArea = area) }
 
     viewModel {
         FiltrationCountriesViewModel(

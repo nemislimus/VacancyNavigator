@@ -1,18 +1,15 @@
 package ru.practicum.android.diploma.ui.filtration.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.filtration.api.FiltrationPlaceOfWorkInteractor
 import ru.practicum.android.diploma.domain.models.Area
-import ru.practicum.android.diploma.domain.repository.SetSearchFilterInteractor
 import ru.practicum.android.diploma.ui.filtration.model.WorkPlace
 import ru.practicum.android.diploma.ui.utils.StateViewModel
 
 class FiltrationPlaceOfWorkViewModel(
     private val interactor: FiltrationPlaceOfWorkInteractor,
-    private val filterSetter: SetSearchFilterInteractor,
     private val previousArea: Area?
 ) :
     StateViewModel<FiltrationPlaceOfWorkState>() {
@@ -53,14 +50,7 @@ class FiltrationPlaceOfWorkViewModel(
     }
 
     fun confirmWorkplace() {
-        viewModelScope.launch(Dispatchers.Main) {
-            currentRegion?.let {
-                filterSetter.saveArea(it)
-            } ?: run {
-                filterSetter.saveArea(currentCountry)
-            }
-            renderState(FiltrationPlaceOfWorkState.Confirm(currentWorkPlace()))
-        }
+        renderState(FiltrationPlaceOfWorkState.Confirm(currentWorkPlace()))
     }
 
     private fun initCountryByRegion() {
