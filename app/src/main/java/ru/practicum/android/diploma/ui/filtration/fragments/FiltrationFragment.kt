@@ -16,14 +16,12 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFiltrationBinding
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationData
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationViewModel
-import ru.practicum.android.diploma.ui.utils.BindingFragment
-import ru.practicum.android.diploma.util.NumDeclension
+import ru.practicum.android.diploma.ui.utils.DetektBindingFragment
 
-open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), NumDeclension {
+open class FiltrationFragment : DetektBindingFragment() {
 
     private val vModel: FiltrationViewModel by viewModel()
     private var lastNormalSalary = 0
-    private var detektHelper: FiltrationFragmentUiDetektHelper? = null
 
     private var salaryThemeColor = 0
     private var valuesThemeColor = 0
@@ -37,9 +35,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        detektHelper = FiltrationFragmentUiDetektHelper(requireContext(), binding)
-        detektHelper?.onViewCreated()
-        detektHelper?.onResume()
         manageFilterElementClick()
         bindingNumberOne()
         bindingNumberTwo()
@@ -213,15 +208,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         }
     }
 
-    private fun rubFormat(salary: String): String {
-        val rubString = threeZeroFormat(salary)
-        return rubString + if (rubString.isNotBlank()) {
-            " " + requireContext().getString(R.string.rub)
-        } else {
-            ""
-        }
-    }
-
     private fun setIndustryFieldValueUi(value: String?) {
         with(binding.clIndustryValue) {
             if (value != null) {
@@ -254,23 +240,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                 binding.tvSalaryHint.setTextColor(salaryThemeColor)
             } else {
                 binding.tvSalaryHint.setTextColor(requireContext().getColor(R.color.black))
-            }
-        }
-    }
-
-    private fun formatSalary(hasFocus: Boolean) {
-        with(binding) {
-            etSalaryEditText.let {
-                it.setText(
-                    if (!hasFocus) {
-                        rubFormat(it.text.toString())
-                    } else {
-                        it.text.toString().replace(
-                            Regex("""[^0-9 ]"""),
-                            ""
-                        ).trim()
-                    }
-                )
             }
         }
     }
