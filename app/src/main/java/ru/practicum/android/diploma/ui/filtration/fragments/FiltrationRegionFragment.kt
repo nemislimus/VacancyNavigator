@@ -2,6 +2,7 @@ package ru.practicum.android.diploma.ui.filtration.fragments
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -140,6 +141,9 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
 
         const val COUNTRY_ID_KEY = "country_id_key"
 
-        fun createArgs(country: Area) = bundleOf(COUNTRY_ID_KEY to country.id)
+        fun createArgs(country: Area): Bundle {
+            Log.d("WWW", country.toString())
+            return bundleOf(COUNTRY_ID_KEY to country.id)
+        }
     }
 }

@@ -1,86 +1,71 @@
 package ru.practicum.android.diploma.ui.filtration.viewmodels
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import ru.practicum.android.diploma.domain.filtration.api.FiltrationPlaceOfWorkInteractor
 import ru.practicum.android.diploma.domain.models.Area
-import ru.practicum.android.diploma.ui.filtration.model.WorkPlace
-import ru.practicum.android.diploma.ui.utils.StateViewModel
+import ru.practicum.android.diploma.domain.models.SearchFilter
+import ru.practicum.android.diploma.domain.repository.GetSearchFilterInteractor
+import ru.practicum.android.diploma.domain.repository.SetSearchFilterInteractor
+import ru.practicum.android.diploma.ui.utils.XxxLiveData
 
 class FiltrationPlaceOfWorkViewModel(
-    private val interactor: FiltrationPlaceOfWorkInteractor,
-    private val previousArea: Area?
-) :
-    StateViewModel<FiltrationPlaceOfWorkState>() {
+    private val filterGetter: GetSearchFilterInteractor,
+    private val filterSetter: SetSearchFilterInteractor
+) : ViewModel() {
 
-    private var currentCountry: Area? = null
-    private var currentRegion: Area? = null
+    private val liveData = XxxLiveData<FiltrationPlaceOfWorkData>()
 
-    private var initCountryJob: Job? = null
+    private var tempFilter: SearchFilter = SearchFilter()
 
     init {
-        previousArea?.let { area ->
-            viewModelScope.launch {
-                interactor.getCountryByRegionId(area.id).collect { country ->
-                    country?.let {
-                        currentCountry = country
-                        if (country != area) {
-                            currentRegion = area
-                        }
-                    } ?: let { currentCountry = area }
-                    renderContent()
-                }
+        viewModelScope.launch {
+
+            liveData.postValue(
+                FiltrationPlaceOfWorkData.OldFilter(
+                    filter = filterGetter.getFilter().first() ?: SearchFilter()
+                )
+            )
+
+            filterGetter.getTempFilter().collect { filter ->
+                tempFilter = filter ?: SearchFilter()
+                liveData.postValue(
+                    FiltrationPlaceOfWorkData.NewFilter(
+                        filter = tempFilter
+                    )
+                )
             }
         }
     }
 
-    fun getCurrentCountry() = currentCountry
-
-    fun countryChange(country: Area?) {
-        currentCountry = country
-        currentCountry?.let { currentRegion = null }
-        renderContent()
+    fun liveData(): XxxLiveData<FiltrationPlaceOfWorkData> {
+        return liveData
     }
 
-    fun regionChange(region: Area?) {
-        currentRegion = region
-        currentCountry ?: initCountryByRegion()
-        renderContent()
+    fun setTempArea(area: Area?) {
+        viewModelScope.launch {
+            filterSetter.saveAreaTempValue(area)
+        }
+    }
+
+    suspend fun resetTempValue() {
+        filterSetter.resetAreaTempValue()
     }
 
     fun confirmWorkplace() {
-        renderState(FiltrationPlaceOfWorkState.Confirm(currentWorkPlace()))
-    }
-
-    private fun initCountryByRegion() {
-        initCountryJob?.cancel()
-        currentRegion?.let { region ->
-            initCountryJob = viewModelScope.launch {
-                interactor.getCountryByRegionId(regionId = region.id).collect {
-                    currentCountry = it
-                    renderContent()
+        viewModelScope.launch {
+            with(tempFilter) {
+                if (city != null) {
+                    filterSetter.saveArea(city)
+                } else if (region != null) {
+                    filterSetter.saveArea(region)
+                } else {
+                    filterSetter.saveArea(country)
                 }
             }
+            filterSetter.resetAreaTempValue()
+            liveData.postValue(FiltrationPlaceOfWorkData.GoBack)
         }
     }
-
-    private fun renderContent() {
-        val modify = when (previousArea) {
-            null -> currentCountry != null || currentRegion != null
-            else -> currentRegion?.let { previousArea.id != it.id }
-                ?: let { currentCountry?.let { previousArea.id != it.id } } ?: true
-        }
-
-        val workPlace = currentWorkPlace()
-        renderState(
-            if (modify) {
-                FiltrationPlaceOfWorkState.Modified(workPlace)
-            } else {
-                FiltrationPlaceOfWorkState.Unmodified(workPlace)
-            }
-        )
-    }
-
-    private fun currentWorkPlace(): WorkPlace = WorkPlace(currentCountry, currentRegion)
 }

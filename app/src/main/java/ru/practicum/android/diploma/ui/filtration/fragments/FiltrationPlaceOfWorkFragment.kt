@@ -4,34 +4,29 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.clearFragmentResultListener
-import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FilterElementBinding
 import ru.practicum.android.diploma.databinding.FragmentFiltrationPlaceOfWorkBinding
-import ru.practicum.android.diploma.domain.models.Area
-import ru.practicum.android.diploma.ui.filtration.model.WorkPlace
-import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationPlaceOfWorkState
+import ru.practicum.android.diploma.domain.models.SearchFilter
+import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationPlaceOfWorkData
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationPlaceOfWorkViewModel
 import ru.practicum.android.diploma.ui.utils.BindingFragment
 
 class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfWorkBinding>() {
 
-    private val viewModel by viewModel<FiltrationPlaceOfWorkViewModel> {
-        val area = arguments?.getString(CURRENT_AREA_KEY)?.let { json ->
-            Gson().fromJson(json, Area::class.java)
-        }
-        parametersOf(area)
-    }
+    private val viewModel: FiltrationPlaceOfWorkViewModel by viewModel()
 
     private var valuesThemeColor = 0
+
+    private var filter: SearchFilter = SearchFilter()
+
+    private var oldFilter: SearchFilter = SearchFilter()
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -48,22 +43,45 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
         manageFilterElementClick()
 
         binding.tbPlaceWorkToolBar.setOnClickListener {
-            findNavController().navigateUp()
+            lifecycleScope.launch(Dispatchers.Main) {
+                viewModel.resetTempValue()
+                findNavController().navigateUp()
+            }
         }
 
-        binding.btnApplyPlaceWork.setOnClickListener { viewModel.confirmWorkplace() }
+        binding.btnApplyPlaceWork.setOnClickListener {
+            viewModel.confirmWorkplace()
+        }
 
-        viewModel.stateObserver().observe(viewLifecycleOwner) { state ->
-            render(state)
+        viewModel.liveData().observe(viewLifecycleOwner) {
+            when (it) {
+                FiltrationPlaceOfWorkData.GoBack -> {
+                    findNavController().popBackStack()
+                }
+
+                is FiltrationPlaceOfWorkData.NewFilter -> {
+                    filter = it.filter
+                    fillWorkplaceData(filter)
+                    binding.btnApplyPlaceWork.isVisible = filter != oldFilter
+                }
+
+                is FiltrationPlaceOfWorkData.OldFilter -> {
+                    oldFilter = it.filter
+                }
+            }
         }
     }
 
     private fun manageFilterElementClick() {
         with(binding) {
             clCountryValue.ivElementButton.setOnClickListener { countryStartSelection() }
-            clCountryValue.ivClearElementButton.setOnClickListener { viewModel.countryChange(null) }
+            clCountryValue.ivClearElementButton.setOnClickListener { viewModel.setTempArea(null) }
             clRegionValue.ivElementButton.setOnClickListener { regionStartSelection() }
-            clRegionValue.ivClearElementButton.setOnClickListener { viewModel.regionChange(null) }
+            clRegionValue.ivClearElementButton.setOnClickListener {
+                viewModel.setTempArea(
+                    area = filter.country
+                )
+            }
         }
     }
 
@@ -78,62 +96,25 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
     }
 
     private fun countryStartSelection() {
-        setFragmentResultListener(FiltrationCountryFragment.RESULT_COUNTRY_KEY) { key, bundle ->
-            bundle.getString(FiltrationCountryFragment.RESULT_COUNTRY_KEY)?.apply {
-                val country = Gson().fromJson(this, Area::class.java)
-                countrySelected(country)
-            }
-        }
         findNavController().navigate(R.id.action_filtrationPlaceOfWorkFragment_to_filtrationCountryFragment)
     }
 
-    private fun countrySelected(country: Area) {
-        viewModel.countryChange(country)
-        clearFragmentResultListener(FiltrationCountryFragment.RESULT_COUNTRY_KEY)
-    }
-
     private fun regionStartSelection() {
-        setFragmentResultListener(FiltrationRegionFragment.RESULT_REGION_KEY) { key, bundle ->
-            bundle.getString(FiltrationRegionFragment.RESULT_REGION_KEY)?.apply {
-                val region = Gson().fromJson(this, Area::class.java)
-                regionSelected(region)
-            }
-        }
         findNavController().navigate(
             R.id.action_filtrationPlaceOfWorkFragment_to_filtrationRegionFragment,
-            viewModel.getCurrentCountry()?.let {
+            filter.country?.let {
                 FiltrationRegionFragment.createArgs(it)
             }
         )
     }
 
-    private fun regionSelected(region: Area) {
-        viewModel.regionChange(region)
-        clearFragmentResultListener(FiltrationRegionFragment.RESULT_REGION_KEY)
-    }
-
-    private fun render(state: FiltrationPlaceOfWorkState) {
-        fillWorkplaceData(state.workPlace)
-        when (state) {
-            is FiltrationPlaceOfWorkState.Modified -> binding.btnApplyPlaceWork.isVisible = true
-            is FiltrationPlaceOfWorkState.Unmodified -> binding.btnApplyPlaceWork.isVisible = false
-            is FiltrationPlaceOfWorkState.Confirm -> onConfirm(state.workPlace)
-        }
-    }
-
-    private fun fillWorkplaceData(workPlace: WorkPlace) {
+    private fun fillWorkplaceData(workPlace: SearchFilter) {
         workPlace.country?.let {
             showFillElement(binding.clCountryValue, it.name)
         } ?: showEmptyCountry()
         workPlace.region?.let {
             showFillElement(binding.clRegionValue, it.name)
         } ?: showEmptyRegion()
-    }
-
-    private fun onConfirm(workPlace: WorkPlace) {
-        val result = workPlace.region ?: let { workPlace.country }
-        setFragmentResult(PLACE_OF_WORK_RESULT_KEY, bundleOf(PLACE_OF_WORK_RESULT_KEY to Gson().toJson(result)))
-        findNavController().popBackStack()
     }
 
     private fun showEmptyCountry() {
@@ -163,11 +144,5 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
         element.ivClearElementButton.isVisible = false
         element.ivElementButton.isVisible = true
         element.tvHint.isVisible = false
-    }
-
-    companion object {
-        const val PLACE_OF_WORK_RESULT_KEY = "place_of_work"
-        private const val CURRENT_AREA_KEY = "current_area"
-        fun createArgs(area: Area) = bundleOf(CURRENT_AREA_KEY to Gson().toJson(area))
     }
 }

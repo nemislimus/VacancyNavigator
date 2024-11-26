@@ -4,11 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.bundle.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
-import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.databinding.FragmentFiltrationCountriesBinding
 import ru.practicum.android.diploma.domain.models.Area
@@ -21,7 +18,9 @@ class FiltrationCountryFragment : BindingFragment<FragmentFiltrationCountriesBin
 
     private val viewModel: FiltrationCountriesViewModel by viewModel()
 
-    private val listAdapter = RegionAdapter { countrySelected(it) }
+    private val listAdapter = RegionAdapter { area ->
+        viewModel.setArea(area)
+    }
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -47,6 +46,9 @@ class FiltrationCountryFragment : BindingFragment<FragmentFiltrationCountriesBin
     private fun manageCountriesData(data: FiltrationCountryData) {
         when (data) {
             is FiltrationCountryData.Countries -> setCountries(data.countries)
+            FiltrationCountryData.GoBack -> {
+                findNavController().navigateUp()
+            }
         }
     }
 
@@ -54,14 +56,5 @@ class FiltrationCountryFragment : BindingFragment<FragmentFiltrationCountriesBin
         binding.rvCountryList.isVisible = true
         listAdapter.areas.addAll(countries)
         listAdapter.notifyDataSetChanged()
-    }
-
-    private fun countrySelected(area: Area) {
-        setFragmentResult(RESULT_COUNTRY_KEY, bundleOf(RESULT_COUNTRY_KEY to Gson().toJson(area)))
-        findNavController().navigateUp()
-    }
-
-    companion object {
-        const val RESULT_COUNTRY_KEY = "selected_country"
     }
 }
