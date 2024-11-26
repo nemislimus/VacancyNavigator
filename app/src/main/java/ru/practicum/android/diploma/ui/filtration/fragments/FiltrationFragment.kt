@@ -16,14 +16,13 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFiltrationBinding
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationData
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationViewModel
-import ru.practicum.android.diploma.ui.utils.BindingFragment
+import ru.practicum.android.diploma.ui.utils.DetektBindingFragment
 import ru.practicum.android.diploma.util.NumDeclension
 
-open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), NumDeclension {
+open class FiltrationFragment : DetektBindingFragment() {
 
     private val vModel: FiltrationViewModel by viewModel()
     private var lastNormalSalary = 0
-    private var detektHelper: FiltrationFragmentUiDetektHelper? = null
 
     private var salaryThemeColor = 0
     private var valuesThemeColor = 0
@@ -37,9 +36,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        detektHelper = FiltrationFragmentUiDetektHelper(requireContext(), binding)
-        detektHelper?.onViewCreated()
-        detektHelper?.onResume()
         manageFilterElementClick()
         bindingNumberOne()
         bindingNumberTwo()
