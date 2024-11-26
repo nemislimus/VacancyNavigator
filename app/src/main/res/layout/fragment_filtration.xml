@@ -133,14 +133,14 @@
         android:id="@+id/btnApplyFilter"
         android:layout_width="0dp"
         android:layout_height="@dimen/weight_height_60"
-        android:layout_marginBottom="@dimen/margin_8"
+        android:layout_marginBottom="@dimen/margin_90"
         android:background="@drawable/field_for_result_text"
         android:gravity="center"
         android:text="@string/apply"
         android:textAppearance="@style/TextMedium_16size_500weight"
         android:textColor="@color/white"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/btnResetFilter"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/right_border"
         app:layout_constraintStart_toStartOf="@+id/left_border" />
 

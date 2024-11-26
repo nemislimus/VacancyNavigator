@@ -1,26 +1,33 @@
 package ru.practicum.android.diploma.ui.search.viewmodels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.domain.models.Resource
 import ru.practicum.android.diploma.domain.models.VacancyShort
+import ru.practicum.android.diploma.domain.repository.GetSearchFilterInteractor
 import ru.practicum.android.diploma.domain.search.api.SearchInteractor
 import ru.practicum.android.diploma.ui.utils.XxxLiveData
 import ru.practicum.android.diploma.util.debounce
 
 class SearchViewModel(
-    private val searchInteractor: SearchInteractor
+    private val searchInteractor: SearchInteractor,
+    private val filterGetter: GetSearchFilterInteractor,
 ) : ViewModel() {
 
     private var currentPage: Int = 0
     private var maxPages: Int = Int.MAX_VALUE
     private val vacanciesList: MutableList<VacancyShort> = mutableListOf()
     private var isNextPageLoading = false
+
+    private val _filterState: MutableLiveData<Boolean> = MutableLiveData(false)
+    internal val filterState: LiveData<Boolean> get() = _filterState
 
     private val _searchState: XxxLiveData<SearchState> = XxxLiveData()
     internal val searchState: LiveData<SearchState> get() = _searchState
@@ -48,6 +55,18 @@ class SearchViewModel(
             clearPagingHistory()
             _searchState.clear()
             _searchDebounce(lastSearchRequest)
+        }
+    }
+
+    suspend fun getFilterExistingStatus() {
+        viewModelScope.launch {
+            val checkFilterJob = launch {
+                filterGetter.isFilterExists().collect { existOrNotExist ->
+                    _filterState.postValue(existOrNotExist)
+                }
+            }
+            delay(UNNECESSERY_DELAY)
+            checkFilterJob.cancel()
         }
     }
 
@@ -87,7 +106,7 @@ class SearchViewModel(
                                     } else if (currentPage == 0) {
                                         renderState(SearchState.NotFoundError, true)
                                     } else {
-                                        // nothing to do
+                                        Unit
                                     }
                                 }
                             }
@@ -131,5 +150,6 @@ class SearchViewModel(
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val UNNECESSERY_DELAY = 1500L
     }
 }
