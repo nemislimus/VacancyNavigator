@@ -41,7 +41,6 @@ class IndustryAdapter(
         if (item.isSelected) {
             selectedIndex = position.toInt()
         }
-
     }
 
     private fun manageListRadioButtons(position: Int) {
@@ -51,7 +50,6 @@ class IndustryAdapter(
         }
         industries[position] = industries[position].copy(isSelected = true)
         notifyItemChanged(position)
-
     }
 
     fun interface IndustryClickListener {

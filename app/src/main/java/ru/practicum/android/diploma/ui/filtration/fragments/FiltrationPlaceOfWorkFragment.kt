@@ -56,7 +56,6 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
         viewModel.stateObserver().observe(viewLifecycleOwner) { state ->
             render(state)
         }
-
     }
 
     private fun manageFilterElementClick() {
@@ -171,5 +170,4 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
         private const val CURRENT_AREA_KEY = "current_area"
         fun createArgs(area: Area) = bundleOf(CURRENT_AREA_KEY to Gson().toJson(area))
     }
-
 }

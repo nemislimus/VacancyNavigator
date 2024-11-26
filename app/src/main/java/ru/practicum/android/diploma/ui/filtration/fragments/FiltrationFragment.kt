@@ -175,7 +175,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
     }
 
     private fun manageFilterElementClick() {
-
         with(binding) {
             clCountryValue.tvValue.setOnClickListener {
                 findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
