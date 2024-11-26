@@ -33,7 +33,12 @@ class IndustryAdapter(
         val item = industries[position]
 
         holder.bind(item)
-        holder.itemView.setOnClickListener {
+        holder.binding.rbIndustryButton.setOnClickListener {
+            manageListRadioButtons(position)
+            listener.onIndustryClick(item)
+        }
+
+        holder.binding.tvIndustryValue.setOnClickListener {
             manageListRadioButtons(position)
             listener.onIndustryClick(item)
         }
