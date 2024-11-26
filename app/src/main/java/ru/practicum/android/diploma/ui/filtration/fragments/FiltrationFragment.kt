@@ -48,35 +48,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         vModel.getLiveData().observe(viewLifecycleOwner) {
             when (it) {
                 is FiltrationData.Filter -> {
-                    with(binding) {
-                        clCountryValue.tvValue.text = detektHelper?.concatAreasNames(it.filter)
-                        if (clCountryValue.tvValue.text != requireContext().getString(R.string.place_of_work)) {
-                            clCountryValue.tvValue.setTextColor(valuesThemeColor)
-                        } else {
-                            clCountryValue.tvHint.isVisible = false
-                        }
-
-                        it.filter.industry?.let { industry ->
-                            setIndustryFieldValueUi(industry.name)
-                        } ?: run {
-                            setIndustryFieldValueUi(null)
-                        }
-
-                        with(binding.clIndustryValue) {
-                            ivElementButton.isVisible = it.filter.industry == null
-                            ivClearElementButton.isVisible = it.filter.industry != null
-                        }
-
-                        it.filter.salary?.let { salary ->
-                            etSalaryEditText.setText(
-                                rubFormat(salary.toString())
-                            )
-                        } ?: run {
-                            etSalaryEditText.text.clear()
-                        }
-
-                        ckbSalaryCheckbox.isChecked = it.filter.onlyWithSalary
-                    }
+                    gotFilter(it)
                 }
 
                 is FiltrationData.GoBack -> {
@@ -97,6 +69,38 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                     binding.btnResetFilter.isVisible = it.visible
                 }
             }
+        }
+    }
+
+    private fun gotFilter(data: FiltrationData.Filter) {
+        with(binding) {
+            clCountryValue.tvValue.text = detektHelper?.concatAreasNames(data.filter)
+            if (clCountryValue.tvValue.text != requireContext().getString(R.string.place_of_work)) {
+                clCountryValue.tvValue.setTextColor(valuesThemeColor)
+            } else {
+                clCountryValue.tvHint.isVisible = false
+            }
+
+            data.filter.industry?.let { industry ->
+                setIndustryFieldValueUi(industry.name)
+            } ?: run {
+                setIndustryFieldValueUi(null)
+            }
+
+            with(binding.clIndustryValue) {
+                ivElementButton.isVisible = data.filter.industry == null
+                ivClearElementButton.isVisible = data.filter.industry != null
+            }
+
+            data.filter.salary?.let { salary ->
+                etSalaryEditText.setText(
+                    rubFormat(salary.toString())
+                )
+            } ?: run {
+                etSalaryEditText.text.clear()
+            }
+
+            ckbSalaryCheckbox.isChecked = data.filter.onlyWithSalary
         }
     }
 
