@@ -45,57 +45,65 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         bindingNumberTwo()
         getAttrColors()
 
-        vModel.getLiveData().observe(viewLifecycleOwner) {
-            when (it) {
-                is FiltrationData.Filter -> {
-                    with(binding) {
-                        clCountryValue.tvValue.text = detektHelper?.concatAreasNames(it.filter)
-                        if (clCountryValue.tvValue.text != requireContext().getString(R.string.place_of_work)) {
-                            clCountryValue.tvValue.setTextColor(valuesThemeColor)
-                        } else {
-                            clCountryValue.tvHint.isVisible = false
-                        }
+        vModel.getLiveData().observe(viewLifecycleOwner) { renderFiltrationData(it) }
+    }
 
-                        it.filter.industry?.let { industry ->
-                            setIndustryFieldValueUi(industry.name)
-                        } ?: run {
-                            setIndustryFieldValueUi(null)
-                        }
-
-                        with(binding.clIndustryValue) {
-                            ivElementButton.isVisible = it.filter.industry == null
-                            ivClearElementButton.isVisible = it.filter.industry != null
-                        }
-
-                        it.filter.salary?.let { salary ->
-                            etSalaryEditText.setText(
-                                rubFormat(salary.toString())
-                            )
-                        } ?: run {
-                            etSalaryEditText.text.clear()
-                        }
-
-                        ckbSalaryCheckbox.isChecked = it.filter.onlyWithSalary
+    private fun renderFiltrationData(filtrationData: FiltrationData) {
+        when (filtrationData) {
+            is FiltrationData.Filter -> {
+                with(binding) {
+                    clCountryValue.tvValue.text = detektHelper?.concatAreasNames(filtrationData.filter)
+                    showCountryValue()
+                    showIndustryValue(filtrationData)
+                    filtrationData.filter.salary?.let { salary ->
+                        etSalaryEditText.setText(rubFormat(salary.toString()))
+                    } ?: run {
+                        etSalaryEditText.text.clear()
                     }
+                    ckbSalaryCheckbox.isChecked = filtrationData.filter.onlyWithSalary
                 }
+            }
 
-                is FiltrationData.GoBack -> {
-                    if (it.applyBeforeExiting) {
-                        setFragmentResult(
-                            RESULT_IS_FILTER_APPLIED_KEY,
-                            bundleOf(RESULT_IS_FILTER_APPLIED_KEY to "true")
-                        )
-                    }
-                    findNavController().navigateUp()
+            is FiltrationData.GoBack -> {
+                if (filtrationData.applyBeforeExiting) {
+                    setFragmentResult(
+                        RESULT_IS_FILTER_APPLIED_KEY,
+                        bundleOf(RESULT_IS_FILTER_APPLIED_KEY to "true")
+                    )
                 }
+                findNavController().navigateUp()
+            }
 
-                is FiltrationData.ApplyButton -> {
-                    binding.btnApplyFilter.isVisible = it.visible
-                }
+            is FiltrationData.ApplyButton -> {
+                binding.btnApplyFilter.isVisible = filtrationData.visible
+            }
 
-                is FiltrationData.ResetButton -> {
-                    binding.btnResetFilter.isVisible = it.visible
-                }
+            is FiltrationData.ResetButton -> {
+                binding.btnResetFilter.isVisible = filtrationData.visible
+            }
+        }
+    }
+
+    private fun showCountryValue() {
+        with(binding) {
+            if (clCountryValue.tvValue.text != requireContext().getString(R.string.place_of_work)) {
+                clCountryValue.tvValue.setTextColor(valuesThemeColor)
+            } else {
+                clCountryValue.tvHint.isVisible = false
+            }
+        }
+    }
+
+    private fun showIndustryValue(filtrationData: FiltrationData.Filter) {
+        with(binding) {
+            filtrationData.filter.industry?.let { industry ->
+                setIndustryFieldValueUi(industry.name)
+            } ?: run {
+                setIndustryFieldValueUi(null)
+            }
+            with(binding.clIndustryValue) {
+                ivElementButton.isVisible = filtrationData.filter.industry == null
+                ivClearElementButton.isVisible = filtrationData.filter.industry != null
             }
         }
     }
@@ -228,22 +236,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
             }
         }
     }
-
-    // Это метод для обработки состояния строки место работы, работает как тот что выше
-//    private fun setWorkPlaceFieldValueUi(value: String?) {
-//        with(binding.clCountryValue) {
-//            if (value != null) {
-//                tvHint.text = requireContext().getText(R.string.place_of_work)
-//                tvValue.text = value
-//                tvHint.isVisible = true
-//                tvValue.setTextColor(valuesThemeColor)
-//            } else {
-//                tvHint.isVisible = false
-//                tvValue.text = requireContext().getText(R.string.place_of_work)
-//                tvValue.setTextColor(requireContext().getColor(R.color.gray))
-//            }
-//        }
-//    }
 
     private fun getAttrColors() {
         val themeValuesTextColor = TypedValue()
