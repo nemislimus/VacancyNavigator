@@ -13,4 +13,8 @@ class FiltrationPlaceOfWorkInteractorImpl(private val areasRepository: AreasRepo
     override suspend fun getCountryByRegionId(regionId: String): Flow<Area?> = flow {
         emit(areasRepository.getCountry(regionId))
     }.flowOn(Dispatchers.IO)
+
+    override suspend fun getAreaById(id: String): Flow<Area?> = flow {
+        emit(areasRepository.getAreaById(id))
+    }.flowOn(Dispatchers.IO)
 }
