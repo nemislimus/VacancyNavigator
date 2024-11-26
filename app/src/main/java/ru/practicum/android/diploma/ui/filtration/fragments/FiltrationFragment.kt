@@ -2,7 +2,6 @@ package ru.practicum.android.diploma.ui.filtration.fragments
 
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,9 +24,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
     private var lastNormalSalary = 0
     private var detektHelper: FiltrationFragmentUiDetektHelper? = null
 
-    private var salaryThemeColor = 0
-    private var valuesThemeColor = 0
-
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -43,7 +39,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         manageFilterElementClick()
         bindingNumberOne()
         bindingNumberTwo()
-        getAttrColors()
 
         vModel.getLiveData().observe(viewLifecycleOwner) { renderFiltrationData(it) }
     }
@@ -87,7 +82,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
     private fun showCountryValue() {
         with(binding) {
             if (clCountryValue.tvValue.text != requireContext().getString(R.string.place_of_work)) {
-                clCountryValue.tvValue.setTextColor(valuesThemeColor)
+                detektHelper?.valuesThemeColor?.let { clCountryValue.tvValue.setTextColor(it) }
             } else {
                 clCountryValue.tvHint.isVisible = false
             }
@@ -97,9 +92,9 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
     private fun showIndustryValue(filtrationData: FiltrationData.Filter) {
         with(binding) {
             filtrationData.filter.industry?.let { industry ->
-                setIndustryFieldValueUi(industry.name)
+                detektHelper?.setIndustryFieldValueUi(industry.name)
             } ?: run {
-                setIndustryFieldValueUi(null)
+                detektHelper?.setIndustryFieldValueUi(null)
             }
             with(binding.clIndustryValue) {
                 ivElementButton.isVisible = filtrationData.filter.industry == null
@@ -222,36 +217,12 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         }
     }
 
-    private fun setIndustryFieldValueUi(value: String?) {
-        with(binding.clIndustryValue) {
-            if (value != null) {
-                tvHint.text = requireContext().getText(R.string.industry)
-                tvValue.text = value
-                tvHint.isVisible = true
-                tvValue.setTextColor(valuesThemeColor)
-            } else {
-                tvHint.isVisible = false
-                tvValue.text = requireContext().getText(R.string.industry)
-                tvValue.setTextColor(requireContext().getColor(R.color.gray))
-            }
-        }
-    }
-
-    private fun getAttrColors() {
-        val themeValuesTextColor = TypedValue()
-        val themeSalaryHintTextColor = TypedValue()
-        requireContext().theme.resolveAttribute(R.attr.elementColor_black_white, themeValuesTextColor, true)
-        requireContext().theme.resolveAttribute(R.attr.elementColor_gray_white, themeSalaryHintTextColor, true)
-        valuesThemeColor = themeValuesTextColor.data
-        salaryThemeColor = themeSalaryHintTextColor.data
-    }
-
     private fun manageSalaryHintColor(hasFocus: Boolean) {
         if (hasFocus) {
             binding.tvSalaryHint.setTextColor(requireContext().getColor(R.color.blue))
         } else {
             if (binding.etSalaryEditText.text.isNullOrBlank()) {
-                binding.tvSalaryHint.setTextColor(salaryThemeColor)
+                detektHelper?.salaryThemeColor?.let { binding.tvSalaryHint.setTextColor(it) }
             } else {
                 binding.tvSalaryHint.setTextColor(requireContext().getColor(R.color.black))
             }

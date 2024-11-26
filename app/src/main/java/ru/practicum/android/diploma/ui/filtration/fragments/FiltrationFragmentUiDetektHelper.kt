@@ -11,8 +11,8 @@ class FiltrationFragmentUiDetektHelper(
     private val context: Context,
     private val binding: FragmentFiltrationBinding
 ) {
-    private var salaryThemeColor = 0
-    private var valuesThemeColor = 0
+    var salaryThemeColor = 0
+    var valuesThemeColor = 0
 
     fun onViewCreated() {
         addBindings()
@@ -88,6 +88,21 @@ class FiltrationFragmentUiDetektHelper(
             clIndustryValue.tvValue.text = context.getText(R.string.industry)
             clIndustryValue.tvValue.setTextColor(context.getColor(R.color.gray))
             clIndustryValue.tvHint.text = context.getText(R.string.industry)
+        }
+    }
+
+    fun setIndustryFieldValueUi(value: String?) {
+        with(binding.clIndustryValue) {
+            if (value != null) {
+                tvHint.text = context.getText(R.string.industry)
+                tvValue.text = value
+                tvHint.isVisible = true
+                tvValue.setTextColor(valuesThemeColor)
+            } else {
+                tvHint.isVisible = false
+                tvValue.text = context.getText(R.string.industry)
+                tvValue.setTextColor(context.getColor(R.color.gray))
+            }
         }
     }
 }
