@@ -22,7 +22,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
 
     private val vModel: FiltrationViewModel by viewModel()
     private var lastNormalSalary = 0
-    private lateinit var detektHelper: FiltrationFragmentUiDetektHelper
+    private var detektHelper: FiltrationFragmentUiDetektHelper? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -34,7 +34,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         detektHelper = FiltrationFragmentUiDetektHelper(requireContext(), binding)
-        detektHelper.onViewCreated()
+        detektHelper?.onViewCreated()
         manageFilterElementClick()
         bindingNumberOne()
         bindingNumberTwo()
@@ -43,7 +43,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
             when (it) {
                 is FiltrationData.Filter -> {
                     with(binding) {
-                        clCountryValue.tvValue.text = detektHelper.concatAreasNames(it.filter)
+                        clCountryValue.tvValue.text = detektHelper?.concatAreasNames(it.filter)
 
                         it.filter.industry?.let { industry ->
                             clIndustryValue.tvValue.text = industry.name
@@ -90,7 +90,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
 
     override fun onResume() {
         super.onResume()
-        detektHelper.onResume()
+        detektHelper?.onResume()
     }
 
     private fun bindingNumberOne() {
@@ -123,7 +123,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
     private fun bindingNumberTwo() {
         with(binding) {
             etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
-                detektHelper.manageSalaryHintColor(hasFocus)
+                detektHelper?.manageSalaryHintColor(hasFocus)
                 formatSalary(hasFocus)
             }
 
