@@ -225,22 +225,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         }
     }
 
-    // Это метод для обработки состояния строки место работы, работает как тот что выше
-//    private fun setWorkPlaceFieldValueUi(value: String?) {
-//        with(binding.clCountryValue) {
-//            if (value != null) {
-//                tvHint.text = requireContext().getText(R.string.place_of_work)
-//                tvValue.text = value
-//                tvHint.isVisible = true
-//                tvValue.setTextColor(valuesThemeColor)
-//            } else {
-//                tvHint.isVisible = false
-//                tvValue.text = requireContext().getText(R.string.place_of_work)
-//                tvValue.setTextColor(requireContext().getColor(R.color.gray))
-//            }
-//        }
-//    }
-
     private fun getAttrColors() {
         val themeValuesTextColor = TypedValue()
         val themeSalaryHintTextColor = TypedValue()
