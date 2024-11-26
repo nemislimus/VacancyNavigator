@@ -51,7 +51,7 @@ class FiltrationViewModel(
                     isReset = false
                 }
 
-                if (lastFilterReceived != filter) {
+                if (oldFilter != filter) {
                     liveData.setValue(
                         FiltrationData.IsFilterChanged(oldFilter != filter)
                     )
