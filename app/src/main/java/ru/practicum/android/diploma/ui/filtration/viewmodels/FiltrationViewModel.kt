@@ -26,6 +26,7 @@ class FiltrationViewModel(
     private var isOldFilterLoaded = false
     private var oldFilter = SearchFilter()
     private var lastFilterReceived = SearchFilter()
+    private val defaultFilter = SearchFilter()
     private var lastSalarySend: Int? = null
     private var isReset = false
     private var job: Job? = null
@@ -51,9 +52,12 @@ class FiltrationViewModel(
                     isReset = false
                 }
 
-                if (oldFilter != filter) {
+                if (lastFilterReceived != filter) {
                     liveData.setValue(
-                        FiltrationData.IsFilterChanged(oldFilter != filter)
+                        FiltrationData.ApplyButton(oldFilter != filter)
+                    )
+                    liveData.setValue(
+                        FiltrationData.ResetButton(defaultFilter != filter)
                     )
                 }
                 lastFilterReceived = filter

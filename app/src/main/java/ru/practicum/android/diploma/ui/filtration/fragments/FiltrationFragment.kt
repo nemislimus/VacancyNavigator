@@ -78,11 +78,12 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                     findNavController().navigateUp()
                 }
 
-                is FiltrationData.IsFilterChanged -> {
-                    with(binding) {
-                        btnApplyFilter.isVisible = it.isChanged
-                        btnResetFilter.isVisible = it.isChanged
-                    }
+                is FiltrationData.ApplyButton -> {
+                    binding.btnApplyFilter.isVisible = it.visible
+                }
+
+                is FiltrationData.ResetButton -> {
+                    binding.btnResetFilter.isVisible = it.visible
                 }
             }
         }
