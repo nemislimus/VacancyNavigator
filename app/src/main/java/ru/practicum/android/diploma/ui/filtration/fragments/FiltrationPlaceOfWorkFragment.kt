@@ -129,7 +129,8 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
 
     private fun onConfirm(workPlace: WorkPlace) {
         val result = workPlace.region ?: let { workPlace.country }
-        setFragmentResult(PLACE_OF_WORK_RESULT_KEY, bundleOf(PLACE_OF_WORK_RESULT_KEY to Gson().toJson(result)))
+        val resultId = result?.id
+        setFragmentResult(PLACE_OF_WORK_RESULT_KEY, bundleOf(PLACE_OF_WORK_RESULT_KEY to resultId))
         findNavController().popBackStack()
     }
 
