@@ -53,6 +53,6 @@ interface AreasDao {
     @Query("SELECT COUNT(*) FROM areas WHERE parentId=:parentId")
     suspend fun countAreasInParent(parentId: Int): Int
 
-    @Query("SELECT * FROM areas WHERE id=:parentId")
-    suspend fun getParentArea(parentId: Int): AreaRoom?
+    @Query("SELECT * FROM areas WHERE id=:areaId")
+    suspend fun getAreaById(areaId: Int): AreaRoom?
 }
