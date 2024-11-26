@@ -153,7 +153,7 @@
         android:text="@string/reset"
         android:textAppearance="@style/TextMedium_16size_500weight"
         android:textColor="@color/red"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/right_border"
         app:layout_constraintStart_toStartOf="@+id/left_border" />
