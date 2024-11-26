@@ -1,12 +1,12 @@
 package ru.practicum.android.diploma.ui.search.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.domain.models.Resource
@@ -40,6 +40,14 @@ class SearchViewModel(
     private var lastSearchRequest: String = ""
     private var searchJob: Job? = null
 
+    init {
+        viewModelScope.launch(Dispatchers.Main) {
+            filterGetter.isFilterExists().collect { existOrNotExist ->
+                _filterState.postValue(existOrNotExist)
+            }
+        }
+    }
+
     fun searchDebounce(searchQuery: String) {
         if (searchQuery == lastSearchRequest) {
             return
@@ -55,18 +63,6 @@ class SearchViewModel(
             clearPagingHistory()
             _searchState.clear()
             _searchDebounce(lastSearchRequest)
-        }
-    }
-
-    suspend fun getFilterExistingStatus() {
-        viewModelScope.launch {
-            val checkFilterJob = launch {
-                filterGetter.isFilterExists().collect { existOrNotExist ->
-                    _filterState.postValue(existOrNotExist)
-                }
-            }
-            delay(UNNECESSERY_DELAY)
-            checkFilterJob.cancel()
         }
     }
 
