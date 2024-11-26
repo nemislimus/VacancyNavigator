@@ -25,10 +25,7 @@ import ru.practicum.android.diploma.ui.utils.BindingFragment
 class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfWorkBinding>() {
 
     private val viewModel by viewModel<FiltrationPlaceOfWorkViewModel> {
-        val area = arguments?.getString(CURRENT_AREA_KEY)?.let { json ->
-            Gson().fromJson(json, Area::class.java)
-        }
-        parametersOf(area)
+        parametersOf(arguments?.getString(CURRENT_AREA_KEY))
     }
 
     private var valuesThemeColor = 0
