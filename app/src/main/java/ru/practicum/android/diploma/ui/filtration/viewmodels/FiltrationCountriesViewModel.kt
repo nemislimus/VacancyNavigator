@@ -24,7 +24,11 @@ class FiltrationCountriesViewModel(
     private fun getCountries() {
         viewModelScope.launch {
             val countries = countryGetter.getAllCountries()
-            _liveData.postValue(FiltrationCountryData.Countries(countries))
+            if (countries.isEmpty()) {
+                _liveData.postValue(FiltrationCountryData.NotFound)
+            } else {
+                _liveData.postValue(FiltrationCountryData.Countries(countries))
+            }
         }
     }
 }
