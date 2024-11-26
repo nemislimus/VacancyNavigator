@@ -10,6 +10,7 @@ import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFiltrationCountriesBinding
 import ru.practicum.android.diploma.domain.models.Area
 import ru.practicum.android.diploma.ui.filtration.adapters.RegionAdapter
@@ -47,13 +48,26 @@ class FiltrationCountryFragment : BindingFragment<FragmentFiltrationCountriesBin
     private fun manageCountriesData(data: FiltrationCountryData) {
         when (data) {
             is FiltrationCountryData.Countries -> setCountries(data.countries)
+            is FiltrationCountryData.NotFound -> showPlaceholder()
         }
     }
 
     private fun setCountries(countries: List<Area>) {
+        binding.pbProgressCountry.isVisible = false
+        binding.clPlaceholder.root.isVisible = false
         binding.rvCountryList.isVisible = true
         listAdapter.areas.addAll(countries)
         listAdapter.notifyDataSetChanged()
+    }
+
+    private fun showPlaceholder() {
+        binding.pbProgressCountry.isVisible = false
+        binding.rvCountryList.isVisible = false
+        with(binding.clPlaceholder) {
+            tvPlaceholderText.text = requireContext().getText(R.string.not_found_regions)
+            ivPlaceholderPicture.setImageResource(R.drawable.placeholder_filter_region_list_not_found)
+            root.isVisible = true
+        }
     }
 
     private fun countrySelected(area: Area) {
