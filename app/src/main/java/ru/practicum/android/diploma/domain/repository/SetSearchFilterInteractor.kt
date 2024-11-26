@@ -20,13 +20,13 @@ interface SetSearchFilterInteractor {
      * Установка фильтра на место работы
      * @param area - [Area] страна, регион или город
      * */
-    suspend fun saveArea(area: Area)
+    suspend fun saveArea(area: Area?)
 
     /**
      * Сохранить временное значение страны, города, региона
      * @param area - [Area] страна, регион или город
      * */
-    suspend fun saveAreaTempValue(area: Area)
+    suspend fun saveAreaTempValue(area: Area?)
 
     /**
      * Удалить временное значение страны, города, региона

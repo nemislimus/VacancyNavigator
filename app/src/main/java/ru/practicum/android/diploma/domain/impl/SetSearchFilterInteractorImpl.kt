@@ -28,14 +28,14 @@ class SetSearchFilterInteractorImpl(private val repository: SetSearchFilterRepos
         repository.resetFilter()
     }
 
-    override suspend fun saveArea(area: Area) {
+    override suspend fun saveArea(area: Area?) {
         repository.saveArea(
             area = area,
             saveToTempFilter = false
         )
     }
 
-    override suspend fun saveAreaTempValue(area: Area) {
+    override suspend fun saveAreaTempValue(area: Area?) {
         repository.saveArea(
             area = area,
             saveToTempFilter = true

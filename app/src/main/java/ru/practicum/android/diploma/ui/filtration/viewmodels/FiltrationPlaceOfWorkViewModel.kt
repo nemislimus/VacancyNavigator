@@ -83,5 +83,4 @@ class FiltrationPlaceOfWorkViewModel(
     }
 
     private fun currentWorkPlace(): WorkPlace = WorkPlace(currentCountry, currentRegion)
-
 }

@@ -63,4 +63,6 @@
     <string name="enter_region_query">Введите регион</string>
     <string name="element_arrow">кнопка-стрелочка</string>
     <string name="element_cross">кнопка-крестик элемента</string>
+    <string name="rub">руб</string>
+    <string name="salary_to_high">Зарплата %s слишком высока! Уменьшите свои амбиции.</string>
 </resources>

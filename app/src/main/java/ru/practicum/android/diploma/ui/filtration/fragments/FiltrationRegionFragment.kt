@@ -54,7 +54,6 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
                 setSearchIcon(s.isNullOrBlank())
                 viewModel.getRegions(s.toString())
             }
-
         }
 
         viewModel.liveData.observe(viewLifecycleOwner) {
@@ -69,7 +68,6 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
                 is FiltrationRegionData.Regions -> showRegions(it.regions)
             }
         }
-
     }
 
     private fun showRegions(regions: List<Area>) {
@@ -143,7 +141,5 @@ class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding
         const val COUNTRY_ID_KEY = "country_id_key"
 
         fun createArgs(country: Area) = bundleOf(COUNTRY_ID_KEY to country.id)
-
     }
-
 }

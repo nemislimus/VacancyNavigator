@@ -43,23 +43,25 @@ class SetSearchFilterRepositoryImpl(
         dao.deleteFilter()
     }
 
-    override suspend fun saveArea(area: Area, saveToTempFilter: Boolean) {
-        val list: MutableList<Area> = mutableListOf(area)
-        var parentId = area.parentId?.toInt() ?: 0
-        while (true) {
-            val areaItem = dao.getParentArea(parentId) ?: break
-            parentId = areaItem.parentId
-            list.add(0, AreaRoomToAreaMapper.map(areaItem))
-        }
-
+    override suspend fun saveArea(area: Area?, saveToTempFilter: Boolean) {
         var oldFilter = getFilterOrDefault().copy(country = null).copy(region = null).copy(city = null)
 
-        list.forEachIndexed { index, areaItem ->
-            oldFilter = when (index) {
-                0 -> oldFilter.copy(country = areaItem)
-                1 -> oldFilter.copy(region = areaItem)
-                2 -> oldFilter.copy(city = areaItem)
-                else -> oldFilter
+        area?.let {
+            val list: MutableList<Area> = mutableListOf(area)
+            var parentId = area.parentId?.toInt() ?: 0
+            while (true) {
+                val areaItem = dao.getParentArea(parentId) ?: break
+                parentId = areaItem.parentId
+                list.add(0, AreaRoomToAreaMapper.map(areaItem))
+            }
+
+            list.forEachIndexed { index, areaItem ->
+                oldFilter = when (index) {
+                    0 -> oldFilter.copy(country = areaItem)
+                    1 -> oldFilter.copy(region = areaItem)
+                    2 -> oldFilter.copy(city = areaItem)
+                    else -> oldFilter
+                }
             }
         }
 

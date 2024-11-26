@@ -1,22 +1,28 @@
 package ru.practicum.android.diploma.ui.filtration.fragments
 
 import android.os.Bundle
-import android.util.TypedValue
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFiltrationBinding
+import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationData
+import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationViewModel
 import ru.practicum.android.diploma.ui.utils.BindingFragment
-import ru.practicum.android.diploma.util.EMPTY_STRING
+import ru.practicum.android.diploma.util.NumDeclension
 
-open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
+open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), NumDeclension {
 
-    private var salaryThemeColor = 0
-    private var valuesThemeColor = 0
+    private val vModel: FiltrationViewModel by viewModel()
+    private var lastNormalSalary = 0
+    private var detektHelper: FiltrationFragmentUiDetektHelper? = null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -27,76 +33,163 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getAttrColors()
-        setFilterFieldUiValues()
+        detektHelper = FiltrationFragmentUiDetektHelper(requireContext(), binding)
+        detektHelper?.onViewCreated()
         manageFilterElementClick()
+        bindingNumberOne()
+        bindingNumberTwo()
 
-        binding.etSalaryEditText.addTextChangedListener { s ->
-            showClearSalaryIcon(s.isNullOrBlank())
-        }
+        vModel.getLiveData().observe(viewLifecycleOwner) {
+            when (it) {
+                is FiltrationData.Filter -> {
+                    with(binding) {
+                        clCountryValue.tvValue.text = detektHelper?.concatAreasNames(it.filter)
 
-        binding.etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
-            manageSalaryHintColor(hasFocus)
-        }
+                        it.filter.industry?.let { industry ->
+                            clIndustryValue.tvValue.text = industry.name
+                        } ?: run {
+                            clIndustryValue.tvValue.text = requireContext().getText(R.string.industry)
+                        }
 
-        binding.tbFilterToolBar.setOnClickListener {
-            findNavController().navigateUp()
-        }
+                        with(binding.clIndustryValue) {
+                            ivElementButton.isVisible = it.filter.industry == null
+                            ivClearElementButton.isVisible = it.filter.industry != null
+                        }
 
-        binding.ivClearSalary.setOnClickListener {
-            clearSalary()
-        }
+                        it.filter.salary?.let { salary ->
+                            etSalaryEditText.setText(
+                                rubFormat(salary.toString())
+                            )
+                        } ?: run {
+                            etSalaryEditText.text.clear()
+                        }
 
-        binding.ckbSalaryCheckbox.setOnClickListener {
-            binding.etSalaryEditText.clearFocus()
-        }
-    }
+                        ckbSalaryCheckbox.isChecked = it.filter.onlyWithSalary
+                    }
+                }
 
-    private fun manageFilterElementClick() {
-        binding.clCountryValue.ivElementButton.setOnClickListener {
-            findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
-        }
+                is FiltrationData.GoBack -> {
+                    if (it.applyBeforeExiting) {
+                        setFragmentResult(
+                            RESULT_IS_FILTER_APPLIED_KEY,
+                            bundleOf(RESULT_IS_FILTER_APPLIED_KEY to "true")
+                        )
+                    }
+                    findNavController().navigateUp()
+                }
 
-        binding.clIndustryValue.ivElementButton.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_filtrationFragment_to_filtrationIndustryFragment
-            )
-        }
+                is FiltrationData.ApplyButton -> {
+                    binding.btnApplyFilter.isVisible = it.visible
+                }
 
-        binding.clCountryValue.ivClearElementButton.setOnClickListener {
-            with(binding.clCountryValue) {
-                tvHint.isVisible = false
-                ivElementButton.isVisible = true
-                ivClearElementButton.isVisible = false
-                tvValue.setTextColor(requireContext().getColor(R.color.gray))
+                is FiltrationData.ResetButton -> {
+                    // binding.btnResetFilter.isVisible = it.visible
+                }
             }
         }
     }
 
-    private fun getAttrColors() {
-        val themeValuesTextColor = TypedValue()
-        val themeSalaryHintTextColor = TypedValue()
-        requireContext().theme.resolveAttribute(R.attr.elementColor_black_white, themeValuesTextColor, true)
-        requireContext().theme.resolveAttribute(R.attr.elementColor_gray_white, themeSalaryHintTextColor, true)
-        valuesThemeColor = themeValuesTextColor.data
-        salaryThemeColor = themeSalaryHintTextColor.data
+    override fun onResume() {
+        super.onResume()
+        detektHelper?.onResume()
     }
 
-    private fun setFilterFieldUiValues() {
+    private fun bindingNumberOne() {
         with(binding) {
-            clCountryValue.tvValue.text = requireContext().getText(R.string.place_of_work)
-            clCountryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
-            clCountryValue.tvHint.text = requireContext().getText(R.string.place_of_work)
+            etSalaryEditText.addTextChangedListener { s ->
+                showClearSalaryIcon(s.isNullOrBlank())
 
-            clIndustryValue.tvValue.text = requireContext().getText(R.string.industry)
-            clIndustryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
-            clIndustryValue.tvHint.text = requireContext().getText(R.string.industry)
+                try {
+                    val salary: Long = longFromString(s.toString())
+
+                    if (salary < Integer.MAX_VALUE) {
+                        lastNormalSalary = salary.toInt()
+
+                        vModel.saveSalary(
+                            salary = lastNormalSalary
+                        )
+                    } else {
+                        etSalaryEditText.setText(lastNormalSalary.toString())
+
+                        vModel.showHighSalaryInfo(salary)
+                    }
+                } catch (er: NumberFormatException) {
+                    Log.d("WWW", "High salary $er")
+                    etSalaryEditText.setText("0")
+                }
+            }
         }
     }
 
-    private fun clearSalary() {
-        binding.etSalaryEditText.setText(EMPTY_STRING)
-        if (!binding.etSalaryEditText.isFocused) binding.tvSalaryHint.setTextColor(salaryThemeColor)
+    private fun bindingNumberTwo() {
+        with(binding) {
+            etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
+                detektHelper?.manageSalaryHintColor(hasFocus)
+                formatSalary(hasFocus)
+            }
+
+            tbFilterToolBar.setOnClickListener {
+                vModel.goBack(
+                    applyBeforeExiting = false
+                )
+            }
+
+            ckbSalaryCheckbox.setOnClickListener {
+                vModel.setOnlyWithSalary(
+                    withSalary = ckbSalaryCheckbox.isChecked
+                )
+            }
+
+            btnApplyFilter.setOnClickListener {
+                vModel.goBack(
+                    applyBeforeExiting = true
+                )
+            }
+
+            btnResetFilter.setOnClickListener {
+                vModel.resetFilter()
+            }
+        }
+    }
+
+    private fun manageFilterElementClick() {
+        with(binding) {
+            clCountryValue.tvValue.setOnClickListener {
+                findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
+            }
+            clCountryValue.ivElementButton.setOnClickListener {
+                findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
+            }
+
+            clIndustryValue.tvValue.setOnClickListener {
+                findNavController().navigate(
+                    R.id.action_filtrationFragment_to_filtrationIndustryFragment
+                )
+            }
+            clIndustryValue.ivElementButton.setOnClickListener {
+                findNavController().navigate(
+                    R.id.action_filtrationFragment_to_filtrationIndustryFragment
+                )
+            }
+            clIndustryValue.ivClearElementButton.setOnClickListener {
+                with(binding.clIndustryValue) {
+                    tvHint.isVisible = false
+                    ivElementButton.isVisible = true
+                    ivClearElementButton.isVisible = false
+                    tvValue.setTextColor(requireContext().getColor(R.color.gray))
+                }
+                vModel.resetIndustry()
+            }
+            clCountryValue.ivClearElementButton.setOnClickListener {
+                with(binding.clCountryValue) {
+                    tvHint.isVisible = false
+                    ivElementButton.isVisible = true
+                    ivClearElementButton.isVisible = false
+                    tvValue.setTextColor(requireContext().getColor(R.color.gray))
+                }
+                vModel.resetWorkplace()
+            }
+        }
     }
 
     private fun showClearSalaryIcon(salaryIsEmpty: Boolean) {
@@ -105,15 +198,33 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>() {
         }
     }
 
-    private fun manageSalaryHintColor(hasFocus: Boolean) {
-        if (hasFocus) {
-            binding.tvSalaryHint.setTextColor(requireContext().getColor(R.color.blue))
+    private fun rubFormat(salary: String): String {
+        val rubString = threeZeroFormat(salary)
+        return rubString + if (rubString.isNotBlank()) {
+            " " + requireContext().getString(R.string.rub)
         } else {
-            if (binding.etSalaryEditText.text.isNullOrBlank()) {
-                binding.tvSalaryHint.setTextColor(salaryThemeColor)
-            } else {
-                binding.tvSalaryHint.setTextColor(requireContext().getColor(R.color.black))
+            ""
+        }
+    }
+
+    private fun formatSalary(hasFocus: Boolean) {
+        with(binding) {
+            etSalaryEditText.let {
+                it.setText(
+                    if (!hasFocus) {
+                        rubFormat(it.text.toString())
+                    } else {
+                        it.text.toString().replace(
+                            Regex("""[^0-9 ]"""),
+                            ""
+                        ).trim()
+                    }
+                )
             }
         }
+    }
+
+    companion object {
+        const val RESULT_IS_FILTER_APPLIED_KEY = "IS_FILTER_APPLIED_KEY"
     }
 }

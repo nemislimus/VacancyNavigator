@@ -28,5 +28,4 @@ class RegionAdapter(
             onClickRegion(item)
         }
     }
-
 }

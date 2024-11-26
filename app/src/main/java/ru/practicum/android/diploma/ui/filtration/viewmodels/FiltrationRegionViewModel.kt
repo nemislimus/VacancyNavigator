@@ -47,5 +47,4 @@ class FiltrationRegionViewModel(
             _liveData.setSingleEventValue(FiltrationRegionData.GoBack(region))
         }
     }
-
 }

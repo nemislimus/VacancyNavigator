@@ -38,5 +38,4 @@ class FavoritesAdapter(
     fun interface ItemClickListener {
         fun onItemClick(item: VacancyShort)
     }
-
 }
