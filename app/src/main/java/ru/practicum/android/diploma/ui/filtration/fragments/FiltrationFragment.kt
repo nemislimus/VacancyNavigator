@@ -83,7 +83,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                 }
 
                 is FiltrationData.ResetButton -> {
-                    binding.btnResetFilter.isVisible = it.visible
+                    // binding.btnResetFilter.isVisible = it.visible
                 }
             }
         }
