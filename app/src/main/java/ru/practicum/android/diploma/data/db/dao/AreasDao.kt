@@ -6,7 +6,7 @@ import ru.practicum.android.diploma.data.db.models.AreaRoom
 
 @Dao
 interface AreasDao {
-    @Query("SELECT * FROM areas WHERE nestingLevel=0 ORDER BY name")
+    @Query("SELECT * FROM areas WHERE nestingLevel=0 ORDER BY hhPosition")
     suspend fun figmaCountries(): List<AreaRoom>
 
     @Query("SELECT * FROM areas WHERE nestingLevel=1 AND type!='country' ORDER BY name")
