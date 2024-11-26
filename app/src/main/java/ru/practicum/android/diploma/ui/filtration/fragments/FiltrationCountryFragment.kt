@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.bundle.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
@@ -50,6 +51,7 @@ class FiltrationCountryFragment : BindingFragment<FragmentFiltrationCountriesBin
     }
 
     private fun setCountries(countries: List<Area>) {
+        binding.rvCountryList.isVisible = true
         listAdapter.areas.addAll(countries)
         listAdapter.notifyDataSetChanged()
     }

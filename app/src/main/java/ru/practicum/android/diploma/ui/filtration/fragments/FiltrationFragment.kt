@@ -2,6 +2,7 @@ package ru.practicum.android.diploma.ui.filtration.fragments
 
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,9 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
     private var lastNormalSalary = 0
     private var detektHelper: FiltrationFragmentUiDetektHelper? = null
 
+    private var salaryThemeColor = 0
+    private var valuesThemeColor = 0
+
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -39,6 +43,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         manageFilterElementClick()
         bindingNumberOne()
         bindingNumberTwo()
+        getAttrColors()
 
         vModel.getLiveData().observe(viewLifecycleOwner) {
             when (it) {
@@ -47,9 +52,9 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
                         clCountryValue.tvValue.text = detektHelper?.concatAreasNames(it.filter)
 
                         it.filter.industry?.let { industry ->
-                            clIndustryValue.tvValue.text = industry.name
+                            setIndustryFieldValueUi(industry.name)
                         } ?: run {
-                            clIndustryValue.tvValue.text = requireContext().getText(R.string.industry)
+                            setIndustryFieldValueUi(null)
                         }
 
                         with(binding.clIndustryValue) {
@@ -122,6 +127,7 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
             etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
                 detektHelper?.manageSalaryHintColor(hasFocus)
                 formatSalary(hasFocus)
+                manageSalaryHintColor(hasFocus)
             }
 
             tbFilterToolBar.setOnClickListener {
@@ -200,6 +206,69 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
             " " + requireContext().getString(R.string.rub)
         } else {
             ""
+        }
+    }
+
+    private fun setEmptyFieldsUi() {
+        with(binding) {
+            clCountryValue.tvValue.text = requireContext().getText(R.string.place_of_work)
+            clCountryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
+            clCountryValue.tvHint.text = requireContext().getText(R.string.place_of_work)
+
+            clIndustryValue.tvValue.text = requireContext().getText(R.string.industry)
+            clIndustryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
+            clIndustryValue.tvHint.text = requireContext().getText(R.string.industry)
+        }
+    }
+
+    private fun setIndustryFieldValueUi(value: String?) {
+        with(binding.clIndustryValue) {
+            if (value != null) {
+                tvHint.text = requireContext().getText(R.string.industry)
+                tvValue.text = value
+                tvHint.isVisible = true
+                tvValue.setTextColor(valuesThemeColor)
+            } else {
+                tvValue.text = requireContext().getText(R.string.industry)
+                tvValue.setTextColor(requireContext().getColor(R.color.gray))
+                tvHint.isVisible = false
+            }
+        }
+    }
+
+    private fun setWorkPlaceFieldValueUi(value: String?) {
+        with(binding.clCountryValue) {
+            if (value != null) {
+                tvHint.text = requireContext().getText(R.string.place_of_work)
+                tvValue.text = value
+                tvHint.isVisible = true
+                tvValue.setTextColor(valuesThemeColor)
+            } else {
+                tvValue.text = requireContext().getText(R.string.place_of_work)
+                tvValue.setTextColor(requireContext().getColor(R.color.gray))
+                tvHint.isVisible = false
+            }
+        }
+    }
+
+    private fun getAttrColors() {
+        val themeValuesTextColor = TypedValue()
+        val themeSalaryHintTextColor = TypedValue()
+        requireContext().theme.resolveAttribute(R.attr.elementColor_black_white, themeValuesTextColor, true)
+        requireContext().theme.resolveAttribute(R.attr.elementColor_gray_white, themeSalaryHintTextColor, true)
+        valuesThemeColor = themeValuesTextColor.data
+        salaryThemeColor = themeSalaryHintTextColor.data
+    }
+
+    private fun manageSalaryHintColor(hasFocus: Boolean) {
+        if (hasFocus) {
+            binding.tvSalaryHint.setTextColor(requireContext().getColor(R.color.blue))
+        } else {
+            if (binding.etSalaryEditText.text.isNullOrBlank()) {
+                binding.tvSalaryHint.setTextColor(salaryThemeColor)
+            } else {
+                binding.tvSalaryHint.setTextColor(requireContext().getColor(R.color.black))
+            }
         }
     }
 

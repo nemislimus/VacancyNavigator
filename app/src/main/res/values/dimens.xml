@@ -29,4 +29,5 @@
     <dimen name="width_height_80">80dp</dimen>
     <dimen name="radio_margin">-22dp</dimen>
     <dimen name="size_56dp">56dp</dimen>
+    <dimen name="margin_90">90dp</dimen>
 </resources>

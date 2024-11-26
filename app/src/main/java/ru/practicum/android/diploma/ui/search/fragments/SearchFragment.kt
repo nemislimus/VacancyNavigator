@@ -12,10 +12,12 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
@@ -98,6 +100,15 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
                 is SearchState.VacanciesCount -> setResultInfo(searchResult.vacanciesCount, R.string.search_result_info)
             }
         }
+
+        viewModel.filterState.observe(viewLifecycleOwner) { filterState ->
+            setFilterIcon(filterState)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getFilterExistingStatus()
     }
 
     private fun showLoadingNextPage() {
@@ -248,6 +259,18 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
         if (scrollToTop) {
             binding.rvVacancyList.scrollToPosition(0)
         }
+    }
+
+    private fun getFilterExistingStatus() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getFilterExistingStatus()
+        }
+    }
+
+    private fun setFilterIcon(hasFilter: Boolean) {
+        binding.tbSearchToolBar.menu.findItem(R.id.miSearchFilter).setIcon(
+            if (hasFilter) R.drawable.filter_on else R.drawable.filter_off
+        )
     }
 
     companion object {
