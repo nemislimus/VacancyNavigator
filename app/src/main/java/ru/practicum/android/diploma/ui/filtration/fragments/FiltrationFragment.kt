@@ -209,18 +209,6 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         }
     }
 
-    private fun setEmptyFieldsUi() {
-        with(binding) {
-            clCountryValue.tvValue.text = requireContext().getText(R.string.place_of_work)
-            clCountryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
-            clCountryValue.tvHint.text = requireContext().getText(R.string.place_of_work)
-
-            clIndustryValue.tvValue.text = requireContext().getText(R.string.industry)
-            clIndustryValue.tvValue.setTextColor(requireContext().getColor(R.color.gray))
-            clIndustryValue.tvHint.text = requireContext().getText(R.string.industry)
-        }
-    }
-
     private fun setIndustryFieldValueUi(value: String?) {
         with(binding.clIndustryValue) {
             if (value != null) {
@@ -236,20 +224,21 @@ open class FiltrationFragment : BindingFragment<FragmentFiltrationBinding>(), Nu
         }
     }
 
-    private fun setWorkPlaceFieldValueUi(value: String?) {
-        with(binding.clCountryValue) {
-            if (value != null) {
-                tvHint.text = requireContext().getText(R.string.place_of_work)
-                tvValue.text = value
-                tvHint.isVisible = true
-                tvValue.setTextColor(valuesThemeColor)
-            } else {
-                tvValue.text = requireContext().getText(R.string.place_of_work)
-                tvValue.setTextColor(requireContext().getColor(R.color.gray))
-                tvHint.isVisible = false
-            }
-        }
-    }
+    // Это метод для обработки состояния строки место работы, работает как тот что выше
+//    private fun setWorkPlaceFieldValueUi(value: String?) {
+//        with(binding.clCountryValue) {
+//            if (value != null) {
+//                tvHint.text = requireContext().getText(R.string.place_of_work)
+//                tvValue.text = value
+//                tvHint.isVisible = true
+//                tvValue.setTextColor(valuesThemeColor)
+//            } else {
+//                tvValue.text = requireContext().getText(R.string.place_of_work)
+//                tvValue.setTextColor(requireContext().getColor(R.color.gray))
+//                tvHint.isVisible = false
+//            }
+//        }
+//    }
 
     private fun getAttrColors() {
         val themeValuesTextColor = TypedValue()
