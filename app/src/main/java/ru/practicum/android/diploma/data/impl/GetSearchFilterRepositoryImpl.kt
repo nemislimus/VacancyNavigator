@@ -15,7 +15,6 @@ class GetSearchFilterRepositoryImpl(
     private val mapper = SearchFilterToSearchFilterRoomMapper
 
     override suspend fun getFilter(): Flow<SearchFilter?> {
-        dao.deleteTempFilter()
         return dao.getFilterFlow().map { mapper.map(it) }
     }
 
