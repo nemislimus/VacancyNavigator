@@ -21,6 +21,7 @@ class FiltrationPlaceOfWorkViewModel(
 
     init {
         viewModelScope.launch {
+            filterSetter.resetAreaTempValue()
 
             liveData.postValue(
                 FiltrationPlaceOfWorkData.OldFilter(

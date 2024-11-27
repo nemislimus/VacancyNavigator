@@ -43,5 +43,4 @@ abstract class DetektBindingFragment : BindingFragment<FragmentFiltrationBinding
             }
         }
     }
-
 }
