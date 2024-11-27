@@ -14,16 +14,14 @@ class FiltrationRegionViewModel(
     private val filterSetter: SetSearchFilterInteractor,
     private val countryId: String?,
 ) : ViewModel() {
+    private val _liveData = XxxLiveData<FiltrationRegionData>()
+    val liveData: LiveData<FiltrationRegionData> get() = _liveData
 
     init {
         viewModelScope.launch {
             getRegions()
         }
     }
-
-    private val _liveData = XxxLiveData<FiltrationRegionData>()
-
-    val liveData: LiveData<FiltrationRegionData> get() = _liveData
 
     fun getRegions(search: String? = null) {
         viewModelScope.launch {
