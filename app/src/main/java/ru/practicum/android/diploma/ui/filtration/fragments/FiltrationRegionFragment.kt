@@ -11,6 +11,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -23,6 +24,7 @@ import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationRegionDat
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationRegionViewModel
 import ru.practicum.android.diploma.ui.utils.BindingFragment
 import ru.practicum.android.diploma.util.EMPTY_STRING
+import ru.practicum.android.diploma.util.debounce
 
 open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding>() {
 
@@ -30,6 +32,13 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
         val countryId: String? = arguments?.getString(COUNTRY_ID_KEY)
         parametersOf(countryId)
     }
+
+    private var lastSearchRequest: String = ""
+
+    private val _searchDebounce: (String) -> Unit =
+        debounce(true, lifecycleScope, SEARCH_DEBOUNCE_DELAY) { searchText ->
+            viewModel.getRegions(searchText)
+        }
 
     private val listAdapter = RegionAdapter {
         viewModel.saveRegion(it)
@@ -53,7 +62,7 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
 
             llSearchRegionField.etSearchRegionQuery.addTextChangedListener { s ->
                 setSearchIcon(s.isNullOrBlank())
-                viewModel.getRegions(s.toString())
+                searchRegion(s.toString().trim())
             }
         }
 
@@ -69,6 +78,14 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
                 is FiltrationRegionData.Regions -> showRegions(it.regions)
             }
         }
+    }
+
+    private fun searchRegion(searchQuery: String) {
+        // корректировка автозаполнения при котором вначале появляется "", а потом значение
+        if (searchQuery == lastSearchRequest) {
+            return
+        }
+        _searchDebounce(searchQuery)
     }
 
     private fun showRegions(regions: List<Area>) {
@@ -136,6 +153,7 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
     }
 
     companion object {
+        const val SEARCH_DEBOUNCE_DELAY = 200L
 
         const val RESULT_REGION_KEY = "selected_region_key"
 
