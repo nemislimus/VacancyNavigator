@@ -82,6 +82,12 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
                     area = filter.country
                 )
             }
+            clCityValue.ivElementButton.setOnClickListener { cityStartSelection() }
+            clCityValue.ivClearElementButton.setOnClickListener {
+                viewModel.setTempArea(
+                    area = filter.region ?: filter.country
+                )
+            }
         }
     }
 
@@ -89,10 +95,12 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
         with(binding) {
             clCountryValue.tvHint.text = requireContext().getText(R.string.country)
             clRegionValue.tvHint.text = requireContext().getText(R.string.region)
+            clCityValue.tvHint.text = requireContext().getText(R.string.city)
             valuesThemeColor = clCountryValue.tvValue.currentTextColor
         }
         showEmptyCountry()
         showEmptyRegion()
+        showEmptyCity()
     }
 
     private fun countryStartSelection() {
@@ -108,6 +116,21 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
         )
     }
 
+    private fun cityStartSelection() {
+        findNavController().navigate(
+            R.id.action_filtrationPlaceOfWorkFragment_to_filtrationCityFragment,
+            if (filter.region != null) {
+                filter.region?.let {
+                    FiltrationRegionFragment.createArgs(it)
+                }
+            } else {
+                filter.country?.let {
+                    FiltrationRegionFragment.createArgs(it)
+                }
+            }
+        )
+    }
+
     private fun fillWorkplaceData(workPlace: SearchFilter) {
         workPlace.country?.let {
             showFillElement(binding.clCountryValue, it.name)
@@ -115,6 +138,9 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
         workPlace.region?.let {
             showFillElement(binding.clRegionValue, it.name)
         } ?: showEmptyRegion()
+        workPlace.city?.let {
+            showFillElement(binding.clCityValue, it.name)
+        } ?: showEmptyCity()
     }
 
     private fun showEmptyCountry() {
@@ -128,6 +154,13 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
         with(binding) {
             clRegionValue.tvValue.text = requireContext().getText(R.string.region)
             showEmptyElement(clRegionValue)
+        }
+    }
+
+    private fun showEmptyCity() {
+        with(binding) {
+            clCityValue.tvValue.text = requireContext().getText(R.string.city)
+            showEmptyElement(clCityValue)
         }
     }
 

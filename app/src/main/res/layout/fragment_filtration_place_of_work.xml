@@ -53,6 +53,15 @@
         app:layout_constraintStart_toStartOf="@id/left_border"
         app:layout_constraintTop_toBottomOf="@id/clCountryValue" />
 
+    <include
+        android:id="@+id/clCityValue"
+        layout="@layout/filter_element"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/right_border"
+        app:layout_constraintStart_toStartOf="@id/left_border"
+        app:layout_constraintTop_toBottomOf="@id/clRegionValue" />
+
     <TextView
         android:id="@+id/btnApplyPlaceWork"
         android:layout_width="0dp"
