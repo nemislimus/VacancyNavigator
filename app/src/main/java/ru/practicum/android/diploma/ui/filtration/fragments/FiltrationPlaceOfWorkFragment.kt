@@ -74,20 +74,47 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
 
     private fun manageFilterElementClick() {
         with(binding) {
-            clCountryValue.ivElementButton.setOnClickListener { countryStartSelection() }
-            clCountryValue.ivClearElementButton.setOnClickListener { viewModel.setTempArea(null) }
-            clRegionValue.ivElementButton.setOnClickListener { regionStartSelection() }
-            clRegionValue.ivClearElementButton.setOnClickListener {
-                viewModel.setTempArea(
-                    area = filter.country
-                )
-            }
-            clCityValue.ivElementButton.setOnClickListener { cityStartSelection() }
-            clCityValue.ivClearElementButton.setOnClickListener {
-                viewModel.setTempArea(
-                    area = filter.region ?: filter.country
-                )
-            }
+            setClickListeners(
+                element = clCountryValue,
+                onClick = ::countryStartSelection,
+                onReset = {
+                    viewModel.setTempArea(
+                        area = null
+                    )
+                }
+            )
+
+            setClickListeners(
+                element = clRegionValue,
+                onClick = ::regionStartSelection,
+                onReset = {
+                    viewModel.setTempArea(
+                        area = filter.country
+                    )
+                }
+            )
+
+            setClickListeners(
+                element = clCityValue,
+                onClick = ::cityStartSelection,
+                onReset = {
+                    viewModel.setTempArea(
+                        area = filter.region ?: filter.country
+                    )
+                }
+            )
+        }
+    }
+
+    private fun setClickListeners(element: FilterElementBinding, onClick: () -> Unit, onReset: () -> Unit) {
+        element.ivElementButton.setOnClickListener {
+            onClick()
+        }
+        element.tvValue.setOnClickListener {
+            onClick()
+        }
+        element.ivClearElementButton.setOnClickListener {
+            onReset()
         }
     }
 
