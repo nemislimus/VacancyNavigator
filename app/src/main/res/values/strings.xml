@@ -60,6 +60,8 @@
     <string name="country">Страна</string>
     <string name="region">Регион</string>
     <string name="region_select">Выбор региона</string>
+    <string name="city">Город</string>
+    <string name="city_select">Выбор города</string>
     <string name="enter_region_query">Введите регион</string>
     <string name="element_arrow">кнопка-стрелочка</string>
     <string name="element_cross">кнопка-крестик элемента</string>

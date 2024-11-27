@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.filtration.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,32 +10,36 @@ import ru.practicum.android.diploma.domain.repository.AreasInteractor
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterInteractor
 import ru.practicum.android.diploma.ui.utils.XxxLiveData
 
-class FiltrationRegionViewModel(
-    private val regionsGetter: AreasInteractor,
+open class FiltrationRegionViewModel(
+    val regionsGetter: AreasInteractor,
     private val filterSetter: SetSearchFilterInteractor,
-    private val countryId: String?,
+    private val parentId: String?
 ) : ViewModel() {
-    private val _liveData = XxxLiveData<FiltrationRegionData>()
-    val liveData: LiveData<FiltrationRegionData> get() = _liveData
+    val _LiveData = XxxLiveData<FiltrationRegionData>()
+    var parentArea: Area? = null
+    val liveData: LiveData<FiltrationRegionData> get() = _LiveData
 
     init {
         viewModelScope.launch {
+            parentId?.let {
+                parentArea = regionsGetter.getAreaById(parentId)
+            }
             getRegions()
         }
     }
 
-    fun getRegions(search: String? = null) {
+    open fun getRegions(search: String? = null) {
         viewModelScope.launch {
-            val regions = if (countryId.isNullOrBlank()) {
+            val regions = if (parentId.isNullOrBlank()) {
                 regionsGetter.getAllRegions(search)
             } else {
-                regionsGetter.getRegionsInCountry(countryId, search)
+                regionsGetter.getRegionsInCountry(parentId, search)
             }
 
             if (regions.isEmpty()) {
-                _liveData.postValue(FiltrationRegionData.NotFound)
+                _LiveData.postValue(FiltrationRegionData.NotFound)
             } else {
-                _liveData.postValue(FiltrationRegionData.Regions(regions))
+                _LiveData.postValue(FiltrationRegionData.Regions(regions))
             }
         }
     }
@@ -42,7 +47,7 @@ class FiltrationRegionViewModel(
     fun saveRegion(region: Area) {
         viewModelScope.launch {
             filterSetter.saveAreaTempValue(region)
-            _liveData.setSingleEventValue(FiltrationRegionData.GoBack(region))
+            _LiveData.setSingleEventValue(FiltrationRegionData.GoBack(region))
         }
     }
 }

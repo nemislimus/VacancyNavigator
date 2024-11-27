@@ -24,9 +24,9 @@ import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationRegionVie
 import ru.practicum.android.diploma.ui.utils.BindingFragment
 import ru.practicum.android.diploma.util.EMPTY_STRING
 
-class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding>() {
+open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding>() {
 
-    private val viewModel: FiltrationRegionViewModel by viewModel {
+    open val viewModel: FiltrationRegionViewModel by viewModel {
         val countryId: String? = arguments?.getString(COUNTRY_ID_KEY)
         parametersOf(countryId)
     }
