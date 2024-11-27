@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.ui.filtration.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,9 +14,9 @@ open class FiltrationRegionViewModel(
     private val filterSetter: SetSearchFilterInteractor,
     private val parentId: String?
 ) : ViewModel() {
-    val _LiveData = XxxLiveData<FiltrationRegionData>()
+    val xxxLiveData = XxxLiveData<FiltrationRegionData>()
     var parentArea: Area? = null
-    val liveData: LiveData<FiltrationRegionData> get() = _LiveData
+    val liveData: LiveData<FiltrationRegionData> get() = xxxLiveData
 
     init {
         viewModelScope.launch {
@@ -37,9 +36,9 @@ open class FiltrationRegionViewModel(
             }
 
             if (regions.isEmpty()) {
-                _LiveData.postValue(FiltrationRegionData.NotFound)
+                xxxLiveData.postValue(FiltrationRegionData.NotFound)
             } else {
-                _LiveData.postValue(FiltrationRegionData.Regions(regions))
+                xxxLiveData.postValue(FiltrationRegionData.Regions(regions))
             }
         }
     }
@@ -47,7 +46,7 @@ open class FiltrationRegionViewModel(
     fun saveRegion(region: Area) {
         viewModelScope.launch {
             filterSetter.saveAreaTempValue(region)
-            _LiveData.setSingleEventValue(FiltrationRegionData.GoBack(region))
+            xxxLiveData.setSingleEventValue(FiltrationRegionData.GoBack(region))
         }
     }
 }

@@ -25,9 +25,9 @@ class FiltrationCityViewModel(
             }
 
             if (regions.isEmpty()) {
-                _LiveData.postValue(FiltrationRegionData.NotFound)
+                xxxLiveData.postValue(FiltrationRegionData.NotFound)
             } else {
-                _LiveData.postValue(FiltrationRegionData.Regions(regions))
+                xxxLiveData.postValue(FiltrationRegionData.Regions(regions))
             }
         }
     }
