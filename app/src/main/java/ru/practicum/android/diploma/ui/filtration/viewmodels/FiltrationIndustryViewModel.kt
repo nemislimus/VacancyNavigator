@@ -33,16 +33,20 @@ class FiltrationIndustryViewModel(
 
     fun getIndustries(search: String? = null) {
         viewModelScope.launch {
-            industriesGetter.getAllIndustries(search).toMutableList().let { industries ->
-                selectedIndustry?.let {
-                    industries.forEachIndexed { index, industry ->
-                        if (selectedIndustry == industry) {
-                            industries[index] = industry.copy(isSelected = true)
+            val industriesList = industriesGetter.getAllIndustries(search)
+            if (industriesList.isEmpty()) {
+                liveData.postValue(FiltrationIndustryData.NotFoundIndustry)
+            } else {
+                industriesList.toMutableList().let { industries ->
+                    selectedIndustry?.let {
+                        industries.forEachIndexed { index, industry ->
+                            if (selectedIndustry == industry) {
+                                industries[index] = industry.copy(isSelected = true)
+                            }
                         }
                     }
+                    liveData.postValue(FiltrationIndustryData.Industries(industries))
                 }
-
-                liveData.postValue(FiltrationIndustryData.Industries(industries))
             }
         }
     }
