@@ -68,4 +68,6 @@
     <string name="rub">руб</string>
     <string name="salary_to_high">Зарплата %s слишком высока! Уменьшите свои амбиции.</string>
     <string name="industry_not_found">Такой отрасли нет</string>
+    <string name="enter_city_query">Введите город</string>
+    <string name="city_not_found">Такого города нет</string>
 </resources>

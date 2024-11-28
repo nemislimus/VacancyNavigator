@@ -14,5 +14,10 @@ class FiltrationCityFragment : FiltrationRegionFragment() {
     override fun onResume() {
         super.onResume()
         binding.tbRegionToolBar.setTitle(requireContext().getString(R.string.city_select))
+        binding.llSearchRegionField.etSearchRegionQuery.hint = requireContext().getText(R.string.enter_city_query)
+    }
+
+    override fun showPlaceholder(notFoundList: Boolean, usingForCities: Boolean) {
+        super.showPlaceholder(notFoundList, true)
     }
 }
