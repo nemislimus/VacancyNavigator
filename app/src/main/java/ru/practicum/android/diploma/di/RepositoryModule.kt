@@ -3,6 +3,7 @@ package ru.practicum.android.diploma.di
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import ru.practicum.android.diploma.data.impl.AreasRepositoryImpl
+import ru.practicum.android.diploma.data.impl.DataLoadingStatusRepositoryImpl
 import ru.practicum.android.diploma.data.impl.FavoriteVacancyRepositoryImpl
 import ru.practicum.android.diploma.data.impl.FirebaseRepositoryImpl
 import ru.practicum.android.diploma.data.impl.GetSearchFilterRepositoryImpl
@@ -13,6 +14,7 @@ import ru.practicum.android.diploma.data.impl.UpdateDbOnAppStartRepositoryImpl
 import ru.practicum.android.diploma.data.network.impl.NetworkConnectionCheckerRepositoryImpl
 import ru.practicum.android.diploma.data.search.impl.VacancyRepositoryImpl
 import ru.practicum.android.diploma.domain.repository.AreasRepository
+import ru.practicum.android.diploma.domain.repository.DataLoadingStatusRepository
 import ru.practicum.android.diploma.domain.repository.FavoriteVacancyRepository
 import ru.practicum.android.diploma.domain.repository.FirebaseRepository
 import ru.practicum.android.diploma.domain.repository.GetSearchFilterRepository
@@ -32,6 +34,12 @@ val repositoryModule = module {
 
     factory<SetSearchFilterRepository> {
         SetSearchFilterRepositoryImpl(
+            dao = get()
+        )
+    }
+
+    factory<DataLoadingStatusRepository> {
+        DataLoadingStatusRepositoryImpl(
             dao = get()
         )
     }
