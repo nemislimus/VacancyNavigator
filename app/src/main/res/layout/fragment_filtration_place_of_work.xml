@@ -69,7 +69,7 @@
         android:layout_marginBottom="@dimen/margin_24"
         android:background="@drawable/field_for_result_text"
         android:gravity="center"
-        android:text="@string/apply"
+        android:text="@string/select"
         android:textAppearance="@style/TextMedium_16size_500weight"
         android:textColor="@color/white"
         android:visibility="gone"
