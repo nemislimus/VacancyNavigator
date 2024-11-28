@@ -18,6 +18,7 @@ class FiltrationIndustryViewModel(
 ) : ViewModel() {
     private val liveData = XxxLiveData<FiltrationIndustryData>()
     private var selectedIndustry: Industry? = null
+    private var hasIndustriesList: Boolean = false
 
     init {
         viewModelScope.launch {
@@ -33,16 +34,25 @@ class FiltrationIndustryViewModel(
 
     fun getIndustries(search: String? = null) {
         viewModelScope.launch {
-            industriesGetter.getAllIndustries(search).toMutableList().let { industries ->
-                selectedIndustry?.let {
-                    industries.forEachIndexed { index, industry ->
-                        if (selectedIndustry == industry) {
-                            industries[index] = industry.copy(isSelected = true)
+            val industriesList = industriesGetter.getAllIndustries(search)
+            if (industriesList.isEmpty()) {
+                if (hasIndustriesList) {
+                    liveData.postValue(FiltrationIndustryData.IncorrectIndustry)
+                } else {
+                    liveData.postValue(FiltrationIndustryData.NotFoundIndustry)
+                }
+            } else {
+                industriesList.toMutableList().let { industries ->
+                    selectedIndustry?.let {
+                        industries.forEachIndexed { index, industry ->
+                            if (selectedIndustry == industry) {
+                                industries[index] = industry.copy(isSelected = true)
+                            }
                         }
                     }
+                    hasIndustriesList = true
+                    liveData.postValue(FiltrationIndustryData.Industries(industries))
                 }
-
-                liveData.postValue(FiltrationIndustryData.Industries(industries))
             }
         }
     }

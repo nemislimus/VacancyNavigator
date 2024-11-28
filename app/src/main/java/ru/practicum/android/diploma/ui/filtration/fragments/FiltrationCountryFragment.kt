@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFiltrationCountriesBinding
 import ru.practicum.android.diploma.domain.models.Area
 import ru.practicum.android.diploma.ui.filtration.adapters.RegionAdapter
@@ -46,6 +47,7 @@ class FiltrationCountryFragment : BindingFragment<FragmentFiltrationCountriesBin
     private fun manageCountriesData(data: FiltrationCountryData) {
         when (data) {
             is FiltrationCountryData.Countries -> setCountries(data.countries)
+            is FiltrationCountryData.NotFoundCountries -> showPlaceholder()
             FiltrationCountryData.GoBack -> {
                 findNavController().navigateUp()
             }
@@ -53,8 +55,18 @@ class FiltrationCountryFragment : BindingFragment<FragmentFiltrationCountriesBin
     }
 
     private fun setCountries(countries: List<Area>) {
+        binding.clPlaceholder.root.isVisible = false
         binding.rvCountryList.isVisible = true
         listAdapter.areas.addAll(countries)
         listAdapter.notifyDataSetChanged()
+    }
+
+    private fun showPlaceholder() {
+        binding.rvCountryList.isVisible = false
+        with(binding.clPlaceholder) {
+            tvPlaceholderText.text = requireContext().getString(R.string.not_found_list)
+            ivPlaceholderPicture.setImageResource(R.drawable.placeholder_filter_region_list_not_found)
+            root.isVisible = true
+        }
     }
 }

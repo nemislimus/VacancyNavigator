@@ -45,7 +45,7 @@
     <string name="vacancy_key_skills">Ключевые навыки</string>
     <string name="vacancy_not_found_or_delete">Вакансия не найдена или удалена</string>
     <string name="server_error">Ошибка сервера</string>
-    <string name="not_found_regions">Не удалось получить список</string>
+    <string name="not_found_list">Не удалось получить список</string>
     <string name="favorite_list_empty">Список пуст</string>
     <string name="region_not_found">Такого региона нет</string>
     <string name="favourites">Избранное</string>
@@ -67,4 +67,5 @@
     <string name="element_cross">кнопка-крестик элемента</string>
     <string name="rub">руб</string>
     <string name="salary_to_high">Зарплата %s слишком высока! Уменьшите свои амбиции.</string>
+    <string name="industry_not_found">Такой отрасли нет</string>
 </resources>
