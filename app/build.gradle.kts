@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.activity.ktx)
     implementation(libs.glide)
     implementation(libs.viewbinding)
+    implementation(libs.play.services.location)
     annotationProcessor(libs.compilerGlide)
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
