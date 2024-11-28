@@ -16,6 +16,7 @@ open class FiltrationRegionViewModel(
 ) : ViewModel() {
     val xxxLiveData = XxxLiveData<FiltrationRegionData>()
     var parentArea: Area? = null
+    private var hasRegionsList: Boolean = false
     val liveData: LiveData<FiltrationRegionData> get() = xxxLiveData
 
     init {
@@ -36,8 +37,13 @@ open class FiltrationRegionViewModel(
             }
 
             if (regions.isEmpty()) {
-                xxxLiveData.postValue(FiltrationRegionData.NotFound)
+                if (hasRegionsList) {
+                    xxxLiveData.postValue(FiltrationRegionData.IncorrectRegion)
+                } else {
+                    xxxLiveData.postValue(FiltrationRegionData.NotFoundRegion)
+                }
             } else {
+                hasRegionsList = true
                 xxxLiveData.postValue(FiltrationRegionData.Regions(regions))
             }
         }

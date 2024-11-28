@@ -11,6 +11,9 @@ class FiltrationCityViewModel(
     filterSetter: SetSearchFilterInteractor,
     parentId: String?
 ) : FiltrationRegionViewModel(regionsGetter, filterSetter, parentId) {
+
+    private var hasCityList: Boolean = false
+
     override fun getRegions(search: String?) {
         viewModelScope.launch {
             var regions: List<Area> = emptyList()
@@ -25,8 +28,13 @@ class FiltrationCityViewModel(
             }
 
             if (regions.isEmpty()) {
-                xxxLiveData.postValue(FiltrationRegionData.NotFound)
+                if (hasCityList) {
+                    xxxLiveData.postValue(FiltrationRegionData.IncorrectRegion)
+                } else {
+                    xxxLiveData.postValue(FiltrationRegionData.NotFoundRegion)
+                }
             } else {
+                hasCityList = true
                 xxxLiveData.postValue(FiltrationRegionData.Regions(regions))
             }
         }

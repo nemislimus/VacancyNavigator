@@ -33,10 +33,11 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
         parametersOf(countryId)
     }
 
-    private var lastSearchRequest: String = ""
+    private var lastSearchRequest: String = EMPTY_STRING
 
     private val _searchDebounce: (String) -> Unit =
         debounce(true, lifecycleScope, SEARCH_DEBOUNCE_DELAY) { searchText ->
+            lastSearchRequest = searchText
             viewModel.getRegions(searchText)
         }
 
@@ -72,16 +73,14 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
                     it.region?.let { region -> regionSelected(region) }
                     goBack()
                 }
-
-                FiltrationRegionData.NotFound -> showNotFound()
-                FiltrationRegionData.NotSuchRegion -> {}
+                FiltrationRegionData.NotFoundRegion -> showPlaceholder(true)
+                FiltrationRegionData.IncorrectRegion -> showPlaceholder(false)
                 is FiltrationRegionData.Regions -> showRegions(it.regions)
             }
         }
     }
 
     private fun searchRegion(searchQuery: String) {
-        // корректировка автозаполнения при котором вначале появляется "", а потом значение
         if (searchQuery == lastSearchRequest) {
             return
         }
@@ -89,24 +88,26 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
     }
 
     private fun showRegions(regions: List<Area>) {
-        setPlaceholdersVisibility(false)
+        binding.clPlaceholderRegion.root.isVisible = false
         binding.rvRegionList.isVisible = true
         showNewList(regions)
     }
 
-    private fun setPlaceholdersVisibility(isVisible: Boolean) {
-        binding.clPlaceholderRegion.root.isVisible = isVisible
-    }
-
-    private fun showNotFound() {
-        showNewList()
-        setPlaceholdersVisibility(true)
-        with(binding) {
-            rvRegionList.isVisible = false
-            clPlaceholderRegion.ivPlaceholderPicture.setImageResource(
-                R.drawable.placeholder_filter_region_list_not_found
+    open fun showPlaceholder(notFoundList: Boolean = false, usingForCities: Boolean = false) {
+        binding.rvRegionList.isVisible = false
+        val placeholderText = if (usingForCities) R.string.city_not_found else R.string.region_not_found
+        with(binding.clPlaceholderRegion) {
+            tvPlaceholderText.text = requireContext().getString(
+                if (notFoundList) R.string.not_found_list else placeholderText
             )
-            clPlaceholderRegion.tvPlaceholderText.text = requireContext().getText(R.string.not_found_list)
+            ivPlaceholderPicture.setImageResource(
+                if (notFoundList) {
+                    R.drawable.placeholder_filter_region_list_not_found
+                } else {
+                    R.drawable.placeholder_not_found_picture
+                }
+            )
+            root.isVisible = true
         }
     }
 
