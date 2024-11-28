@@ -7,7 +7,6 @@ import android.util.Log
 import ru.practicum.android.diploma.data.db.DbHelper
 import ru.practicum.android.diploma.data.db.converters.AreaDtoToTempAreaItemMapper
 import ru.practicum.android.diploma.data.db.converters.IndustryDtoToTempIndustryMapper
-import ru.practicum.android.diploma.data.db.dao.CreateDbDao
 import ru.practicum.android.diploma.data.db.models.AreaRoomTemp
 import ru.practicum.android.diploma.data.db.models.IndustryRoomTemp
 import ru.practicum.android.diploma.data.network.ApiRequest
@@ -16,12 +15,14 @@ import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.search.dto.model.AreaDto
 import ru.practicum.android.diploma.data.search.dto.model.IndustryDto
 import ru.practicum.android.diploma.domain.models.AreaType
+import ru.practicum.android.diploma.domain.models.DataLoadingStatus
+import ru.practicum.android.diploma.domain.repository.DataLoadingStatusRepository
 import ru.practicum.android.diploma.domain.repository.UpdateDbOnAppStartRepository
 
 class UpdateDbOnAppStartRepositoryImpl(
     private val client: NetworkClient,
     private val sql: DbHelper,
-    private var roomDb: CreateDbDao?
+    private var roomDb: DataLoadingStatusRepository
 ) : UpdateDbOnAppStartRepository {
 
     private val db: SQLiteDatabase by lazy { sql.writableDatabase }
@@ -32,9 +33,7 @@ class UpdateDbOnAppStartRepositoryImpl(
     private var cityCounter = 1
 
     override suspend fun update(): Boolean {
-        logTime("roomDb -> " + roomDb?.version())
-
-        roomDb = null
+        roomDb.setStatus(DataLoadingStatus.LOADING)
 
         clearTempTables()
         db.execSQL("CREATE TABLE IF NOT EXISTS $AREAS_NO_INDEXES AS SELECT * FROM areas_temp LIMIT 0")
@@ -67,10 +66,18 @@ class UpdateDbOnAppStartRepositoryImpl(
 
             sql.close()
 
+            roomDb.setStatus(DataLoadingStatus.SERVER_ERROR)
+
             return false
         }
 
+        roomDb.setStatus(DataLoadingStatus.COMPLETE)
+
         return true
+    }
+
+    override suspend fun setNoInternet() {
+        roomDb.setStatus(DataLoadingStatus.NO_INTERNET)
     }
 
     private suspend fun clearTempTables() {
