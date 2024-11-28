@@ -138,15 +138,6 @@ class RootActivity : AppCompatActivity() {
         // ...
     }
 
-    fun createLocationRequest() {
-
-        val locationRequest = LocationRequest.Builder()
-            .setIntervalMillis(10000)
-            .setFastestIntervalMillis(5000)
-            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-            .build()
-    }
-
     private fun showLocationPermissionRequest() {
 
         shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
