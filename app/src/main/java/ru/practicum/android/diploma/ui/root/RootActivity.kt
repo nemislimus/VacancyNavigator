@@ -30,20 +30,14 @@ class RootActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.filtrationFragment -> {
-                    binding.bottomNavigationPanel.isVisible = false
-                    binding.flDivider.isVisible = false
-                }
-
-                R.id.vacancyFragment -> {
-                    binding.bottomNavigationPanel.isVisible = false
-                    binding.flDivider.isVisible = false
-                }
-
-                else -> {
-                    binding.bottomNavigationPanel.isVisible = true
-                    binding.flDivider.isVisible = true
-                }
+                R.id.filtrationFragment -> { showBottomNavPanel(false) }
+                R.id.vacancyFragment -> { showBottomNavPanel(false) }
+                R.id.filtrationCountryFragment -> { showBottomNavPanel(false) }
+                R.id.filtrationCityFragment -> { showBottomNavPanel(false) }
+                R.id.filtrationRegionFragment -> { showBottomNavPanel(false) }
+                R.id.filtrationIndustryFragment -> { showBottomNavPanel(false) }
+                R.id.filtrationPlaceOfWorkFragment -> { showBottomNavPanel(false) }
+                else -> { showBottomNavPanel(true) }
             }
 
             vModel.sendVIewScreenEventToStat(
@@ -53,6 +47,11 @@ class RootActivity : AppCompatActivity() {
 
         // Пример использования access token для HeadHunter API
         networkRequestExample(accessToken = BuildConfig.HH_ACCESS_TOKEN)
+    }
+
+    private fun showBottomNavPanel(show: Boolean) {
+        binding.bottomNavigationPanel.isVisible = show
+        binding.flDivider.isVisible = show
     }
 
     private fun networkRequestExample(accessToken: String) {
