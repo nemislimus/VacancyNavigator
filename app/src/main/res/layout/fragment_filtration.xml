@@ -116,8 +116,8 @@
         android:text="@string/not_show_without_sallary"
         android:textAppearance="@style/TextRegular_16size_400weight"
         android:textColor="?attr/elementColor_black_white"
-        app:layout_constraintStart_toStartOf="@+id/left_border"
-        app:layout_constraintTop_toBottomOf="@+id/etSalaryEditText" />
+        app:layout_constraintStart_toStartOf="@id/left_border"
+        app:layout_constraintTop_toBottomOf="@id/etSalaryEditText" />
 
     <CheckBox
         android:id="@+id/ckbSalaryCheckbox"
@@ -127,7 +127,28 @@
         android:buttonTint="@color/blue"
         app:layout_constraintBottom_toBottomOf="@+id/tvWithoutSalary"
         app:layout_constraintEnd_toStartOf="@id/right_border"
-        app:layout_constraintTop_toTopOf="@+id/tvWithoutSalary" />
+        app:layout_constraintTop_toTopOf="@id/tvWithoutSalary" />
+
+    <TextView
+        android:id="@+id/tvGeolocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_44"
+        android:text="@string/geolocation_enabled_checkbox"
+        android:textAppearance="@style/TextRegular_16size_400weight"
+        android:textColor="?attr/elementColor_black_white"
+        app:layout_constraintStart_toStartOf="@id/left_border"
+        app:layout_constraintTop_toBottomOf="@id/tvWithoutSalary" />
+
+    <CheckBox
+        android:id="@+id/ckbGeolocation"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:backgroundTint="@color/blue"
+        android:buttonTint="@color/blue"
+        app:layout_constraintBottom_toBottomOf="@id/tvGeolocation"
+        app:layout_constraintEnd_toStartOf="@id/right_border"
+        app:layout_constraintTop_toTopOf="@id/tvGeolocation" />
 
     <TextView
         android:id="@+id/btnApplyFilter"

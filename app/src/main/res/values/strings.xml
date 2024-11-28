@@ -32,6 +32,7 @@
     <string name="enter_salary">Введите сумму</string>
     <string name="expected_salary">Ожидаемая ЗП</string>
     <string name="not_show_without_sallary">Не показывать без ЗП</string>
+    <string name="geolocation_enabled_checkbox">Показать вакансии рядом со мной</string>
     <string name="apply">Применить</string>
     <string name="reset">Сбросить</string>
     
