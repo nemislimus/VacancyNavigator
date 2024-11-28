@@ -27,6 +27,7 @@ roomKtx = "2.6.1"
 roomRuntime = "2.6.1"
 roomCompiler = "2.6.1"
 viewbinding = "8.7.2"
+firebaseCrashlytics = "19.2.1"
 
 [libraries]
 
@@ -71,6 +72,7 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx"
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 viewbinding = { group = "androidx.databinding", name = "viewbinding", version.ref = "viewbinding" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 
 [plugins]
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
