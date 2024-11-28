@@ -53,7 +53,8 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
         vModel.getLiveData().observe(viewLifecycleOwner) {
             when (it) {
                 FiltrationIndustryData.GoBack -> goBack()
-                is FiltrationIndustryData.NotFoundIndustry -> showPlaceholder()
+                is FiltrationIndustryData.IncorrectIndustry -> showPlaceholder(false)
+                is FiltrationIndustryData.NotFoundIndustry -> showPlaceholder(true)
                 is FiltrationIndustryData.Industries -> showIndustries(it.industries)
             }
         }
@@ -103,11 +104,19 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
         listAdapter.notifyDataSetChanged()
     }
 
-    private fun showPlaceholder() {
+    private fun showPlaceholder(notFoundList: Boolean) {
         binding.rvIndustryList.isVisible = false
         with(binding.clPlaceholderIndustry) {
-            tvPlaceholderText.text = requireContext().getString(R.string.not_found_regions)
-            ivPlaceholderPicture.setImageResource(R.drawable.placeholder_filter_region_list_not_found)
+            tvPlaceholderText.text = requireContext().getString(
+                if (notFoundList) R.string.not_found_list else R.string.industry_not_found
+            )
+            ivPlaceholderPicture.setImageResource(
+                if (notFoundList) {
+                    R.drawable.placeholder_filter_region_list_not_found
+                } else {
+                    R.drawable.placeholder_not_found_picture
+                }
+            )
             root.isVisible = true
         }
     }

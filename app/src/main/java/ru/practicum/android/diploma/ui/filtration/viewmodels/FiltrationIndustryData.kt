@@ -6,4 +6,5 @@ sealed interface FiltrationIndustryData {
     data class Industries(val industries: List<Industry>) : FiltrationIndustryData
     data object GoBack : FiltrationIndustryData
     data object NotFoundIndustry : FiltrationIndustryData
+    data object IncorrectIndustry : FiltrationIndustryData
 }

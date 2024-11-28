@@ -64,7 +64,7 @@ class FiltrationCountryFragment : BindingFragment<FragmentFiltrationCountriesBin
     private fun showPlaceholder() {
         binding.rvCountryList.isVisible = false
         with(binding.clPlaceholder) {
-            tvPlaceholderText.text = requireContext().getString(R.string.not_found_regions)
+            tvPlaceholderText.text = requireContext().getString(R.string.not_found_list)
             ivPlaceholderPicture.setImageResource(R.drawable.placeholder_filter_region_list_not_found)
             root.isVisible = true
         }
