@@ -4,6 +4,7 @@ plugins {
     id("ru.practicum.android.diploma.plugins.developproperties")
     id("kotlin-kapt")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -59,6 +60,7 @@ dependencies {
     implementation(libs.activity.ktx)
     implementation(libs.glide)
     implementation(libs.viewbinding)
+    implementation(libs.play.services.location)
     annotationProcessor(libs.compilerGlide)
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
@@ -93,6 +95,7 @@ dependencies {
     // firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
     // endfirebase
 
 }
