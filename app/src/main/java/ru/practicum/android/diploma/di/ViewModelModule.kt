@@ -46,7 +46,8 @@ val viewModelModule = module {
         FiltrationRegionViewModel(
             regionsGetter = get(),
             filterSetter = get(),
-            parentId = countryId
+            parentId = countryId,
+            loadingStatus = get()
         )
     }
 
@@ -76,7 +77,8 @@ val viewModelModule = module {
         FiltrationCityViewModel(
             regionsGetter = get(),
             filterSetter = get(),
-            parentId = countryId
+            parentId = countryId,
+            loadingStatus = get()
         )
     }
 }
