@@ -30,20 +30,17 @@ open class FiltrationRegionViewModel(
             job = launch {
                 loadingStatus().collect { status ->
                     when (status) {
-                        DataLoadingStatus.APP_FIRST_START -> {
-                            // ничего не делаем
-                        }
+                        DataLoadingStatus.APP_FIRST_START -> Unit
 
                         DataLoadingStatus.NO_INTERNET -> {
-                            // показываем нет интернета
+                            xxxLiveData.postValue(FiltrationRegionData.NoInternet)
                         }
 
                         DataLoadingStatus.LOADING -> {
-                            // крутим прелоадер загрузки
+                            xxxLiveData.postValue(FiltrationRegionData.Loading)
                         }
 
                         DataLoadingStatus.SERVER_ERROR -> {
-                            // показываем ошибку сервера (коврик с Аладином)
                             xxxLiveData.postValue(FiltrationRegionData.NotFoundRegion)
                         }
 

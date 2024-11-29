@@ -7,4 +7,6 @@ sealed interface FiltrationRegionData {
     data class GoBack(val region: Area?) : FiltrationRegionData
     data object IncorrectRegion : FiltrationRegionData
     data object NotFoundRegion : FiltrationRegionData
+    data object NoInternet : FiltrationRegionData
+    data object Loading : FiltrationRegionData
 }
