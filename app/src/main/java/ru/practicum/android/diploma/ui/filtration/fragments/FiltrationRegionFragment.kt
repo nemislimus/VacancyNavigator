@@ -96,38 +96,20 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
         showNewList(regions)
     }
 
-//    open fun showPlaceholder(notFoundList: Boolean = false, usingForCities: Boolean = false) {
-//        binding.rvRegionList.isVisible = false
-//        val placeholderText = if (usingForCities) R.string.city_not_found else R.string.region_not_found
-//        with(binding.clPlaceholderRegion) {
-//            tvPlaceholderText.text = requireContext().getString(
-//                if (notFoundList) R.string.not_found_list else placeholderText
-//            )
-//            ivPlaceholderPicture.setImageResource(
-//                if (notFoundList) {
-//                    R.drawable.placeholder_filter_region_list_not_found
-//                } else {
-//                    R.drawable.placeholder_not_found_picture
-//                }
-//            )
-//            root.isVisible = true
-//        }
-//    }
-
-    open fun showPlaceholder(placeholderType: Int = NO_INTERNET_TYPE, usingForCities: Boolean = false) {
+    open fun showPlaceholder(placeholderType: Int, usingForCities: Boolean = false) {
         binding.pbRegionProgress.isVisible = false
         binding.rvRegionList.isVisible = false
         val placeholderTextIncorrect = if (usingForCities) R.string.city_not_found else R.string.region_not_found
         with(binding.clPlaceholderRegion) {
             tvPlaceholderText.text = requireContext().getString(
-                when(placeholderType) {
+                when (placeholderType) {
                     NO_INTERNET_TYPE -> R.string.no_internet
                     NOT_FOUND_TYPE -> R.string.not_found_list
                     else -> placeholderTextIncorrect
                 }
             )
             ivPlaceholderPicture.setImageResource(
-                when(placeholderType) {
+                when (placeholderType) {
                     NO_INTERNET_TYPE -> R.drawable.placeholder_no_internet_picture
                     NOT_FOUND_TYPE -> R.drawable.placeholder_filter_region_list_not_found
                     else -> R.drawable.placeholder_not_found_picture

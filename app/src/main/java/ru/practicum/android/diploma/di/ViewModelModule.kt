@@ -61,7 +61,8 @@ val viewModelModule = module {
     viewModel {
         FiltrationCountriesViewModel(
             countryGetter = get(),
-            filterSetter = get()
+            filterSetter = get(),
+            loadingStatus = get()
         )
     }
 

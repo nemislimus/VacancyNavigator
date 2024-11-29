@@ -45,18 +45,15 @@ open class FiltrationRegionViewModel(
                         }
 
                         DataLoadingStatus.COMPLETE -> {
-                            // все готово можно делать запросы
                             hasRegionsList = true
                             job?.cancel()
                         }
                     }
                 }
             }
-
             job?.join()
 
-            // это все ниже мы получаем только когда у нас уже загружены регионы
-
+            // получить регионы можно только после того как они были загружены в БД
             parentId?.let {
                 parentArea = regionsGetter.getAreaById(parentId)
             }
@@ -65,10 +62,8 @@ open class FiltrationRegionViewModel(
     }
 
     open fun getRegions(search: String? = null) {
-        if (!hasRegionsList) {
-            // пока регионы не загружены поиск по ним не имеет смысла
-            return
-        }
+        if (!hasRegionsList) return
+
         viewModelScope.launch {
             val regions = if (parentId.isNullOrBlank()) {
                 regionsGetter.getAllRegions(search)
