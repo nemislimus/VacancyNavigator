@@ -17,7 +17,7 @@ class FiltrationCityFragment : FiltrationRegionFragment() {
         binding.llSearchRegionField.etSearchRegionQuery.hint = requireContext().getText(R.string.enter_city_query)
     }
 
-    override fun showPlaceholder(notFoundList: Boolean, usingForCities: Boolean) {
-        super.showPlaceholder(notFoundList, true)
+    override fun showPlaceholder(placeholderType: Int, usingForCities: Boolean) {
+        super.showPlaceholder(placeholderType, true)
     }
 }

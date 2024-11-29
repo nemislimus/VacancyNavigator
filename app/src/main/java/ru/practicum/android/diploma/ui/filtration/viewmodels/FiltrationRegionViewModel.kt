@@ -30,36 +30,30 @@ open class FiltrationRegionViewModel(
             job = launch {
                 loadingStatus().collect { status ->
                     when (status) {
-                        DataLoadingStatus.APP_FIRST_START -> {
-                            // ничего не делаем
-                        }
+                        DataLoadingStatus.APP_FIRST_START -> Unit
 
                         DataLoadingStatus.NO_INTERNET -> {
-                            // показываем нет интернета
+                            xxxLiveData.postValue(FiltrationRegionData.NoInternet)
                         }
 
                         DataLoadingStatus.LOADING -> {
-                            // крутим прелоадер загрузки
+                            xxxLiveData.postValue(FiltrationRegionData.Loading)
                         }
 
                         DataLoadingStatus.SERVER_ERROR -> {
-                            // показываем ошибку сервера (коврик с Аладином)
                             xxxLiveData.postValue(FiltrationRegionData.NotFoundRegion)
                         }
 
                         DataLoadingStatus.COMPLETE -> {
-                            // все готово можно делать запросы
                             hasRegionsList = true
                             job?.cancel()
                         }
                     }
                 }
             }
-
             job?.join()
 
-            // это все ниже мы получаем только когда у нас уже загружены регионы
-
+            // получить регионы можно только после того как они были загружены в БД
             parentId?.let {
                 parentArea = regionsGetter.getAreaById(parentId)
             }
@@ -68,10 +62,8 @@ open class FiltrationRegionViewModel(
     }
 
     open fun getRegions(search: String? = null) {
-        if (!hasRegionsList) {
-            // пока регионы не загружены поиск по ним не имеет смысла
-            return
-        }
+        if (!hasRegionsList) return
+
         viewModelScope.launch {
             val regions = if (parentId.isNullOrBlank()) {
                 regionsGetter.getAllRegions(search)
