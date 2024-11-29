@@ -22,8 +22,8 @@ import ru.practicum.android.diploma.data.network.HhSearchApiProvider
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.impl.RetrofitNetworkClient
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
-import ru.practicum.android.diploma.data.sharing.ExternalNavigatorImpl
-import ru.practicum.android.diploma.domain.sharing.api.ExternalNavigator
+import ru.practicum.android.diploma.data.sharing.ExternalNavigatorRepositoryImpl
+import ru.practicum.android.diploma.domain.sharing.api.ExternalNavigatorRepository
 
 val dataModule = module {
 
@@ -85,9 +85,5 @@ val dataModule = module {
 
     factory<FirebaseAnalytics> {
         FirebaseAnalytics.getInstance(androidContext())
-    }
-
-    factory<ExternalNavigator> {
-        ExternalNavigatorImpl(get())
     }
 }
