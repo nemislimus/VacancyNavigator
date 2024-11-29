@@ -38,7 +38,8 @@ val viewModelModule = module {
         FiltrationIndustryViewModel(
             industriesGetter = get(),
             filterGetter = get(),
-            filterSetter = get()
+            filterSetter = get(),
+            loadingStatus = get()
         )
     }
 

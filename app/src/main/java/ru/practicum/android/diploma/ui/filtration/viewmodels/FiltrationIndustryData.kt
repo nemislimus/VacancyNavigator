@@ -7,4 +7,6 @@ sealed interface FiltrationIndustryData {
     data object GoBack : FiltrationIndustryData
     data object NotFoundIndustry : FiltrationIndustryData
     data object IncorrectIndustry : FiltrationIndustryData
+    data object NoInternet : FiltrationIndustryData
+    data object Loading : FiltrationIndustryData
 }
