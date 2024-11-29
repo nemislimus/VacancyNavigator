@@ -1,13 +1,11 @@
 package ru.practicum.android.diploma.ui.filtration.fragments
 
-import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -106,7 +104,6 @@ open class FiltrationFragment : DetektBindingFragment() {
     }
 
     private fun bindingNumberOne() {
-
         with(binding) {
             etSalaryEditText.addTextChangedListener { s ->
                 showClearSalaryIcon(s.isNullOrBlank())
@@ -128,12 +125,6 @@ open class FiltrationFragment : DetektBindingFragment() {
                 } catch (er: NumberFormatException) {
                     Log.d("WWW", "High salary $er")
                     etSalaryEditText.setText("0")
-                }
-            }
-
-            ckbGeolocation.setOnClickListener {
-                if (ckbGeolocation.isChecked) {
-
                 }
             }
         }

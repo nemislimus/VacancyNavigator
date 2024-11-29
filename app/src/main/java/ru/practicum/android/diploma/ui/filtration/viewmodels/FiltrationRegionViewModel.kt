@@ -22,6 +22,7 @@ open class FiltrationRegionViewModel(
     var parentArea: Area? = null
     var hasRegionsList: Boolean = false
     val liveData: LiveData<FiltrationRegionData> get() = xxxLiveData
+    var userSearchQuery: String? = null
     private var job: Job? = null
 
     init {
@@ -57,11 +58,12 @@ open class FiltrationRegionViewModel(
             parentId?.let {
                 parentArea = regionsGetter.getAreaById(parentId)
             }
-            getRegions()
+            getRegions(userSearchQuery)
         }
     }
 
     open fun getRegions(search: String? = null) {
+        userSearchQuery = search
         if (!hasRegionsList) return
 
         viewModelScope.launch {

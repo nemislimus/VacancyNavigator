@@ -130,6 +130,7 @@
         app:layout_constraintEnd_toStartOf="@id/right_border"
         app:layout_constraintTop_toTopOf="@id/tvWithoutSalary" />
 
+    <!--
     <TextView
         android:id="@+id/tvGeolocation"
         android:layout_width="wrap_content"
@@ -150,6 +151,7 @@
         app:layout_constraintBottom_toBottomOf="@id/tvGeolocation"
         app:layout_constraintEnd_toStartOf="@id/right_border"
         app:layout_constraintTop_toTopOf="@id/tvGeolocation" />
+        -->
 
     <TextView
         android:id="@+id/btnApplyFilter"
