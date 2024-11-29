@@ -39,7 +39,6 @@ abstract class DetektBindingFragment : BindingFragment<FragmentFiltrationBinding
                         rubFormat(noSpaceSalary)
                     )
                 }
-
             }
         }
     }
