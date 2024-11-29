@@ -14,6 +14,7 @@ class FiltrationCityViewModel(
     loadingStatus: GetDataLoadingStatusUseCase
 ) : FiltrationRegionViewModel(regionsGetter, filterSetter, parentId, loadingStatus) {
     override fun getRegions(search: String?) {
+        userSearchQuery = search
         if (!hasRegionsList) {
             // пока регионы не загружены поиск по ним не имеет смысла
             // о том что они получены мы узнаем от родителя который выставит hasRegionsList = true
