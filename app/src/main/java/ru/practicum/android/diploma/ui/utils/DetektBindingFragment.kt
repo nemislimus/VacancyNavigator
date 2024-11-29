@@ -2,7 +2,6 @@ package ru.practicum.android.diploma.ui.utils
 
 import android.os.Bundle
 import android.view.View
-import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFiltrationBinding
 import ru.practicum.android.diploma.ui.filtration.fragments.FiltrationFragmentUiDetektHelper
 import ru.practicum.android.diploma.util.NumDeclension
@@ -20,27 +19,32 @@ abstract class DetektBindingFragment : BindingFragment<FragmentFiltrationBinding
 
     protected fun rubFormat(salary: String): String {
         val rubString = threeZeroFormat(salary)
-        return rubString + if (rubString.isNotBlank()) {
-            " " + requireContext().getString(R.string.rub)
+        return if (rubString.length <= MAX_SALARY_LENGTH) {
+            rubString
         } else {
-            ""
+            salary
         }
     }
 
     protected fun formatSalary(hasFocus: Boolean) {
         with(binding) {
             etSalaryEditText.let {
-                it.setText(
-                    if (!hasFocus) {
-                        rubFormat(it.text.toString())
-                    } else {
-                        it.text.toString().replace(
-                            Regex("""[^0-9 ]"""),
-                            ""
-                        ).trim()
-                    }
-                )
+                val noSpaceSalary = it.text.toString().replace(
+                    Regex("""[^0-9 ]"""),
+                    ""
+                ).trim()
+
+                if (!hasFocus) {
+                    it.setText(
+                        rubFormat(noSpaceSalary)
+                    )
+                }
+
             }
         }
+    }
+
+    companion object {
+        const val MAX_SALARY_LENGTH = 9
     }
 }

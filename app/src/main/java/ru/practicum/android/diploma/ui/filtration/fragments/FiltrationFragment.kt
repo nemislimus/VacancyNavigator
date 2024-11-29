@@ -134,7 +134,6 @@ open class FiltrationFragment : DetektBindingFragment() {
         with(binding) {
             etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
                 detektHelper?.manageSalaryHintColor(hasFocus)
-                formatSalary(hasFocus)
                 manageSalaryHintColor(hasFocus)
             }
 

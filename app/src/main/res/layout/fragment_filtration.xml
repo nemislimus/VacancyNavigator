@@ -75,6 +75,7 @@
         android:background="@drawable/field_for_search_edit_text"
         android:hint="@string/enter_salary"
         android:inputType="number"
+        android:maxLength="9"
         android:maxLines="1"
         android:singleLine="true"
         android:textAppearance="@style/TextRegular_16size_400weight"
