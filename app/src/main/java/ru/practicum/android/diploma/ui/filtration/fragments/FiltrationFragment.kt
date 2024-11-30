@@ -51,7 +51,7 @@ open class FiltrationFragment : DetektBindingFragment() {
                     showCountryValue()
                     showIndustryValue(filtrationData)
                     filtrationData.filter.salary?.let { salary ->
-                        etSalaryEditText.setText(rubFormat(salary.toString()))
+                        etSalaryEditText.setText(salary.toString())
                     } ?: run {
                         etSalaryEditText.text.clear()
                     }
