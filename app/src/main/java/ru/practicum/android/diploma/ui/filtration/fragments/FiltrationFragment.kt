@@ -163,19 +163,11 @@ open class FiltrationFragment : DetektBindingFragment() {
 
     private fun manageFilterElementClick() {
         with(binding) {
-            clCountryValue.tvValue.setOnClickListener {
-                findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
-            }
-            clCountryValue.ivElementButton.setOnClickListener {
+            clCountryValue.wholeElement.setOnClickListener {
                 findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
             }
 
-            clIndustryValue.tvValue.setOnClickListener {
-                findNavController().navigate(
-                    R.id.action_filtrationFragment_to_filtrationIndustryFragment
-                )
-            }
-            clIndustryValue.ivElementButton.setOnClickListener {
+            clIndustryValue.wholeElement.setOnClickListener {
                 findNavController().navigate(
                     R.id.action_filtrationFragment_to_filtrationIndustryFragment
                 )

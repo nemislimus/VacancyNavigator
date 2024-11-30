@@ -107,10 +107,7 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
     }
 
     private fun setClickListeners(element: FilterElementBinding, onClick: () -> Unit, onReset: () -> Unit) {
-        element.ivElementButton.setOnClickListener {
-            onClick()
-        }
-        element.tvValue.setOnClickListener {
+        element.wholeElement.setOnClickListener {
             onClick()
         }
         element.ivClearElementButton.setOnClickListener {
