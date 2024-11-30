@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -63,10 +62,7 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
                 clearQuery()
             }
 
-            llSearchRegionField.etSearchRegionQuery.addTextChangedListener { s ->
-                setSearchIcon(s.isNullOrBlank())
-                searchRegion(s.toString().trim())
-            }
+            llSearchRegionField.etSearchRegionQuery.addTextChangedListener(textWatcher)
 
             rvRegionList.addOnScrollListener(object : OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -100,6 +96,15 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
                 FiltrationRegionData.Loading -> showLoading()
             }
         }
+    }
+
+    override fun onTextInput(text: String) {
+        setSearchIcon(text.isBlank())
+        searchRegion(text.trim())
+    }
+
+    override fun onDestroyFragment() {
+        binding.llSearchRegionField.etSearchRegionQuery.removeTextChangedListener(textWatcher)
     }
 
     private fun searchRegion(searchQuery: String) {
