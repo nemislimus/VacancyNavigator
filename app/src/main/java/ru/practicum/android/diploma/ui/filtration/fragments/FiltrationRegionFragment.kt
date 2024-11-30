@@ -2,7 +2,6 @@ package ru.practicum.android.diploma.ui.filtration.fragments
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,9 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -65,15 +67,33 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
                 setSearchIcon(s.isNullOrBlank())
                 searchRegion(s.toString().trim())
             }
+
+            rvRegionList.addOnScrollListener(object : OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    if (dy > 0) {
+                        val manager = binding.rvRegionList.layoutManager as LinearLayoutManager
+                        val first = manager.findFirstVisibleItemPosition()
+                        val last = manager.findLastVisibleItemPosition()
+                        val elementsPerPage = last - first
+                        if (last >= listAdapter.itemCount - elementsPerPage) {
+                            viewModel.onLastItemReached()
+                        }
+                        viewModel.setNoScrollOnViewCreated()
+                    }
+                }
+            })
         }
 
         viewModel.liveData.observe(viewLifecycleOwner) {
             when (it) {
-                is FiltrationRegionData.Regions -> showRegions(it.regions)
+                is FiltrationRegionData.Regions -> showRegions(it.regions, it.listNeedsScrollTop)
                 is FiltrationRegionData.GoBack -> {
                     it.region?.let { region -> regionSelected(region) }
                     goBack()
                 }
+
                 FiltrationRegionData.NotFoundRegion -> showPlaceholder(NOT_FOUND_TYPE)
                 FiltrationRegionData.IncorrectRegion -> showPlaceholder(INCORRECT_TYPE)
                 FiltrationRegionData.NoInternet -> showPlaceholder(NO_INTERNET_TYPE)
@@ -89,11 +109,11 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
         _searchDebounce(searchQuery)
     }
 
-    private fun showRegions(regions: List<Area>) {
+    private fun showRegions(regions: List<Area>, listNeedsScrollTop: Boolean) {
         binding.pbRegionProgress.isVisible = false
         binding.clPlaceholderRegion.root.isVisible = false
         binding.rvRegionList.isVisible = true
-        showNewList(regions)
+        showNewList(regions, listNeedsScrollTop)
     }
 
     open fun showPlaceholder(placeholderType: Int, usingForCities: Boolean = false) {
@@ -159,10 +179,22 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
         findNavController().popBackStack()
     }
 
-    private fun showNewList(areas: List<Area>? = null) {
-        listAdapter.areas.clear()
-        areas?.let { list -> listAdapter.areas.addAll(list) }
-        listAdapter.notifyDataSetChanged()
+    private fun showNewList(newList: List<Area>, listNeedsScrollTop: Boolean) {
+        if (listNeedsScrollTop) {
+            with(listAdapter) {
+                areas.clear()
+                areas.addAll(newList)
+                notifyDataSetChanged()
+            }
+            binding.rvRegionList.scrollToPosition(0)
+        } else {
+            val oldListSize = listAdapter.areas.size
+            with(listAdapter) {
+                areas.clear()
+                areas.addAll(newList)
+                notifyItemRangeChanged(oldListSize, areas.size - oldListSize)
+            }
+        }
     }
 
     private fun regionSelected(region: Area) {
@@ -179,7 +211,6 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
         const val INCORRECT_TYPE = 2
 
         fun createArgs(country: Area): Bundle {
-            Log.d("WWW", country.toString())
             return bundleOf(COUNTRY_ID_KEY to country.id)
         }
     }

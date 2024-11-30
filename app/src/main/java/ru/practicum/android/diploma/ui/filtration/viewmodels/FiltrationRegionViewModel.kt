@@ -20,9 +20,13 @@ open class FiltrationRegionViewModel(
 ) : ViewModel() {
     val xxxLiveData = XxxLiveData<FiltrationRegionData>()
     var parentArea: Area? = null
-    var hasRegionsList: Boolean = false
+    var isRegionsLoaded: Boolean = false
+    var isNextPageLoading = false
     val liveData: LiveData<FiltrationRegionData> get() = xxxLiveData
-    var userSearchQuery: String? = null
+    var lastSearchQuery: String? = null
+    var maxPages = Integer.MAX_VALUE
+    var currentPage = 0
+    val areasList: MutableList<Area> = mutableListOf()
     private var job: Job? = null
 
     init {
@@ -46,7 +50,7 @@ open class FiltrationRegionViewModel(
                         }
 
                         DataLoadingStatus.COMPLETE -> {
-                            hasRegionsList = true
+                            isRegionsLoaded = true
                             job?.cancel()
                         }
                     }
@@ -58,26 +62,37 @@ open class FiltrationRegionViewModel(
             parentId?.let {
                 parentArea = regionsGetter.getAreaById(parentId)
             }
-            getRegions(userSearchQuery)
+            getRegions(lastSearchQuery)
         }
     }
 
     open fun getRegions(search: String? = null) {
-        userSearchQuery = search
-        if (!hasRegionsList) return
+        if (search != lastSearchQuery) {
+            clearPagingHistory()
+            lastSearchQuery = search
+        }
+
+        if (!(isRegionsLoaded && currentPage < maxPages)) return
 
         viewModelScope.launch {
             val regions = if (parentId.isNullOrBlank()) {
-                regionsGetter.getAllRegions(search)
+                regionsGetter.getAllRegions(search, currentPage)
             } else {
-                regionsGetter.getRegionsInCountry(parentId, search)
+                regionsGetter.getRegionsInCountry(parentId, search, currentPage)
             }
 
             if (regions.isEmpty()) {
-                xxxLiveData.postValue(FiltrationRegionData.IncorrectRegion)
+                if (currentPage == 0) {
+                    xxxLiveData.postValue(FiltrationRegionData.IncorrectRegion)
+                } else {
+                    maxPages = currentPage
+                }
             } else {
-                xxxLiveData.postValue(FiltrationRegionData.Regions(regions))
+                areasList.addAll(regions)
+                xxxLiveData.postValue(FiltrationRegionData.Regions(areasList, currentPage == 0))
             }
+            currentPage++
+            isNextPageLoading = false
         }
     }
 
@@ -85,6 +100,23 @@ open class FiltrationRegionViewModel(
         viewModelScope.launch {
             filterSetter.saveAreaTempValue(region)
             xxxLiveData.setSingleEventValue(FiltrationRegionData.GoBack(region))
+        }
+    }
+
+    fun clearPagingHistory() {
+        areasList.clear()
+        maxPages = Integer.MAX_VALUE
+        currentPage = 0
+    }
+
+    fun setNoScrollOnViewCreated() {
+        xxxLiveData.setStartValue(FiltrationRegionData.Regions(areasList, false))
+    }
+
+    fun onLastItemReached() {
+        if (!isNextPageLoading) {
+            isNextPageLoading = true
+            getRegions(lastSearchQuery)
         }
     }
 }

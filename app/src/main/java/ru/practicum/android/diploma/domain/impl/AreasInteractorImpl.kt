@@ -9,36 +9,24 @@ class AreasInteractorImpl(private val repository: AreasRepository) : AreasIntera
         return repository.getAllCountries(search)
     }
 
-    override suspend fun getAllRegions(search: String?): List<Area> {
-        return repository.getAllRegions(search)
+    override suspend fun getAllRegions(search: String?, page: Int): List<Area> {
+        return repository.getAllRegions(search, page)
     }
 
-    override suspend fun getAllCities(search: String?): List<Area> {
-        return repository.getAllCities(search)
+    override suspend fun getAllCities(search: String?, page: Int): List<Area> {
+        return repository.getAllCities(search, page)
     }
 
-    override suspend fun getRegionsInCountry(countryId: String, search: String?): List<Area> {
-        return repository.getRegionsInCountry(countryId, search)
+    override suspend fun getRegionsInCountry(countryId: String, search: String?, page: Int): List<Area> {
+        return repository.getRegionsInCountry(countryId, search, page)
     }
 
-    override suspend fun getCitiesInCountry(countryId: String, search: String?): List<Area> {
-        return repository.getCitiesInCountry(countryId, search)
+    override suspend fun getCitiesInCountry(countryId: String, search: String?, page: Int): List<Area> {
+        return repository.getCitiesInCountry(countryId, search, page)
     }
 
-    override suspend fun getCitiesInRegion(regionId: String, search: String?): List<Area> {
-        return repository.getCitiesInRegion(regionId, search)
-    }
-
-    override suspend fun countCitiesInCountry(countryId: String): Int {
-        return repository.countCitiesInCountry(countryId)
-    }
-
-    override suspend fun countCitiesInRegion(regionId: String): Int {
-        return repository.countCitiesInRegion(regionId)
-    }
-
-    override suspend fun countRegionsInCountry(countryId: String): Int {
-        return repository.countRegionsInCountry(countryId)
+    override suspend fun getCitiesInRegion(regionId: String, search: String?, page: Int): List<Area> {
+        return repository.getCitiesInRegion(regionId, search, page)
     }
 
     override suspend fun getCountry(parentId: String): Area? {
