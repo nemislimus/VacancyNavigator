@@ -14,29 +14,36 @@ class FiltrationCityViewModel(
     loadingStatus: GetDataLoadingStatusUseCase
 ) : FiltrationRegionViewModel(regionsGetter, filterSetter, parentId, loadingStatus) {
     override fun getRegions(search: String?) {
-        userSearchQuery = search
-        if (!hasRegionsList) {
-            // пока регионы не загружены поиск по ним не имеет смысла
-            // о том что они получены мы узнаем от родителя который выставит hasRegionsList = true
-            return
+        if (search != lastSearchQuery) {
+            clearPagingHistory()
+            lastSearchQuery = search
         }
+
+        if (!(isRegionsLoaded && currentPage < maxPages)) return
+
         viewModelScope.launch {
             var regions: List<Area> = emptyList()
             parentArea?.let { area ->
                 area.parentId?.let {
-                    regions = regionsGetter.getCitiesInRegion(area.id, search)
+                    regions = regionsGetter.getCitiesInRegion(area.id, search, currentPage)
                 } ?: run {
-                    regions = regionsGetter.getCitiesInCountry(area.id, search)
+                    regions = regionsGetter.getCitiesInCountry(area.id, search, currentPage)
                 }
             } ?: run {
-                regions = regionsGetter.getAllCities(search)
+                regions = regionsGetter.getAllCities(search, currentPage)
             }
 
             if (regions.isEmpty()) {
-                xxxLiveData.postValue(FiltrationRegionData.IncorrectRegion)
+                if (currentPage == 0) {
+                    xxxLiveData.postValue(FiltrationRegionData.IncorrectRegion)
+                } else {
+                    maxPages = currentPage
+                }
             } else {
-                xxxLiveData.postValue(FiltrationRegionData.Regions(regions))
+                areasList.addAll(regions)
+                xxxLiveData.postValue(FiltrationRegionData.Regions(areasList, currentPage == 0))
             }
+            currentPage++
         }
     }
 }
