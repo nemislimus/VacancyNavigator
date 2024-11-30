@@ -10,7 +10,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -66,14 +65,8 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
                 clearQuery()
             }
 
-            llSearchFieldContainer.etSearchQueryText.addTextChangedListener { s ->
-                if (s.isNullOrBlank()) {
-                    clearScreen()
-                }
-                viewModel.searchDebounce(s.toString())
-                setSearchIcon(s.isNullOrBlank())
-                showIntro(s.isNullOrBlank())
-            }
+            llSearchFieldContainer.etSearchQueryText.addTextChangedListener(textWatcher)
+
             rvVacancyList.addOnScrollListener(object : OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -109,6 +102,19 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
         binding.root.post {
             setFilterIcon(hasFilter)
         }
+    }
+
+    override fun onDestroyFragment() {
+        binding.llSearchFieldContainer.etSearchQueryText.removeTextChangedListener(textWatcher)
+    }
+
+    override fun onTextInput(text: String) {
+        if (text.isBlank()) {
+            clearScreen()
+        }
+        viewModel.searchDebounce(text)
+        setSearchIcon(text.isBlank())
+        showIntro(text.isBlank())
     }
 
     private fun showLoadingNextPage() {

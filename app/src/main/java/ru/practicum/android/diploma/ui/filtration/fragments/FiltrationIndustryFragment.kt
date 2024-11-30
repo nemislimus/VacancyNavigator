@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
@@ -40,10 +39,7 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
                 clearQuery()
             }
 
-            llSearchIndustryField.etSearchIndustryQuery.addTextChangedListener { s ->
-                setSearchIcon(s.isNullOrBlank())
-                vModel.getIndustries(s.toString())
-            }
+            llSearchIndustryField.etSearchIndustryQuery.addTextChangedListener(textWatcher)
 
             btnSelectIndustry.setOnClickListener {
                 vModel.saveIndustryFilter()
@@ -60,6 +56,15 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
                 is FiltrationIndustryData.Industries -> showIndustries(it.industries)
             }
         }
+    }
+
+    override fun onTextInput(text: String) {
+        setSearchIcon(text.isBlank())
+        vModel.getIndustries(text)
+    }
+
+    override fun onDestroyFragment() {
+        binding.llSearchIndustryField.etSearchIndustryQuery.removeTextChangedListener(textWatcher)
     }
 
     private fun setSearchIcon(queryIsEmpty: Boolean) {

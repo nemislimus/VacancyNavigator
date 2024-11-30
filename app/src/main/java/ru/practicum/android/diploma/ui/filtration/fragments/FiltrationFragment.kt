@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -104,30 +103,34 @@ open class FiltrationFragment : DetektBindingFragment() {
     }
 
     private fun bindingNumberOne() {
-        with(binding) {
-            etSalaryEditText.addTextChangedListener { s ->
-                showClearSalaryIcon(s.isNullOrBlank())
+        binding.etSalaryEditText.addTextChangedListener(textWatcher)
+    }
 
-                try {
-                    val salary: Long = longFromString(s.toString())
+    override fun onTextInput(text: String) {
+        showClearSalaryIcon(text.isBlank())
 
-                    if (salary < Integer.MAX_VALUE) {
-                        lastNormalSalary = salary.toInt()
+        try {
+            val salary: Long = longFromString(text)
 
-                        vModel.saveSalary(
-                            salary = lastNormalSalary
-                        )
-                    } else {
-                        etSalaryEditText.setText(lastNormalSalary.toString())
+            if (salary < Integer.MAX_VALUE) {
+                lastNormalSalary = salary.toInt()
 
-                        vModel.showHighSalaryInfo(salary)
-                    }
-                } catch (er: NumberFormatException) {
-                    Log.d("WWW", "High salary $er")
-                    etSalaryEditText.setText("0")
-                }
+                vModel.saveSalary(
+                    salary = lastNormalSalary
+                )
+            } else {
+                binding.etSalaryEditText.setText(lastNormalSalary.toString())
+
+                vModel.showHighSalaryInfo(salary)
             }
+        } catch (er: NumberFormatException) {
+            Log.d("WWW", "High salary $er")
+            binding.etSalaryEditText.setText("0")
         }
+    }
+
+    override fun onDestroyFragment() {
+        binding.etSalaryEditText.removeTextChangedListener(textWatcher)
     }
 
     private fun bindingNumberTwo() {
