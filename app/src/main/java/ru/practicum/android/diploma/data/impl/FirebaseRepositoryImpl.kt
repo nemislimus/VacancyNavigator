@@ -35,7 +35,14 @@ class FirebaseRepositoryImpl(private val analytics: FirebaseAnalytics) : Firebas
                     is FirebaseEvent.Error -> logKeyValue(ERROR_EVENT_NAME, event.message)
                     is FirebaseEvent.Log -> logKeyValue(LOG_EVENT_NAME, event.message)
                     is FirebaseEvent.SearchVacancy -> logKeyValue(SEARCH_VACANCY, event.text)
-                    is FirebaseEvent.ViewScreen -> logKeyValue(VIEW_SCREEN, event.name)
+                    is FirebaseEvent.ViewScreen -> {
+                        analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+                            param(
+                                FirebaseAnalytics.Param.SCREEN_NAME,
+                                notValidChars.replace(event.name, "")
+                            )
+                        }
+                    }
                 }
             }.onFailure { er ->
                 Log.d("WWW", "Firebase Error: $er")
