@@ -22,7 +22,7 @@ class VacancyViewModel(
     private var android: SystemInteractor,
     private val vacancyInteractor: VacancyDetailsInteractor,
     private val favoriteInteractor: FavoriteVacancyInteractor,
-    private val sharingInteractor: SharingInteractor,
+    private val sharingInteractor: SharingInteractor
 ) : ViewModel() {
     @Volatile
     private var currentVacancy: VacancyFull? = null
@@ -163,7 +163,10 @@ class VacancyViewModel(
 
     fun clickOnShareIcon() {
         currentVacancy?.let {
-            sharingInteractor.shareAppMessageOrLink(it.urlHh)
+            sharingInteractor.shareAppMessageOrLink(
+                text = it.urlHh,
+                shareDialogTitle = android.getString(R.string.share_dialog_title)
+            )
         } ?: run {
             showDeny(SHARE_TOAST_MARKER)
         }

@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.ui.filtration.viewmodels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -12,7 +13,6 @@ import ru.practicum.android.diploma.domain.repository.GetDataLoadingStatusUseCas
 import ru.practicum.android.diploma.domain.repository.GetSearchFilterInteractor
 import ru.practicum.android.diploma.domain.repository.IndustriesInteractor
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterInteractor
-import ru.practicum.android.diploma.ui.utils.XxxLiveData
 
 class FiltrationIndustryViewModel(
     private val industriesGetter: IndustriesInteractor,
@@ -20,7 +20,7 @@ class FiltrationIndustryViewModel(
     private val filterGetter: GetSearchFilterInteractor,
     private val loadingStatus: GetDataLoadingStatusUseCase
 ) : ViewModel() {
-    private val liveData = XxxLiveData<FiltrationIndustryData>()
+    private val liveData = MutableLiveData<FiltrationIndustryData>()
     private var selectedIndustry: Industry? = null
     private var hasIndustriesList: Boolean = false
     private var job: Job? = null

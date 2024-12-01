@@ -72,46 +72,6 @@ class FirebaseRepositoryImpl(private val analytics: FirebaseAnalytics) : Firebas
         }
     }
 
-    /*
-    log.d(eventName: String, eventParams: Map<String, String>)
-    eventName - Название события. Должно содержать от 1 до 40 символов [a-z0-9] или знаков подчеркивания.
-    Название должно начинаться с буквенного символа. Короче те же правила, что для названия переменных
-
-    eventParams - можно передать до 25 параментров в виде ключ - значение
-    Например:
-    log.d("addVacancyToFav", mapOf(
-        "city" to "Moscow",
-        "rubles" to "280_000",
-        "company" to "Yandex"
-    ))
-     */
-    /*
-        private fun logEventWithParams(eventName: String, eventParams: Map<String, String>) {
-            Log.d(eventName, eventParams.toString())
-
-            if (fireBaseEnabled) {
-                val validEventParams = Bundle()
-
-                eventParams.forEach { (key, value) ->
-
-                    val validKey = getKey(key)
-
-                    val validValue = getValue(value)
-
-                    if (validKey.isNotBlank() && validValue.isNotBlank()) {
-                        validEventParams.putString(validKey, validValue)
-                    } else {
-                        Log.d(eventName, "$key -> $value не подходит для Firebase")
-                    }
-                }
-
-                // Параметров может быть не больше 25
-                if (validEventParams.size() in 1..MAX_PARAMS_NUMBER) {
-                    analytics.logEvent(eventName, validEventParams)
-                }
-            }
-        }
-     */
     private fun getKey(key: String): String {
         // Ключ должен быть не длинее 40 символов
         // соделжать только латинские буквы, цифры и подчеркивания
@@ -127,13 +87,10 @@ class FirebaseRepositoryImpl(private val analytics: FirebaseAnalytics) : Firebas
     }
 
     companion object {
-        const val MAX_PARAMS_NUMBER = 25
         const val MAX_KEY_LENGTH = 40
         const val MAX_VALUE_LENGTH = 100
         const val LOG_EVENT_NAME = "WWW"
         const val ERROR_EVENT_NAME = "ERROR_EVENT"
         const val SEARCH_VACANCY = "SEARCH_VACANCY"
-        const val ADD_VACANCY_TO_FAV = "ADD_VACANCY_TO_FAV"
-        const val VIEW_SCREEN = "VIEW_SCREEN"
     }
 }
