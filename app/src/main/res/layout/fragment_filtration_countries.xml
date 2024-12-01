@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/appBackgroundColor"
+    tools:context="ru.practicum.android.diploma.ui.filtration.fragments.FiltrationFragment">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glLeftBorder_16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/margin_16" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glRightBorder_16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/margin_16" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tbCountryWorkToolBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_64dp"
+        app:buttonGravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/CoutryWork"
+        app:navigationIcon="@drawable/arrow_back"
+        app:titleTextAppearance="@style/TextMedium_22size_500weight"
+        app:titleTextColor="?attr/elementColor_black_white" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCountryList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_marginTop="@dimen/margin_8"
+        tools:listitem="@layout/filter_element"
+        app:layout_constraintStart_toStartOf="@id/glLeftBorder_16"
+        app:layout_constraintEnd_toEndOf="@id/glRightBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/tbCountryWorkToolBar"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ProgressBar
+        android:id="@+id/pbProgressCountry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tbCountryWorkToolBar" />
+
+    <include
+        android:id="@+id/clPlaceholder"
+        layout="@layout/placeholder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constrainedHeight="true"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glRightBorder_16"
+        app:layout_constraintStart_toEndOf="@id/glLeftBorder_16"
+        app:layout_constraintTop_toBottomOf="@id/tbCountryWorkToolBar" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

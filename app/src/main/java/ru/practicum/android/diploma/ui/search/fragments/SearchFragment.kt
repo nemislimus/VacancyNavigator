@@ -11,34 +11,35 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
 import ru.practicum.android.diploma.domain.models.VacancyShort
+import ru.practicum.android.diploma.ui.filtration.fragments.FiltrationFragment
 import ru.practicum.android.diploma.ui.search.rv.VacancyListAdapter
 import ru.practicum.android.diploma.ui.search.viewmodels.SearchState
 import ru.practicum.android.diploma.ui.search.viewmodels.SearchViewModel
 import ru.practicum.android.diploma.ui.utils.MenuBindingFragment
 import ru.practicum.android.diploma.ui.vacancy.VacancyFragment
 import ru.practicum.android.diploma.util.EMPTY_STRING
-import ru.practicum.android.diploma.util.declension
+import ru.practicum.android.diploma.util.NumDeclension
 
-class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
+class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclension {
 
     private val listAdapter = VacancyListAdapter { clickOnVacancy(it) }
+
+    private var hasFilter: Boolean = false
 
     private val viewModel: SearchViewModel by viewModel()
 
     override fun createBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
     ): FragmentSearchBinding {
         return FragmentSearchBinding.inflate(inflater, container, false)
     }
@@ -83,6 +84,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
                         if (pos >= listAdapter.itemCount - 1) {
                             viewModel.onLastItemReached()
                         }
+                        viewModel.setNoScrollOnViewCreated()
                     }
                 }
             })
@@ -90,17 +92,22 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
 
         viewModel.searchState.observe(viewLifecycleOwner) { searchResult ->
             when (searchResult) {
-                SearchState.IsLoading -> {
-                    listAdapter.submitList(emptyList())
-                    showLoading()
-                    closeKeyboard()
-                }
-
+                SearchState.IsLoading -> showLoading()
                 SearchState.IsLoadingNextPage -> showLoadingNextPage()
-                is SearchState.Content -> showContent(searchResult.pageData, searchResult.vacanciesCount)
-                SearchState.ConnectionError -> showConnectionError()
+                is SearchState.Content -> showContent(searchResult.pageData, searchResult.listNeedsScrollTop)
+                is SearchState.ConnectionError -> showConnectionError(searchResult.replaceVacancyList)
                 SearchState.NotFoundError -> showNotFoundError()
+                is SearchState.VacanciesCount -> setResultInfo(searchResult.vacanciesCount, R.string.search_result_info)
             }
+        }
+
+        viewModel.filterState.observe(viewLifecycleOwner) { filterState ->
+            setFilterIcon(filterState)
+            hasFilter = filterState
+        }
+
+        binding.root.post {
+            setFilterIcon(hasFilter)
         }
     }
 
@@ -130,8 +137,8 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         }
     }
 
-    private fun showConnectionError() {
-        if (listAdapter.itemCount > 1) {
+    private fun showConnectionError(replaceVacancyList: Boolean) {
+        if (!replaceVacancyList) {
             binding.pbNextPageProgress.isVisible = false
             showToast(R.string.no_internet)
         } else {
@@ -142,13 +149,6 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
                 tvResultInfo.isVisible = false
             }
         }
-    }
-
-    private fun clearScreen() {
-        listAdapter.submitList(emptyList())
-        binding.rvVacancyList.isVisible = false
-        binding.tvResultInfo.isVisible = false
-        clearPlaceholders()
     }
 
     private fun clearPlaceholders() {
@@ -167,19 +167,14 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         }
     }
 
-    private fun showContent(searchData: List<VacancyShort>, vacanciesCount: Int) {
+    private fun showContent(searchData: List<VacancyShort>, listNeedsScrollTop: Boolean) {
         with(binding) {
             rvVacancyList.isVisible = true
-            setResultInfo(vacanciesCount, R.string.search_result_info)
         }
         clearPlaceholders()
-        listAdapter.submitList(searchData)
-        if (searchData.size <= PER_PAGE) {
-            lifecycleScope.launch {
-                delay(DELAY)
-                binding.rvVacancyList.scrollToPosition(0)
-            }
-        }
+        closeKeyboard()
+
+        showFoundVacancies(vacancies = searchData, scrollToTop = listNeedsScrollTop)
     }
 
     private fun setResultInfo(vacanciesCount: Int = -1, messageId: Int) {
@@ -202,15 +197,31 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         binding.ivIntroPicture.isVisible = queryIsEmpty
     }
 
+    private fun clearScreen() {
+        showFoundVacancies()
+        binding.rvVacancyList.isVisible = false
+        binding.tvResultInfo.isVisible = false
+        clearPlaceholders()
+        viewModel.cancelSearch()
+    }
+
     private fun clearQuery() {
         with(binding) {
             llSearchFieldContainer.etSearchQueryText.setText(EMPTY_STRING)
             rvVacancyList.isVisible = false
             pbSearchProgress.isVisible = false
         }
+        showFoundVacancies()
+        closeKeyboard()
+        viewModel.cancelSearch()
     }
 
     private fun goToFilter() {
+        setFragmentResultListener(FiltrationFragment.RESULT_IS_FILTER_APPLIED_KEY) { key, bundle ->
+            bundle.getString(FiltrationFragment.RESULT_IS_FILTER_APPLIED_KEY)?.apply {
+                viewModel.searchAfterFilterApplied()
+            }
+        }
         findNavController().navigate(
             R.id.action_searchFragment_to_filtrationFragment
         )
@@ -237,8 +248,26 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>() {
         }
     }
 
+    private fun showFoundVacancies(vacancies: List<VacancyShort>? = null, scrollToTop: Boolean = false) {
+        listAdapter.vacancies.clear()
+        /*
+         * searchData.toMutableList() поставлен специально
+         * подробности тут https://stackoverflow.com/questions/49726385/listadapter-not-updating-item-in-recyclerview
+         * */
+        vacancies?.let { list -> listAdapter.vacancies.addAll(list.toMutableList()) }
+        listAdapter.notifyDataSetChanged()
+        if (scrollToTop) {
+            binding.rvVacancyList.scrollToPosition(0)
+        }
+    }
+
+    private fun setFilterIcon(hasFilter: Boolean) {
+        binding.tbSearchToolBar.menu.findItem(R.id.miSearchFilter).setIcon(
+            if (hasFilter) R.drawable.filter_on else R.drawable.filter_off
+        )
+    }
+
     companion object {
-        const val PER_PAGE = 20
-        const val DELAY = 200L
+        const val RESULT_IS_FILTER_APPLIED_KEY = "IS_FILTER_APPLIED_KEY"
     }
 }

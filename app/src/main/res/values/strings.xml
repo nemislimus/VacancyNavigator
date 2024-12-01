@@ -25,6 +25,8 @@
     <string name="vacancy_logo">логотип вакансии</string>
     
     <string name="SettingFilters">Настройки фильтрации</string>
+    <string name="PlaceWork">Выбор места работы</string>
+    <string name="CoutryWork">Выбор страны</string>
     <string name="place_of_work">Место работы</string>
     <string name="industry">Отрасль</string>
     <string name="enter_salary">Введите сумму</string>
@@ -52,4 +54,17 @@
     <string name="cant_add_to_favorite">Невозможно сохранить в избранное</string>
     <string name="no_apps_for_text_sending">На устройстве нет приложений для отправки текста!</string>
     <string name="cant_share">Невозможно поделиться вакансией</string>
+    <string name="industry_select">Выбор отрасли</string>
+    <string name="select">Выбрать</string>
+    <string name="enter_industry_query">Введите отрасль</string>
+    <string name="country">Страна</string>
+    <string name="region">Регион</string>
+    <string name="region_select">Выбор региона</string>
+    <string name="city">Город</string>
+    <string name="city_select">Выбор города</string>
+    <string name="enter_region_query">Введите регион</string>
+    <string name="element_arrow">кнопка-стрелочка</string>
+    <string name="element_cross">кнопка-крестик элемента</string>
+    <string name="rub">руб</string>
+    <string name="salary_to_high">Зарплата %s слишком высока! Уменьшите свои амбиции.</string>
 </resources>

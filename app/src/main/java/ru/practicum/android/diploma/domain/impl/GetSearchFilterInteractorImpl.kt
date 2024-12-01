@@ -17,4 +17,8 @@ class GetSearchFilterInteractorImpl(private val repository: GetSearchFilterRepos
     override suspend fun getFilterForNetworkClient(page: Int): SearchFilter? {
         return repository.getFilterForNetworkClient(page)
     }
+
+    override suspend fun getTempFilter(): Flow<SearchFilter?> {
+        return repository.getTempFilter()
+    }
 }

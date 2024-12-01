@@ -9,63 +9,11 @@ import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.domain.models.SearchFilter
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterRepository
 
-class SetSearchFilterRepositoryImpl(private val dao: SearchFilterDao) : SetSearchFilterRepository {
+class SetSearchFilterRepositoryImpl(
+    private val dao: SearchFilterDao
+) :
+    SetSearchFilterRepository {
     private val mapper = SearchFilterToSearchFilterRoomMapper
-
-    override suspend fun saveCountry(country: Area?) {
-        val oldFilter = getFilterOrDefault()
-        if (oldFilter.country == country) {
-            return
-        }
-        setOrReset(
-            newFilter = oldFilter.copy(country = country).copy(region = null).copy(city = null)
-        )
-    }
-
-    override suspend fun saveRegion(region: Area?) {
-        val oldFilter = getFilterOrDefault()
-        if (oldFilter.region == region) {
-            return
-        }
-        var country: Area? = null
-
-        if (region?.parentId != null) {
-            dao.getParentArea(region.parentId.toInt())?.let { roomCountry ->
-                country = AreaRoomToAreaMapper.map(roomCountry)
-            }
-        }
-
-        setOrReset(
-            newFilter = oldFilter.copy(country = country).copy(region = region).copy(city = null)
-        )
-    }
-
-    override suspend fun saveCity(city: Area?) {
-        val oldFilter = getFilterOrDefault()
-        if (oldFilter.city == city) {
-            return
-        }
-        var country: Area? = null
-        var region: Area? = null
-
-        if (city?.parentId != null) {
-            dao.getParentArea(city.parentId.toInt())?.let { roomRegion ->
-                region = AreaRoomToAreaMapper.map(roomRegion)
-            }
-        }
-
-        val regionParentId = region?.parentId
-
-        if (regionParentId != null) {
-            dao.getParentArea(regionParentId.toInt())?.let { roomCountry ->
-                country = AreaRoomToAreaMapper.map(roomCountry)
-            }
-        }
-
-        setOrReset(
-            newFilter = oldFilter.copy(country = country).copy(region = region).copy(city = city)
-        )
-    }
 
     override suspend fun saveIndustry(industry: Industry?) {
         setOrReset(
@@ -95,12 +43,49 @@ class SetSearchFilterRepositoryImpl(private val dao: SearchFilterDao) : SetSearc
         dao.deleteFilter()
     }
 
+    override suspend fun saveArea(area: Area?, saveToTempFilter: Boolean) {
+        var oldFilter = getFilterOrDefault().copy(country = null).copy(region = null).copy(city = null)
+
+        area?.let {
+            val list: MutableList<Area> = mutableListOf(area)
+            var parentId = area.parentId?.toInt() ?: 0
+            while (true) {
+                val areaItem = dao.getParentArea(parentId) ?: break
+                parentId = areaItem.parentId
+                list.add(0, AreaRoomToAreaMapper.map(areaItem))
+            }
+
+            list.forEachIndexed { index, areaItem ->
+                oldFilter = when (index) {
+                    0 -> oldFilter.copy(country = areaItem)
+                    1 -> oldFilter.copy(region = areaItem)
+                    2 -> oldFilter.copy(city = areaItem)
+                    else -> oldFilter
+                }
+            }
+        }
+
+        if (saveToTempFilter) {
+            setTempFilter(oldFilter)
+        } else {
+            setOrReset(oldFilter)
+        }
+    }
+
+    override suspend fun resetAreaTempValue() {
+        dao.deleteTempFilter()
+    }
+
     private suspend fun setOrReset(newFilter: SearchFilter) {
         if (newFilter == SearchFilter()) {
             dao.deleteFilter()
         } else {
             dao.replaceFilter(mapper.map(newFilter))
         }
+    }
+
+    private suspend fun setTempFilter(newFilter: SearchFilter) {
+        dao.replaceFilter(mapper.map(newFilter).copy(filterId = 2))
     }
 
     private suspend fun getFilterOrDefault(): SearchFilter {

@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.data.db
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import ru.practicum.android.diploma.data.DB_VERSION
@@ -24,6 +25,9 @@ import ru.practicum.android.diploma.data.db.models.SearchFilterRoom
         IndustryRoomTemp::class,
         SearchFilterRoom::class,
         FavoriteVacancyRoom::class
+    ],
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2)
     ],
     exportSchema = true
 )

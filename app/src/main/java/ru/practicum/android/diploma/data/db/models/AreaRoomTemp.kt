@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.data.db.models
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -8,12 +9,16 @@ import androidx.room.PrimaryKey
     tableName = "areas_temp",
     indices = [
         Index(value = ["type"]),
-        Index(value = ["parentId"])
+        Index(value = ["parentId"]),
+        Index(value = ["nestingLevel"])
     ]
 )
-data class AreaRoomTemp(
+data class AreaRoomTemp @JvmOverloads constructor(
     @PrimaryKey val id: Int,
     val name: String, // Москва, Воронеж, Сочи
     val type: String, // country, region, city
-    val parentId: Int
+    val parentId: Int,
+    val nestingLevel: Int, // уровень вложенности в выдаче API hh.ru
+    @ColumnInfo(defaultValue = "0")
+    val hhPosition: Int // позиция в выдаче hh.ru
 )

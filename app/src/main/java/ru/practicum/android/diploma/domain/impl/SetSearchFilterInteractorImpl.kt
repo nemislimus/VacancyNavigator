@@ -7,17 +7,6 @@ import ru.practicum.android.diploma.domain.repository.SetSearchFilterInteractor
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterRepository
 
 class SetSearchFilterInteractorImpl(private val repository: SetSearchFilterRepository) : SetSearchFilterInteractor {
-    override suspend fun saveCountry(country: Area?) {
-        repository.saveCountry(country)
-    }
-
-    override suspend fun saveRegion(region: Area?) {
-        repository.saveRegion(region)
-    }
-
-    override suspend fun saveCity(city: Area?) {
-        repository.saveCity(city)
-    }
 
     override suspend fun saveIndustry(industry: Industry?) {
         repository.saveIndustry(industry)
@@ -37,5 +26,23 @@ class SetSearchFilterInteractorImpl(private val repository: SetSearchFilterRepos
 
     override suspend fun resetFilter() {
         repository.resetFilter()
+    }
+
+    override suspend fun saveArea(area: Area?) {
+        repository.saveArea(
+            area = area,
+            saveToTempFilter = false
+        )
+    }
+
+    override suspend fun saveAreaTempValue(area: Area?) {
+        repository.saveArea(
+            area = area,
+            saveToTempFilter = true
+        )
+    }
+
+    override suspend fun resetAreaTempValue() {
+        repository.resetAreaTempValue()
     }
 }

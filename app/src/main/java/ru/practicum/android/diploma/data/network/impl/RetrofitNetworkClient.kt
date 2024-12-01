@@ -7,22 +7,22 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import ru.practicum.android.diploma.data.network.ApiRequest
 import ru.practicum.android.diploma.data.network.ApiResponse
-import ru.practicum.android.diploma.data.network.ApiResponse.Companion.BAD_GATEWAY_CODE
-import ru.practicum.android.diploma.data.network.ApiResponse.Companion.CAPTCHA_REQUIRED_ERROR
+import ru.practicum.android.diploma.data.network.ApiResponse.Companion.BAD_GATEWAY_ERROR_CODE
+import ru.practicum.android.diploma.data.network.ApiResponse.Companion.CAPTCHA_REQUIRED_ERROR_CODE
 import ru.practicum.android.diploma.data.network.ApiResponse.Companion.INCORRECT_PARAM_ERROR_CODE
 import ru.practicum.android.diploma.data.network.ApiResponse.Companion.INTERNAL_SERV_ERROR_CODE
-import ru.practicum.android.diploma.data.network.ApiResponse.Companion.NOT_FOUND_CODE
-import ru.practicum.android.diploma.data.network.ApiResponse.Companion.NO_CONNECTION_CODE
+import ru.practicum.android.diploma.data.network.ApiResponse.Companion.NOT_FOUND_ERROR_CODE
+import ru.practicum.android.diploma.data.network.ApiResponse.Companion.NO_CONNECTION_ERROR_CODE
 import ru.practicum.android.diploma.data.network.ApiResponse.Companion.SUCCESSFUL_RESPONSE_CODE
-import ru.practicum.android.diploma.data.network.api.HhSearchApi
+import ru.practicum.android.diploma.data.network.HhSearchApiProvider
 import ru.practicum.android.diploma.data.network.api.NetworkClient
-import ru.practicum.android.diploma.data.network.api.NetworkConnectionChecker
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
+import ru.practicum.android.diploma.domain.repository.NetworkConnectionCheckerRepository
 import java.io.IOException
 
 class RetrofitNetworkClient(
-    private val hhSearchApi: HhSearchApi,
-    private val connectionChecker: NetworkConnectionChecker,
+    private val apiProvider: HhSearchApiProvider,
+    private val connectionChecker: NetworkConnectionCheckerRepository,
     private val mapper: NetworkMapper,
 ) : NetworkClient {
     override suspend fun doRequest(dto: ApiRequest): ApiResponse {
@@ -30,8 +30,8 @@ class RetrofitNetworkClient(
 
         when {
             !connectionChecker.isConnected() -> {
-                netLog("[$NO_CONNECTION_CODE] - no connection")
-                resultResponse = ApiResponse.BadResponse().apply { resultCode = NO_CONNECTION_CODE }
+                netLog("[$NO_CONNECTION_ERROR_CODE] - no connection")
+                resultResponse = ApiResponse.BadResponse().apply { resultCode = NO_CONNECTION_ERROR_CODE }
             }
         }
 
@@ -53,6 +53,8 @@ class RetrofitNetworkClient(
     }
 
     private suspend fun sendValidRequest(dto: ApiRequest): ApiResponse {
+        val hhSearchApi = apiProvider.getApi()
+
         return when (dto) {
             is ApiRequest.Area -> hhSearchApi.getAreasByCountry(dto.parentAreaId)
             is ApiRequest.AreasAll -> hhSearchApi.getAreas()
@@ -70,19 +72,19 @@ class RetrofitNetworkClient(
                 incorrectParamResponse()
             }
 
-            CAPTCHA_REQUIRED_ERROR -> {
-                netLog("[$CAPTCHA_REQUIRED_ERROR] - captcha required error\n$message")
-                ApiResponse.BadResponse().apply { resultCode = CAPTCHA_REQUIRED_ERROR }
+            CAPTCHA_REQUIRED_ERROR_CODE -> {
+                netLog("[$CAPTCHA_REQUIRED_ERROR_CODE] - captcha required error\n$message")
+                ApiResponse.BadResponse().apply { resultCode = CAPTCHA_REQUIRED_ERROR_CODE }
             }
 
-            NOT_FOUND_CODE -> {
-                netLog("[$NOT_FOUND_CODE] - page not found\n$message")
-                ApiResponse.BadResponse().apply { resultCode = NOT_FOUND_CODE }
+            NOT_FOUND_ERROR_CODE -> {
+                netLog("[$NOT_FOUND_ERROR_CODE] - page not found\n$message")
+                ApiResponse.BadResponse().apply { resultCode = NOT_FOUND_ERROR_CODE }
             }
 
-            BAD_GATEWAY_CODE -> {
-                netLog("[$BAD_GATEWAY_CODE] - bad gateway\n$message")
-                ApiResponse.BadResponse().apply { resultCode = BAD_GATEWAY_CODE }
+            BAD_GATEWAY_ERROR_CODE -> {
+                netLog("[$BAD_GATEWAY_ERROR_CODE] - bad gateway\n$message")
+                ApiResponse.BadResponse().apply { resultCode = BAD_GATEWAY_ERROR_CODE }
             }
 
             else -> {

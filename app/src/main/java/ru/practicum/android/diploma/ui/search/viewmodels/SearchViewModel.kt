@@ -4,20 +4,31 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.domain.models.Resource
 import ru.practicum.android.diploma.domain.models.VacancyShort
+import ru.practicum.android.diploma.domain.repository.GetSearchFilterInteractor
 import ru.practicum.android.diploma.domain.search.api.SearchInteractor
+import ru.practicum.android.diploma.ui.utils.XxxLiveData
 import ru.practicum.android.diploma.util.debounce
 
-class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewModel() {
+class SearchViewModel(
+    private val searchInteractor: SearchInteractor,
+    private val filterGetter: GetSearchFilterInteractor,
+) : ViewModel() {
 
     private var currentPage: Int = 0
     private var maxPages: Int = Int.MAX_VALUE
     private val vacanciesList: MutableList<VacancyShort> = mutableListOf()
     private var isNextPageLoading = false
 
-    private val _searchState: MutableLiveData<SearchState> = MutableLiveData()
+    private val _filterState: MutableLiveData<Boolean> = MutableLiveData(false)
+    internal val filterState: LiveData<Boolean> get() = _filterState
+
+    private val _searchState: XxxLiveData<SearchState> = XxxLiveData()
     internal val searchState: LiveData<SearchState> get() = _searchState
 
     private val _searchDebounce: (String) -> Unit =
@@ -26,6 +37,15 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
         }
 
     private var lastSearchRequest: String = ""
+    private var searchJob: Job? = null
+
+    init {
+        viewModelScope.launch(Dispatchers.Main) {
+            filterGetter.isFilterExists().collect { existOrNotExist ->
+                _filterState.postValue(existOrNotExist)
+            }
+        }
+    }
 
     fun searchDebounce(searchQuery: String) {
         if (searchQuery == lastSearchRequest) {
@@ -37,6 +57,14 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
         _searchDebounce(searchQuery)
     }
 
+    fun searchAfterFilterApplied() {
+        if (lastSearchRequest.isNotBlank()) {
+            clearPagingHistory()
+            _searchState.clear()
+            _searchDebounce(lastSearchRequest)
+        }
+    }
+
     private fun clearPagingHistory() {
         vacanciesList.clear()
         maxPages = Integer.MAX_VALUE
@@ -46,22 +74,35 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     private fun searchVacancies(searchQuery: String) {
         if (searchQuery.isNotEmpty() && currentPage < maxPages) {
             renderLoadingState()
-            viewModelScope.launch {
+            searchJob?.cancel()
+            searchJob = viewModelScope.launch {
                 searchInteractor.searchVacancy(searchQuery, currentPage).collect { result ->
-                    when (result) {
-                        is Resource.ConnectionError -> renderState(SearchState.ConnectionError)
-                        is Resource.NotFoundError -> renderState(SearchState.NotFoundError)
-                        is Resource.ServerError -> renderState(SearchState.NotFoundError)
-                        is Resource.Success -> {
-                            with(result.data) {
-                                ++currentPage
-                                isNextPageLoading = false
-                                maxPages = pages
-                                if (found > 0) {
-                                    vacanciesList.addAll(items)
-                                    renderState(SearchState.Content(vacanciesList, found))
+                    withContext(Dispatchers.Main) {
+                        when (result) {
+                            is Resource.ConnectionError -> {
+                                if (currentPage == 0) {
+                                    renderState(SearchState.ConnectionError(true), true)
                                 } else {
-                                    renderState(SearchState.NotFoundError)
+                                    _searchState.setSingleEventValue(SearchState.ConnectionError(false))
+                                }
+                            }
+
+                            is Resource.NotFoundError -> renderState(SearchState.NotFoundError, true)
+                            is Resource.ServerError -> renderState(SearchState.NotFoundError, true)
+                            is Resource.Success -> {
+                                with(result.data) {
+                                    isNextPageLoading = false
+                                    maxPages = pages
+                                    if (found > 0) {
+                                        vacanciesList.addAll(items)
+                                        renderState(SearchState.Content(vacanciesList, currentPage == 0), true)
+                                        renderState(SearchState.VacanciesCount(found))
+                                        ++currentPage
+                                    } else if (currentPage == 0) {
+                                        renderState(SearchState.NotFoundError, true)
+                                    } else {
+                                        Unit
+                                    }
                                 }
                             }
                         }
@@ -71,16 +112,23 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
         }
     }
 
+    fun setNoScrollOnViewCreated() {
+        _searchState.setStartValue(SearchState.Content(vacanciesList, false))
+    }
+
     private fun renderLoadingState() {
         if (currentPage == 0) {
-            renderState(SearchState.IsLoading)
+            renderState(SearchState.IsLoading, true)
         } else {
-            renderState(SearchState.IsLoadingNextPage)
+            _searchState.setSingleEventValue(SearchState.IsLoadingNextPage)
         }
     }
 
-    private fun renderState(newState: SearchState) {
-        _searchState.value = newState
+    private fun renderState(newState: SearchState, clearOtherStates: Boolean = false) {
+        if (clearOtherStates) {
+            _searchState.clear()
+        }
+        _searchState.setValue(newState)
     }
 
     fun onLastItemReached() {
@@ -88,6 +136,11 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
             isNextPageLoading = true
             searchVacancies(lastSearchRequest)
         }
+    }
+
+    fun cancelSearch() {
+        searchJob?.cancel()
+        _searchState.clear()
     }
 
     companion object {

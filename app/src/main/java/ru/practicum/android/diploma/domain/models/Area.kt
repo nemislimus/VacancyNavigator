@@ -5,4 +5,16 @@ data class Area(
     val name: String, // Москва, Воронеж, Сочи
     val type: AreaType, // country, region, city
     val parentId: String? = null
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        return if (other is Area) {
+            return id == other.id && parentId == other.parentId
+        } else {
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode() + parentId.hashCode()
+    }
+}

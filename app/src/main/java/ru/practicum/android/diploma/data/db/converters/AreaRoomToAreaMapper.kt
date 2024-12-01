@@ -6,18 +6,14 @@ import ru.practicum.android.diploma.domain.models.AreaType
 import kotlin.math.abs
 
 object AreaRoomToAreaMapper {
-    fun map(area: AreaRoom): Area {
-        return Area(
-            id = abs(area.id).toString(),
-            name = area.name,
-            type = AreaType.find(area.type),
-            parentId = if (area.parentId > 0) area.parentId.toString() else null
-        )
-    }
+    fun map(area: AreaRoom): Area = Area(
+        id = abs(area.id).toString(),
+        name = area.name.trim(),
+        type = AreaType.find(area.type),
+        parentId = if (area.parentId > 0) area.parentId.toString() else null
+    )
 
-    fun map(list: List<AreaRoom>): List<Area> {
-        return list.map { area ->
-            map(area)
-        }
+    fun map(list: List<AreaRoom>): List<Area> = list.map { area ->
+        map(area)
     }
 }

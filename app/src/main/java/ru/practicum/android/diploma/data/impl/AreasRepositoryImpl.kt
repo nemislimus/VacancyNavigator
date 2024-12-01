@@ -8,105 +8,85 @@ import ru.practicum.android.diploma.domain.repository.AreasRepository
 
 class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
     override suspend fun getAllCountries(search: String?): List<Area> {
-        search?.let {
-            return AreaRoomToAreaMapper.map(
-                dao.areasByTypeAndName(
-                    AreaType.COUNTRY.type,
-                    search
-                )
-            )
-        } ?: run {
-            return AreaRoomToAreaMapper.map(
-                dao.areasByType(
-                    AreaType.COUNTRY.type
-                )
-            )
-        }
+        return AreaRoomToAreaMapper.map(
+            dao.figmaCountries().let { country ->
+                val first = country.filter { it.hhPosition > 0 }
+                val second = country.filter { it.hhPosition < 0 }
+                first + second
+            }
+        )
     }
 
     override suspend fun getAllRegions(search: String?): List<Area> {
-        search?.let {
-            return AreaRoomToAreaMapper.map(
-                dao.areasByTypeAndName(
-                    AreaType.REGION.type,
-                    search
+        return AreaRoomToAreaMapper.map(
+            if (search.isNullOrBlank()) {
+                dao.figmaRegions()
+            } else {
+                dao.figmaRegionsByName(
+                    search.trim()
                 )
-            )
-        } ?: run {
-            return AreaRoomToAreaMapper.map(
-                dao.areasByType(
-                    AreaType.REGION.type
-                )
-            )
-        }
+            }
+        )
     }
 
     override suspend fun getAllCities(search: String?): List<Area> {
-        search?.let {
-            return AreaRoomToAreaMapper.map(
-                dao.areasByTypeAndName(
-                    AreaType.CITY.type,
-                    search
-                )
-            )
-        } ?: run {
-            return AreaRoomToAreaMapper.map(
+        return AreaRoomToAreaMapper.map(
+            if (search.isNullOrBlank()) {
                 dao.areasByType(
                     AreaType.CITY.type
                 )
-            )
-        }
+            } else {
+                dao.areasByTypeAndName(
+                    AreaType.CITY.type,
+                    search.trim()
+                )
+            }
+        )
     }
 
     override suspend fun getRegionsInCountry(countryId: String, search: String?): List<Area> {
-        search?.let {
-            return AreaRoomToAreaMapper.map(
-                dao.areasByParentAndName(
-                    parentId = countryId.toInt(),
-                    search = search
-                )
-            )
-        } ?: run {
-            return AreaRoomToAreaMapper.map(
+        return AreaRoomToAreaMapper.map(
+            if (search.isNullOrBlank()) {
                 dao.areasByParent(
                     parentId = countryId.toInt()
                 )
-            )
-        }
+            } else {
+                dao.areasByParentAndName(
+                    parentId = countryId.toInt(),
+                    search = search.trim()
+                )
+            }
+        )
     }
 
     override suspend fun getCitiesInCountry(countryId: String, search: String?): List<Area> {
-        search?.let {
-            return AreaRoomToAreaMapper.map(
-                dao.citiesInCountryByName(
-                    countryId = countryId.toInt(),
-                    search = search
-                )
-            )
-        } ?: run {
-            return AreaRoomToAreaMapper.map(
+        return AreaRoomToAreaMapper.map(
+            if (search.isNullOrBlank()) {
                 dao.citiesInCountry(
                     countryId = countryId.toInt()
                 )
-            )
-        }
+            } else {
+                dao.citiesInCountryByName(
+                    countryId = countryId.toInt(),
+                    search = search.trim()
+                )
+            }
+        )
     }
 
     override suspend fun getCitiesInRegion(regionId: String, search: String?): List<Area> {
-        search?.let {
-            return AreaRoomToAreaMapper.map(
-                dao.areasByParentAndName(
-                    parentId = regionId.toInt(),
-                    search = search
-                )
-            )
-        } ?: run {
-            return AreaRoomToAreaMapper.map(
+        return AreaRoomToAreaMapper.map(
+            if (search.isNullOrBlank()) {
                 dao.areasByParent(
                     parentId = regionId.toInt()
                 )
-            )
-        }
+            } else {
+                dao.areasByParentAndName(
+                    parentId = regionId.toInt(),
+                    search = search.trim()
+                )
+            }
+        )
     }
 
     override suspend fun countCitiesInCountry(countryId: String): Int {
@@ -121,7 +101,19 @@ class AreasRepositoryImpl(private val dao: AreasDao) : AreasRepository {
         return dao.countAreasInParent(countryId.toInt())
     }
 
-    companion object {
-        const val MOSCOW_ID = 1
+    override suspend fun getCountry(parentId: String): Area? {
+        var country: Area? = null
+        var areaId = parentId.toInt()
+        while (true) {
+            val area = dao.getAreaById(areaId) ?: break
+            areaId = area.parentId
+            country = AreaRoomToAreaMapper.map(area)
+        }
+        return country
+    }
+
+    override suspend fun getAreaById(id: String): Area? {
+        val area = dao.getAreaById(id.toInt())
+        return if (area != null) AreaRoomToAreaMapper.map(area) else null
     }
 }

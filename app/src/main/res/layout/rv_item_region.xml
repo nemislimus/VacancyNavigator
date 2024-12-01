@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settings_button_share"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/weight_height_60"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tvRegion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginEnd="@dimen/margin_44"
+        android:textAppearance="@style/TextRegular_16size_400weight"
+        android:textColor="?attr/elementColor_black_white"
+        tools:text="ВрядлиБудетРегионСТакимДлиннымНазванием"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+
+    <ImageView
+        android:id="@+id/ivArrowForward"
+        android:layout_gravity="end|center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_20"
+        android:contentDescription="@string/element_arrow"
+        android:src="@drawable/arrow_forward" />
+
+</FrameLayout>

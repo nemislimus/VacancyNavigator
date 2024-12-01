@@ -4,20 +4,77 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ru.practicum.android.diploma.ui.filtration.FiltrationPlaceOfWorkFragment">
+    android:background="?attr/appBackgroundColor"
+    tools:context="ru.practicum.android.diploma.ui.filtration.fragments.FiltrationFragment">
 
-    <!--    Удалить при реализации-->
-    <TextView
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/left_border"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Выбор места работы (экран 11)"
-        android:textAlignment="center"
-        android:textColor="?attr/elementColor_black_white"
-        android:textSize="46sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/margin_16" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/right_border"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/margin_16" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tbPlaceWorkToolBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_64dp"
+        app:buttonGravity="center_vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/arrow_back"
+        app:title="@string/PlaceWork"
+        app:titleTextAppearance="@style/TextMedium_22size_500weight"
+        app:titleTextColor="?attr/elementColor_black_white" />
+
+    <include
+        android:id="@+id/clCountryValue"
+        layout="@layout/filter_element"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_16"
+        app:layout_constraintEnd_toEndOf="@id/right_border"
+        app:layout_constraintStart_toStartOf="@id/left_border"
+        app:layout_constraintTop_toBottomOf="@id/tbPlaceWorkToolBar" />
+
+    <include
+        android:id="@+id/clRegionValue"
+        layout="@layout/filter_element"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/right_border"
+        app:layout_constraintStart_toStartOf="@id/left_border"
+        app:layout_constraintTop_toBottomOf="@id/clCountryValue" />
+
+    <include
+        android:id="@+id/clCityValue"
+        layout="@layout/filter_element"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/right_border"
+        app:layout_constraintStart_toStartOf="@id/left_border"
+        app:layout_constraintTop_toBottomOf="@id/clRegionValue" />
+
+    <TextView
+        android:id="@+id/btnApplyPlaceWork"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/weight_height_60"
+        android:layout_marginBottom="@dimen/margin_24"
+        android:background="@drawable/field_for_result_text"
+        android:gravity="center"
+        android:text="@string/apply"
+        android:textAppearance="@style/TextMedium_16size_500weight"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/right_border"
+        app:layout_constraintStart_toStartOf="@+id/left_border" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

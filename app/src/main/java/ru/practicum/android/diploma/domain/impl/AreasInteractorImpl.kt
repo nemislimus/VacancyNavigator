@@ -18,7 +18,7 @@ class AreasInteractorImpl(private val repository: AreasRepository) : AreasIntera
     }
 
     override suspend fun getRegionsInCountry(countryId: String, search: String?): List<Area> {
-        return repository.getCitiesInCountry(countryId, search)
+        return repository.getRegionsInCountry(countryId, search)
     }
 
     override suspend fun getCitiesInCountry(countryId: String, search: String?): List<Area> {
@@ -39,5 +39,13 @@ class AreasInteractorImpl(private val repository: AreasRepository) : AreasIntera
 
     override suspend fun countRegionsInCountry(countryId: String): Int {
         return repository.countRegionsInCountry(countryId)
+    }
+
+    override suspend fun getCountry(parentId: String): Area? {
+        return repository.getCountry(parentId)
+    }
+
+    override suspend fun getAreaById(id: String): Area? {
+        return repository.getAreaById(id)
     }
 }
