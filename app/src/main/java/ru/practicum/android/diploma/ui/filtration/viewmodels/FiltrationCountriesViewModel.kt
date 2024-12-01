@@ -1,6 +1,7 @@
 package ru.practicum.android.diploma.ui.filtration.viewmodels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -10,14 +11,13 @@ import ru.practicum.android.diploma.domain.models.DataLoadingStatus
 import ru.practicum.android.diploma.domain.repository.AreasInteractor
 import ru.practicum.android.diploma.domain.repository.GetDataLoadingStatusUseCase
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterInteractor
-import ru.practicum.android.diploma.ui.utils.XxxLiveData
 
 class FiltrationCountriesViewModel(
     private val countryGetter: AreasInteractor,
     private val filterSetter: SetSearchFilterInteractor,
     private val loadingStatus: GetDataLoadingStatusUseCase
 ) : ViewModel() {
-    private val _liveData = XxxLiveData<FiltrationCountryData>()
+    private val _liveData = MutableLiveData<FiltrationCountryData>()
     val liveData: LiveData<FiltrationCountryData> get() = _liveData
     private var job: Job? = null
 

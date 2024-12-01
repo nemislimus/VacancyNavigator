@@ -38,15 +38,15 @@ open class FiltrationRegionViewModel(
                         DataLoadingStatus.APP_FIRST_START -> Unit
 
                         DataLoadingStatus.NO_INTERNET -> {
-                            xxxLiveData.postValue(FiltrationRegionData.NoInternet)
+                            renderState(FiltrationRegionData.NoInternet)
                         }
 
                         DataLoadingStatus.LOADING -> {
-                            xxxLiveData.postValue(FiltrationRegionData.Loading)
+                            renderState(FiltrationRegionData.Loading)
                         }
 
                         DataLoadingStatus.SERVER_ERROR -> {
-                            xxxLiveData.postValue(FiltrationRegionData.NotFoundRegion)
+                            renderState(FiltrationRegionData.NotFoundRegion)
                         }
 
                         DataLoadingStatus.COMPLETE -> {
@@ -83,13 +83,13 @@ open class FiltrationRegionViewModel(
 
             if (regions.isEmpty()) {
                 if (currentPage == 0) {
-                    xxxLiveData.postValue(FiltrationRegionData.IncorrectRegion)
+                    renderState(FiltrationRegionData.IncorrectRegion, true)
                 } else {
                     maxPages = currentPage
                 }
             } else {
                 areasList.addAll(regions)
-                xxxLiveData.postValue(FiltrationRegionData.Regions(areasList, currentPage == 0))
+                renderState(FiltrationRegionData.Regions(areasList, currentPage == 0), true)
             }
             currentPage++
             isNextPageLoading = false
@@ -118,5 +118,12 @@ open class FiltrationRegionViewModel(
             isNextPageLoading = true
             getRegions(lastSearchQuery)
         }
+    }
+
+    private fun renderState(newState: FiltrationRegionData, clearOtherStates: Boolean = false) {
+        if (clearOtherStates) {
+            xxxLiveData.clear()
+        }
+        xxxLiveData.setValue(newState)
     }
 }
