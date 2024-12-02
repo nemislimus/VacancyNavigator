@@ -84,6 +84,9 @@ open class FiltrationFragment : DetektBindingFragment() {
                 clCountryValue.tvValue.setTextColor(valuesThemeColor)
             } else {
                 clCountryValue.tvHint.isVisible = false
+                clCountryValue.tvValue.setTextColor(
+                    requireContext().getColor(R.color.gray)
+                )
             }
         }
     }
