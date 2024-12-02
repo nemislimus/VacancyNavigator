@@ -109,7 +109,7 @@ class SearchViewModel(
                             }
                         }
                     }
-                }.onFailure {
+                }.onFailure { er ->
                     // тут надо добавить ошибку АПИ hh.ru
                     renderState(SearchState.NotFoundError, true)
                 }
