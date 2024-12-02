@@ -20,7 +20,9 @@ import ru.practicum.android.diploma.domain.repository.DataLoadingStatusRepositor
 import ru.practicum.android.diploma.domain.repository.UpdateDbOnAppStartRepository
 
 class UpdateDbOnAppStartRepositoryImpl(
-    private val client: NetworkClient, private val sql: DbHelper, private var roomDb: DataLoadingStatusRepository
+    private val client: NetworkClient,
+    private val sql: DbHelper,
+    private var roomDb: DataLoadingStatusRepository
 ) : UpdateDbOnAppStartRepository {
 
     private val db: SQLiteDatabase by lazy { sql.writableDatabase }
