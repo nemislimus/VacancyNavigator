@@ -146,7 +146,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
     private fun showConnectionError(replaceVacancyList: Boolean) {
         if (!replaceVacancyList) {
             binding.pbNextPageProgress.isVisible = false
-            showToast(R.string.no_internet)
+            showToast(R.string.check_internet_connection)
         } else {
             showErrorBase()
             with(binding) {
