@@ -20,9 +20,7 @@ import ru.practicum.android.diploma.domain.repository.DataLoadingStatusRepositor
 import ru.practicum.android.diploma.domain.repository.UpdateDbOnAppStartRepository
 
 class UpdateDbOnAppStartRepositoryImpl(
-    private val client: NetworkClient,
-    private val sql: DbHelper,
-    private var roomDb: DataLoadingStatusRepository
+    private val client: NetworkClient, private val sql: DbHelper, private var roomDb: DataLoadingStatusRepository
 ) : UpdateDbOnAppStartRepository {
 
     private val db: SQLiteDatabase by lazy { sql.writableDatabase }
@@ -31,7 +29,6 @@ class UpdateDbOnAppStartRepositoryImpl(
     private val areasInCountry: MutableMap<String, String?> = mutableMapOf()
     private var countryCounter = 1
     private var regionCounter = 1
-    private var cityCounter = 1
 
     override suspend fun update(): Boolean {
         roomDb.setStatus(DataLoadingStatus.LOADING)
@@ -176,7 +173,6 @@ class UpdateDbOnAppStartRepositoryImpl(
 
             insertArea(
                 area = AreaDtoToTempAreaItemMapper.map(areaItem, type = type, nestingLevel = level),
-                addAlsoAsCity = type == AreaType.REGION && area.areas.isNullOrEmpty(),
                 hhPosition = hhPosition
             )
 
@@ -195,7 +191,7 @@ class UpdateDbOnAppStartRepositoryImpl(
         }
     }
 
-    private fun insertArea(area: AreaRoomTemp, addAlsoAsCity: Boolean = false, hhPosition: Int = 0) {
+    private fun insertArea(area: AreaRoomTemp, hhPosition: Int = 0) {
         val contentValues = ContentValues()
         contentValues.put(ID, area.id)
         contentValues.put(NAME, SPACE + area.name)
@@ -204,24 +200,6 @@ class UpdateDbOnAppStartRepositoryImpl(
         contentValues.put(NESTING_LEVEL, area.nestingLevel)
         contentValues.put(HH_POSITION, hhPosition)
         db.insertWithOnConflict(AREAS_NO_INDEXES, null, contentValues, CONFLICT_IGNORE)
-
-//        if (addAlsoAsCity) {
-//            // добавим Москву и другие федеральные города тоже в города
-//            val parentId = if (area.nestingLevel < 2) {
-//                area.id
-//            } else {
-//                area.parentId
-//            }
-//            val nestingLevel = area.nestingLevel + if (area.nestingLevel < 2) 1 else 0
-//            val contentValues = ContentValues()
-//            contentValues.put(ID, -1 * area.id)
-//            contentValues.put(NAME, SPACE + area.name)
-//            contentValues.put(TYPE, AreaType.CITY.type)
-//            contentValues.put(PARENT_ID, parentId)
-//            contentValues.put(NESTING_LEVEL, nestingLevel)
-//            contentValues.put(HH_POSITION, hhPosition)
-//            db.insertWithOnConflict(AREAS_NO_INDEXES, null, contentValues, CONFLICT_IGNORE)
-//        }
     }
 
     private fun insertIndustry(industry: IndustryRoomTemp) {
