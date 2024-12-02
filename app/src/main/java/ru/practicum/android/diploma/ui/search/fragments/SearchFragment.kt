@@ -292,8 +292,4 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
             if (hasFilter) R.drawable.filter_on else R.drawable.filter_off
         )
     }
-
-    companion object {
-        const val RESULT_IS_FILTER_APPLIED_KEY = "IS_FILTER_APPLIED_KEY"
-    }
 }

@@ -93,16 +93,6 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
                     )
                 }
             )
-
-            setClickListeners(
-                element = clCityValue,
-                onClick = ::cityStartSelection,
-                onReset = {
-                    viewModel.setTempArea(
-                        area = filter.region ?: filter.country
-                    )
-                }
-            )
         }
     }
 
@@ -136,21 +126,6 @@ class FiltrationPlaceOfWorkFragment : BindingFragment<FragmentFiltrationPlaceOfW
             R.id.action_filtrationPlaceOfWorkFragment_to_filtrationRegionFragment,
             filter.country?.let {
                 FiltrationRegionFragment.createArgs(it)
-            }
-        )
-    }
-
-    private fun cityStartSelection() {
-        findNavController().navigate(
-            R.id.action_filtrationPlaceOfWorkFragment_to_filtrationCityFragment,
-            if (filter.region != null) {
-                filter.region?.let {
-                    FiltrationRegionFragment.createArgs(it)
-                }
-            } else {
-                filter.country?.let {
-                    FiltrationRegionFragment.createArgs(it)
-                }
             }
         )
     }
