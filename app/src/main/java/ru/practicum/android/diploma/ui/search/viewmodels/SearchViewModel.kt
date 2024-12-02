@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.search.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -79,6 +80,7 @@ class SearchViewModel(
                 runCatching {
                     searchInteractor.searchVacancy(searchQuery, currentPage).collect { result ->
                         withContext(Dispatchers.Main) {
+                            val replaceVacancyList = currentPage == 0
                             when (result) {
                                 is Resource.ConnectionError -> {
                                     if (currentPage == 0) {
@@ -88,8 +90,16 @@ class SearchViewModel(
                                     }
                                 }
 
-                                is Resource.NotFoundError -> renderState(SearchState.NotFoundError, true)
-                                is Resource.ServerError -> renderState(SearchState.NotFoundError, true)
+                                is Resource.NotFoundError -> renderState(
+                                    SearchState.NotFoundError(replaceVacancyList),
+                                    replaceVacancyList
+                                )
+
+                                is Resource.ServerError -> renderState(
+                                    SearchState.NotFoundError(replaceVacancyList),
+                                    replaceVacancyList
+                                )
+
                                 is Resource.Success -> {
                                     with(result.data) {
                                         isNextPageLoading = false
@@ -100,7 +110,7 @@ class SearchViewModel(
                                             renderState(SearchState.VacanciesCount(found))
                                             ++currentPage
                                         } else if (currentPage == 0) {
-                                            renderState(SearchState.NotFoundError, true)
+                                            renderState(SearchState.NotFoundError(true), true)
                                         } else {
                                             Unit
                                         }
@@ -110,8 +120,9 @@ class SearchViewModel(
                         }
                     }
                 }.onFailure { er ->
-                    // тут надо добавить ошибку АПИ hh.ru
-                    renderState(SearchState.NotFoundError, true)
+                    val replaceVacancyList = currentPage == 0
+                    Log.d("WWW", "Vacancy search error: $er")
+                    renderState(SearchState.ServerError500(replaceVacancyList), replaceVacancyList)
                 }
             }
         }

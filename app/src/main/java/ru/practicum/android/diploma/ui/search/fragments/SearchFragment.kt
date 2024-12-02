@@ -89,8 +89,9 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
                 SearchState.IsLoadingNextPage -> showLoadingNextPage()
                 is SearchState.Content -> showContent(searchResult.pageData, searchResult.listNeedsScrollTop)
                 is SearchState.ConnectionError -> showConnectionError(searchResult.replaceVacancyList)
-                SearchState.NotFoundError -> showNotFoundError()
+                is SearchState.NotFoundError -> showNotFoundError(searchResult.replaceVacancyList)
                 is SearchState.VacanciesCount -> setResultInfo(searchResult.vacanciesCount, R.string.search_result_info)
+                is SearchState.ServerError500 -> showServerError500(searchResult.replaceVacancyList)
             }
         }
 
@@ -134,12 +135,31 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun showNotFoundError() {
-        setResultInfo(messageId = R.string.no_query_vacancies)
-        showErrorBase()
-        with(binding) {
-            clPlaceholder.tvPlaceholderText.text = getString(R.string.not_found_vacancies)
-            clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_not_found_picture)
+    private fun showNotFoundError(replaceVacancyList: Boolean) {
+        if (!replaceVacancyList) {
+            binding.pbNextPageProgress.isVisible = false
+            showToast(R.string.no_query_vacancies)
+        } else {
+            setResultInfo(messageId = R.string.no_query_vacancies)
+            showErrorBase()
+            with(binding) {
+                clPlaceholder.tvPlaceholderText.text = getString(R.string.not_found_vacancies)
+                clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_not_found_picture)
+            }
+        }
+    }
+
+    private fun showServerError500(replaceVacancyList: Boolean) {
+        if (!replaceVacancyList) {
+            binding.pbNextPageProgress.isVisible = false
+            showToast(R.string.server_error)
+        } else {
+            setResultInfo(messageId = R.string.server_error)
+            showErrorBase()
+            with(binding) {
+                clPlaceholder.tvPlaceholderText.text = getString(R.string.server_error)
+                clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_search_server_error)
+            }
         }
     }
 
