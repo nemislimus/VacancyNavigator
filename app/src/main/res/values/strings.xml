@@ -72,4 +72,6 @@
     <string name="enter_city_query">Введите город</string>
     <string name="city_not_found">Такого города нет</string>
     <string name="share_dialog_title">Выберите с кем поделиться этой вакансией</string>
+    <string name="check_internet_connection">Проверьте подключение к интернету</string>
+    <string name="error_happens">Произошла ошибка</string>
 </resources>
