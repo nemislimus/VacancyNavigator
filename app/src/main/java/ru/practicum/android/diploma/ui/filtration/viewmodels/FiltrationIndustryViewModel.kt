@@ -82,7 +82,9 @@ class FiltrationIndustryViewModel(
                             }
                         }
                     }
-                    liveData.postValue(FiltrationIndustryData.Industries(industries))
+                    liveData.postValue(FiltrationIndustryData.Industries(
+                        industries = industries.partition { it.isSelected }.let { it.first + it.second }
+                    ))
                 }
             }
         }

@@ -16,34 +16,4 @@ abstract class DetektBindingFragment : BindingFragment<FragmentFiltrationBinding
         detektHelper?.onViewCreated()
         detektHelper?.onResume()
     }
-
-    protected fun rubFormat(salary: String): String {
-        val rubString = threeZeroFormat(salary)
-        return if (rubString.length <= MAX_SALARY_LENGTH) {
-            rubString
-        } else {
-            salary
-        }
-    }
-
-    protected fun formatSalary(hasFocus: Boolean) {
-        with(binding) {
-            etSalaryEditText.let {
-                val noSpaceSalary = it.text.toString().replace(
-                    Regex("""[^0-9 ]"""),
-                    ""
-                ).trim()
-
-                if (!hasFocus) {
-                    it.setText(
-                        rubFormat(noSpaceSalary)
-                    )
-                }
-            }
-        }
-    }
-
-    companion object {
-        const val MAX_SALARY_LENGTH = 9
-    }
 }
