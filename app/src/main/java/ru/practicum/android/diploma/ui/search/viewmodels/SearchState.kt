@@ -10,7 +10,9 @@ sealed interface SearchState {
 
     data class ConnectionError(val replaceVacancyList: Boolean) : SearchState
 
-    data object NotFoundError : SearchState
+    data class NotFoundError(val replaceVacancyList: Boolean) : SearchState
+
+    data class ServerError500(val replaceVacancyList: Boolean) : SearchState
 
     data class Content(val pageData: List<VacancyShort>, val listNeedsScrollTop: Boolean) : SearchState
 
