@@ -96,7 +96,7 @@ class SearchViewModel(
                                 )
 
                                 is Resource.ServerError -> renderState(
-                                    SearchState.NotFoundError(replaceVacancyList),
+                                    SearchState.ServerError500(replaceVacancyList),
                                     replaceVacancyList
                                 )
 
