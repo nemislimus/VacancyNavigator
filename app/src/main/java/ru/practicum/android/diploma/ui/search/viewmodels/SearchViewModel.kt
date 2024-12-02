@@ -76,37 +76,42 @@ class SearchViewModel(
             renderLoadingState()
             searchJob?.cancel()
             searchJob = viewModelScope.launch {
-                searchInteractor.searchVacancy(searchQuery, currentPage).collect { result ->
-                    withContext(Dispatchers.Main) {
-                        when (result) {
-                            is Resource.ConnectionError -> {
-                                if (currentPage == 0) {
-                                    renderState(SearchState.ConnectionError(true), true)
-                                } else {
-                                    _searchState.setSingleEventValue(SearchState.ConnectionError(false))
-                                }
-                            }
-
-                            is Resource.NotFoundError -> renderState(SearchState.NotFoundError, true)
-                            is Resource.ServerError -> renderState(SearchState.NotFoundError, true)
-                            is Resource.Success -> {
-                                with(result.data) {
-                                    isNextPageLoading = false
-                                    maxPages = pages
-                                    if (found > 0) {
-                                        vacanciesList.addAll(items)
-                                        renderState(SearchState.Content(vacanciesList, currentPage == 0), true)
-                                        renderState(SearchState.VacanciesCount(found))
-                                        ++currentPage
-                                    } else if (currentPage == 0) {
-                                        renderState(SearchState.NotFoundError, true)
+                runCatching {
+                    searchInteractor.searchVacancy(searchQuery, currentPage).collect { result ->
+                        withContext(Dispatchers.Main) {
+                            when (result) {
+                                is Resource.ConnectionError -> {
+                                    if (currentPage == 0) {
+                                        renderState(SearchState.ConnectionError(true), true)
                                     } else {
-                                        Unit
+                                        _searchState.setSingleEventValue(SearchState.ConnectionError(false))
+                                    }
+                                }
+
+                                is Resource.NotFoundError -> renderState(SearchState.NotFoundError, true)
+                                is Resource.ServerError -> renderState(SearchState.NotFoundError, true)
+                                is Resource.Success -> {
+                                    with(result.data) {
+                                        isNextPageLoading = false
+                                        maxPages = pages
+                                        if (found > 0) {
+                                            vacanciesList.addAll(items)
+                                            renderState(SearchState.Content(vacanciesList, currentPage == 0), true)
+                                            renderState(SearchState.VacanciesCount(found))
+                                            ++currentPage
+                                        } else if (currentPage == 0) {
+                                            renderState(SearchState.NotFoundError, true)
+                                        } else {
+                                            Unit
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                }.onFailure { er ->
+                    // тут надо добавить ошибку АПИ hh.ru
+                    renderState(SearchState.NotFoundError, true)
                 }
             }
         }

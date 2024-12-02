@@ -165,8 +165,6 @@ class UpdateDbOnAppStartRepositoryImpl(
                 type = AreaType.REGION
                 hhPosition = regionCounter++
                 areaItem = area.copy(parentId = areasInCountry[area.parentId])
-                // type = AreaType.CITY
-                // hhPosition = cityCounter++
             } else {
                 type = AreaType.COUNTRY // это другие регионы
                 hhPosition = -countryCounter

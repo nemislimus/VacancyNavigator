@@ -30,8 +30,7 @@ class VacancyViewModel(
     @Volatile
     private var vacancyIsFavorite = false
 
-    private val vacancyDetailsStateLiveData =
-        MutableLiveData<VacancyDetailsState>()
+    private val vacancyDetailsStateLiveData = MutableLiveData<VacancyDetailsState>()
 
     private val isFavoriteLiveData = MutableLiveData<Boolean>()
 
@@ -54,9 +53,15 @@ class VacancyViewModel(
                 dbVacancy = vacancy
             }
 
-            launch {
+            runCatching {
                 vacancyInteractor.searchVacancyById(id).collect { result ->
                     preManageDetailsResult(result)
+                }
+            }.onFailure { er ->
+                if (!vacancyIsFavorite) {
+                    updateState(
+                        state = VacancyDetailsState.ServerError(errorMessage = er.toString())
+                    )
                 }
             }
 
@@ -164,8 +169,7 @@ class VacancyViewModel(
     fun clickOnShareIcon() {
         currentVacancy?.let {
             sharingInteractor.shareAppMessageOrLink(
-                text = it.urlHh,
-                shareDialogTitle = android.getString(R.string.share_dialog_title)
+                text = it.urlHh, shareDialogTitle = android.getString(R.string.share_dialog_title)
             )
         } ?: run {
             showDeny(SHARE_TOAST_MARKER)
