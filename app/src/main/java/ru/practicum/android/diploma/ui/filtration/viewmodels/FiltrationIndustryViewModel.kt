@@ -25,6 +25,7 @@ class FiltrationIndustryViewModel(
     private var hasIndustriesList: Boolean = false
     private var lastSearchQuery: String? = null
     private var job: Job? = null
+    var lastSearchQuery: String? = null
 
     init {
         viewModelScope.launch {
@@ -77,6 +78,7 @@ class FiltrationIndustryViewModel(
                 liveData.postValue(FiltrationIndustryData.IncorrectIndustry)
             } else {
                 industriesList.toMutableList().let { industries ->
+                    industries.sortBy { it.name }
                     selectedIndustry?.let {
                         industries.forEachIndexed { index, industry ->
                             if (selectedIndustry == industry) {

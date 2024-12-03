@@ -60,6 +60,7 @@ class FiltrationIndustryFragment : BindingFragment<FragmentFiltrationIndustryBin
 
     override fun onTextInput(text: String) {
         setSearchIcon(text.isBlank())
+        vModel.lastSearchQuery = text
         vModel.getIndustries(text)
     }
 
