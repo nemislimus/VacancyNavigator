@@ -53,15 +53,17 @@ class VacancyViewModel(
                 dbVacancy = vacancy
             }
 
-            runCatching {
-                vacancyInteractor.searchVacancyById(id).collect { result ->
-                    preManageDetailsResult(result)
-                }
-            }.onFailure { er ->
-                if (!vacancyIsFavorite) {
-                    updateState(
-                        state = VacancyDetailsState.ServerError(errorMessage = er.toString())
-                    )
+            launch {
+                runCatching {
+                    vacancyInteractor.searchVacancyById(id).collect { result ->
+                        preManageDetailsResult(result)
+                    }
+                }.onFailure { er ->
+                    if (!vacancyIsFavorite) {
+                        updateState(
+                            state = VacancyDetailsState.ServerError(errorMessage = er.toString())
+                        )
+                    }
                 }
             }
 
