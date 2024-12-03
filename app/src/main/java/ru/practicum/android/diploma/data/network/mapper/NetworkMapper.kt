@@ -30,7 +30,7 @@ class NetworkMapper {
         searchVacancyOptions.filter?.let { params ->
             params.salary?.let { map["salary"] = it.toString() }
 
-            params.onlyWithSalary?.let { map["only_with_salary"] = it.toString() }
+            params.onlyWithSalary.let { map["only_with_salary"] = it.toString() }
 
             params.industry?.let { map["industry"] = it.id }
 
@@ -93,7 +93,7 @@ class NetworkMapper {
             schedule = vacDto.schedule?.name ?: "",
             description = vacDto.description ?: "",
             keySkills = vacDto.keySkills?.map { it.name } ?: emptyList(),
-            address = vacDto.address?.raw ?: "",
+            address = vacDto.address?.raw,
             geolocation = vacDto.address?.let { map(it) },
             urlHh = vacDto.alternateUrl
         )

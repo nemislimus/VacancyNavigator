@@ -83,15 +83,26 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
             })
         }
 
-        viewModel.searchState.observe(viewLifecycleOwner) { searchResult ->
-            when (searchResult) {
+        viewModel.searchState.observe(viewLifecycleOwner) { state ->
+            when (state) {
                 SearchState.IsLoading -> showLoading()
                 SearchState.IsLoadingNextPage -> showLoadingNextPage()
-                is SearchState.Content -> showContent(searchResult.pageData, searchResult.listNeedsScrollTop)
-                is SearchState.ConnectionError -> showConnectionError(searchResult.replaceVacancyList)
-                is SearchState.NotFoundError -> showNotFoundError(searchResult.replaceVacancyList)
-                is SearchState.VacanciesCount -> setResultInfo(searchResult.vacanciesCount, R.string.search_result_info)
-                is SearchState.ServerError500 -> showServerError500(searchResult.replaceVacancyList)
+                is SearchState.Content -> showContent(state.pageData, state.listNeedsScrollTop)
+                is SearchState.ConnectionError -> showConnectionError(state.replaceVacancyList)
+                is SearchState.NotFoundError -> showNotFoundError(state.replaceVacancyList)
+                is SearchState.VacanciesCount -> setResultInfo(state.vacanciesCount, R.string.search_result_info)
+                is SearchState.ServerError500 -> showServerError500(state.replaceVacancyList)
+                is SearchState.QueryIsEmpty -> {
+                    if (state.isEmpty) {
+                        clearScreen()
+                    }
+                    showIntro(state.isEmpty)
+                    setSearchIcon(state.isEmpty)
+                }
+
+                is SearchState.SearchText -> {
+                    binding.llSearchFieldContainer.etSearchQueryText.setText(state.text)
+                }
             }
         }
 
@@ -110,12 +121,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
     }
 
     override fun onTextInput(text: String) {
-        if (text.isBlank()) {
-            clearScreen()
-        }
         viewModel.searchDebounce(text.trim())
-        setSearchIcon(text.isBlank())
-        showIntro(text.isBlank())
     }
 
     private fun showLoadingNextPage() {
@@ -199,7 +205,6 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
         }
         clearPlaceholders()
         closeKeyboard()
-
         showFoundVacancies(vacancies = searchData, scrollToTop = listNeedsScrollTop)
     }
 
@@ -224,28 +229,23 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
     }
 
     private fun clearScreen() {
-        showFoundVacancies()
-        binding.rvVacancyList.isVisible = false
-        binding.tvResultInfo.isVisible = false
+        with(binding) {
+            rvVacancyList.isVisible = false
+            tvResultInfo.isVisible = false
+        }
         clearPlaceholders()
-        viewModel.cancelSearch()
+        showFoundVacancies()
     }
 
     private fun clearQuery() {
-        with(binding) {
-            llSearchFieldContainer.etSearchQueryText.setText(EMPTY_STRING)
-            rvVacancyList.isVisible = false
-            pbSearchProgress.isVisible = false
-        }
-        showFoundVacancies()
+        binding.llSearchFieldContainer.etSearchQueryText.setText(EMPTY_STRING)
         closeKeyboard()
-        viewModel.cancelSearch()
     }
 
     private fun goToFilter() {
         setFragmentResultListener(FiltrationFragment.RESULT_IS_FILTER_APPLIED_KEY) { key, bundle ->
             bundle.getString(FiltrationFragment.RESULT_IS_FILTER_APPLIED_KEY)?.apply {
-                viewModel.searchAfterFilterApplied()
+                viewModel.forceSearchLastRequest()
             }
         }
         findNavController().navigate(

@@ -19,6 +19,7 @@
         android:inputType="text"
         android:maxLength="100"
         android:minHeight="@dimen/size_56dp"
+        android:saveEnabled="false"
         android:singleLine="true"
         android:textAppearance="@style/TextRegular_16size_400weight"
         android:textColor="@color/black"
