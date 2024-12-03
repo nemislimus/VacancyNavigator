@@ -204,7 +204,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
             rvVacancyList.isVisible = true
         }
         clearPlaceholders()
-
+        closeKeyboard()
         showFoundVacancies(vacancies = searchData, scrollToTop = listNeedsScrollTop)
     }
 
@@ -245,7 +245,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
     private fun goToFilter() {
         setFragmentResultListener(FiltrationFragment.RESULT_IS_FILTER_APPLIED_KEY) { key, bundle ->
             bundle.getString(FiltrationFragment.RESULT_IS_FILTER_APPLIED_KEY)?.apply {
-                viewModel.searchAfterFilterApplied()
+                viewModel.forceSearchLastRequest()
             }
         }
         findNavController().navigate(

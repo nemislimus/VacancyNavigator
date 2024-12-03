@@ -67,7 +67,7 @@ class SearchViewModel(
         _searchState.setStartValue(SearchState.SearchText(searchQuery))
     }
 
-    fun searchAfterFilterApplied() {
+    fun forceSearchLastRequest() {
         if (lastSearchRequest.isNotBlank()) {
             clearPagingHistory()
             _searchState.clear()
