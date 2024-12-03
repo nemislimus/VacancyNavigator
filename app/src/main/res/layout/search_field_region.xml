@@ -3,26 +3,27 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/search_container_background"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/etSearchRegionQuery"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="start|center_vertical"
+        android:layout_marginStart="@dimen/margin_16"
         android:layout_weight="1"
         android:background="@android:color/transparent"
-        android:hint="@string/enter_region_query"
-        android:textColorHint="?attr/elementColor_gray_white"
-        android:textColor="@color/black"
-        android:inputType="text"
-        android:singleLine="true"
         android:ellipsize="end"
+        android:gravity="start|center_vertical"
+        android:hint="@string/enter_region_query"
+        android:inputType="text"
+        android:maxLength="100"
         android:minHeight="@dimen/size_56dp"
-        android:textCursorDrawable="@drawable/text_cursor"
+        android:singleLine="true"
         android:textAppearance="@style/TextRegular_16size_400weight"
-        android:layout_marginStart="@dimen/margin_16" />
+        android:textColor="@color/black"
+        android:textColorHint="?attr/elementColor_gray_white"
+        android:textCursorDrawable="@drawable/text_cursor" />
 
     <FrameLayout
         android:id="@+id/ivSearchIcon"

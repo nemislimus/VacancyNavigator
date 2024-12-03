@@ -17,6 +17,7 @@
         android:gravity="start|center_vertical"
         android:hint="@string/enter_the_query"
         android:inputType="text"
+        android:maxLength="100"
         android:minHeight="@dimen/size_56dp"
         android:singleLine="true"
         android:textAppearance="@style/TextRegular_16size_400weight"
