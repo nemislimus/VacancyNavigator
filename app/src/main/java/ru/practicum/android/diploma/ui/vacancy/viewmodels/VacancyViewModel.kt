@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.vacancy.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -59,11 +60,7 @@ class VacancyViewModel(
                         preManageDetailsResult(result)
                     }
                 }.onFailure { er ->
-                    if (!vacancyIsFavorite) {
-                        updateState(
-                            state = VacancyDetailsState.ServerError(errorMessage = er.toString())
-                        )
-                    }
+                    Log.d("WWW", "Vacancy load error: $er")
                 }
             }
 
