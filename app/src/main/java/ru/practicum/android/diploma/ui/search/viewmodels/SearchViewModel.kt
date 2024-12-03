@@ -122,7 +122,11 @@ class SearchViewModel(
                 }.onFailure { er ->
                     val replaceVacancyList = currentPage == 0
                     Log.d("WWW", "Vacancy search error: $er")
-                    renderState(SearchState.ServerError500(replaceVacancyList), replaceVacancyList)
+                    searchJob?.let { job ->
+                        if (!job.isCancelled) {
+                            renderState(SearchState.ServerError500(replaceVacancyList), replaceVacancyList)
+                        }
+                    }
                 }
             }
         }
