@@ -39,36 +39,38 @@ class VacancyViewModel(
     fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
 
     init {
-        getVacancyDetails(vacancyId)
+        getVacancyDetails()
     }
 
-    private fun getVacancyDetails(id: String) {
+    private fun getVacancyDetails() {
         updateState(VacancyDetailsState.Loading)
 
         var dbVacancy: VacancyFull? = null
 
         viewModelScope.launch {
-            favoriteInteractor.getById(id)?.let { vacancy ->
+            favoriteInteractor.getById(vacancyId)?.let { vacancy ->
                 vacancyIsFavorite = true
                 dbVacancy = vacancy
             }
 
-            runCatching {
-                vacancyInteractor.searchVacancyById(id).collect { result ->
-                    preManageDetailsResult(result)
-                }
-            }.onFailure { er ->
-                if (!vacancyIsFavorite) {
-                    updateState(
-                        state = VacancyDetailsState.ServerError(errorMessage = er.toString())
-                    )
+            launch {
+                runCatching {
+                    vacancyInteractor.searchVacancyById(vacancyId).collect { result ->
+                        preManageDetailsResult(result)
+                    }
+                }.onFailure { er ->
+                    if (!vacancyIsFavorite) {
+                        updateState(
+                            state = VacancyDetailsState.ServerError(errorMessage = er.toString())
+                        )
+                    }
                 }
             }
 
             delay(RESPONSE_AWAIT_TIME)
 
             dbVacancy?.let { vacancy ->
-                if (currentVacancy == null) {
+                if (currentVacancy == null && vacancyIsFavorite) {
                     currentVacancy = vacancy
                     updateState(VacancyDetailsState.Content(vacancy))
                 }
@@ -86,7 +88,7 @@ class VacancyViewModel(
 
             is Resource.NotFoundError -> {
                 // прокидываем результат, отрабатываем удаление вакансии
-                vacancyIsFavorite = false
+                doOn404ErrorCode()
                 manageDetailsResult(result)
             }
 
@@ -109,6 +111,12 @@ class VacancyViewModel(
                 }
             }
         }
+    }
+
+    private fun doOn404ErrorCode() {
+        vacancyIsFavorite = false
+        currentVacancy = null
+        removeCurrentVacancy()
     }
 
     private fun manageDetailsResult(result: Resource<VacancyFull>) {
@@ -176,7 +184,7 @@ class VacancyViewModel(
         }
     }
 
-    fun removeCurrentVacancy() {
+    private fun removeCurrentVacancy() {
         viewModelScope.launch {
             favoriteInteractor.remove(vacancyId)
         }

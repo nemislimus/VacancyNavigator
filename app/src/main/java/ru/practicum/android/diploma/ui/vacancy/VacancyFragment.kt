@@ -117,7 +117,6 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
                     clPlaceholder.ivPlaceholderPicture.setImageResource(
                         R.drawable.placeholder_vacancy_not_found_or_delete
                     )
-                    viewModel.removeCurrentVacancy()
                 }
 
                 requireContext().getString(R.string.no_internet) -> {

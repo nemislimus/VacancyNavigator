@@ -12,11 +12,4 @@ interface BooleanForDetekt {
         }
         return false
     }
-
-    fun ifAllTrue(vararg list: Boolean): Boolean {
-        list.forEach {
-            if (!it) return false
-        }
-        return true
-    }
 }
