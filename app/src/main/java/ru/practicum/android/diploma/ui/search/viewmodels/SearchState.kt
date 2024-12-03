@@ -17,4 +17,8 @@ sealed interface SearchState {
     data class Content(val pageData: List<VacancyShort>, val listNeedsScrollTop: Boolean) : SearchState
 
     data class VacanciesCount(val vacanciesCount: Int) : SearchState
+
+    data class QueryIsEmpty(val isEmpty: Boolean) : SearchState
+
+    data class SearchText(val text: String) : SearchState
 }

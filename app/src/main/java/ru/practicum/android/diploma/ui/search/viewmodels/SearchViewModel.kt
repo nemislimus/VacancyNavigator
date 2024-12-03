@@ -52,17 +52,26 @@ class SearchViewModel(
         if (searchQuery == lastSearchRequest) {
             return
         }
+        if (searchQuery.isBlank()) {
+            cancelSearch()
+            _searchState.setValue(SearchState.QueryIsEmpty(isEmpty = true))
+        } else {
+            searchJob?.cancel()
+            if (lastSearchRequest.isBlank()) {
+                _searchState.setValue(SearchState.QueryIsEmpty(isEmpty = false))
+            }
+        }
         clearPagingHistory()
         lastSearchRequest = searchQuery
-
         _searchDebounce(searchQuery)
+        _searchState.setStartValue(SearchState.SearchText(searchQuery))
     }
 
     fun searchAfterFilterApplied() {
         if (lastSearchRequest.isNotBlank()) {
             clearPagingHistory()
             _searchState.clear()
-            _searchDebounce(lastSearchRequest)
+            searchVacancies(lastSearchRequest)
         }
     }
 
@@ -141,6 +150,12 @@ class SearchViewModel(
     private fun renderState(newState: SearchState, clearOtherStates: Boolean = false) {
         if (clearOtherStates) {
             _searchState.clear()
+            _searchState.setValue(
+                SearchState.QueryIsEmpty(
+                    isEmpty = lastSearchRequest.isBlank()
+                )
+            )
+            _searchState.setStartValue(SearchState.SearchText(lastSearchRequest))
         }
         _searchState.setValue(newState)
     }
@@ -154,7 +169,6 @@ class SearchViewModel(
 
     fun cancelSearch() {
         searchJob?.cancel()
-        searchJob = null
         _searchState.clear()
     }
 

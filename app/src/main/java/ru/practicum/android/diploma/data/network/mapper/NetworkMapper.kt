@@ -93,7 +93,7 @@ class NetworkMapper {
             schedule = vacDto.schedule?.name ?: "",
             description = vacDto.description ?: "",
             keySkills = vacDto.keySkills?.map { it.name } ?: emptyList(),
-            address = vacDto.address?.raw ?: "",
+            address = vacDto.address?.raw,
             geolocation = vacDto.address?.let { map(it) },
             urlHh = vacDto.alternateUrl
         )
