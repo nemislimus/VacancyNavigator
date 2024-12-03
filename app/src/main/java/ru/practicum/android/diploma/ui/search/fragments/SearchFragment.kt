@@ -121,7 +121,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
     }
 
     override fun onTextInput(text: String) {
-        viewModel.searchDebounce(text)
+        viewModel.searchDebounce(text.trim())
     }
 
     private fun showLoadingNextPage() {

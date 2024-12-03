@@ -25,7 +25,6 @@ class FiltrationIndustryViewModel(
     private var hasIndustriesList: Boolean = false
     private var lastSearchQuery: String? = null
     private var job: Job? = null
-    var lastSearchQuery: String? = null
 
     init {
         viewModelScope.launch {
