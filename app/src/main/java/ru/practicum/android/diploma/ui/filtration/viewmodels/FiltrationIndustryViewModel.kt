@@ -23,6 +23,7 @@ class FiltrationIndustryViewModel(
     private val liveData = MutableLiveData<FiltrationIndustryData>()
     private var selectedIndustry: Industry? = null
     private var hasIndustriesList: Boolean = false
+    private var lastSearchQuery: String? = null
     private var job: Job? = null
 
     init {
@@ -59,13 +60,14 @@ class FiltrationIndustryViewModel(
             }
 
             // получить отрасли можно только после того как они были загружены в БД
-            getIndustries()
+            getIndustries(lastSearchQuery)
         }
     }
 
     fun getLiveData(): LiveData<FiltrationIndustryData> = liveData
 
     fun getIndustries(search: String? = null) {
+        lastSearchQuery = search
         if (!hasIndustriesList) return
 
         viewModelScope.launch {
