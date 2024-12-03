@@ -113,7 +113,7 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
         if (text.isBlank()) {
             clearScreen()
         }
-        viewModel.searchDebounce(text)
+        viewModel.searchDebounce(text.trim())
         setSearchIcon(text.isBlank())
         showIntro(text.isBlank())
     }
