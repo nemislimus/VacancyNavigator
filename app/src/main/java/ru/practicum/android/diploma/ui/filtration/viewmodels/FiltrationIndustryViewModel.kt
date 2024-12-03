@@ -24,6 +24,7 @@ class FiltrationIndustryViewModel(
     private var selectedIndustry: Industry? = null
     private var hasIndustriesList: Boolean = false
     private var job: Job? = null
+    var lastSearchQuery: String? = null
 
     init {
         viewModelScope.launch {
@@ -59,7 +60,7 @@ class FiltrationIndustryViewModel(
             }
 
             // получить отрасли можно только после того как они были загружены в БД
-            getIndustries()
+            getIndustries(lastSearchQuery)
         }
     }
 
