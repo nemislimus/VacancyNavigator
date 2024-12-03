@@ -30,7 +30,7 @@ class NetworkMapper {
         searchVacancyOptions.filter?.let { params ->
             params.salary?.let { map["salary"] = it.toString() }
 
-            params.onlyWithSalary?.let { map["only_with_salary"] = it.toString() }
+            params.onlyWithSalary.let { map["only_with_salary"] = it.toString() }
 
             params.industry?.let { map["industry"] = it.id }
 
