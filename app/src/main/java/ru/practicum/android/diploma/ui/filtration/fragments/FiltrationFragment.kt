@@ -38,7 +38,6 @@ open class FiltrationFragment : DetektBindingFragment() {
         bindingNumberOne()
         bindingNumberTwo()
         getAttrColors()
-
         vModel.getLiveData().observe(viewLifecycleOwner) { renderFiltrationData(it) }
     }
 

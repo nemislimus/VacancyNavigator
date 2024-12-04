@@ -29,6 +29,7 @@ class FiltrationViewModel(
     private val defaultFilter = SearchFilter()
     private var isReset = true
     private var job: Job? = null
+    private var salary: Int? = null
 
     init {
         viewModelScope.launch {
@@ -41,6 +42,8 @@ class FiltrationViewModel(
                     isOldFilterLoaded = true
                 }
 
+                salary = filter.salary
+
                 // если отличаются только зарплатой, то не обновляем данные во фрагменте
                 if (isReset || lastFilterReceived.copy(salary = 0) != filter.copy(salary = 0)) {
                     liveData.setValue(
@@ -49,6 +52,12 @@ class FiltrationViewModel(
                         )
                     )
                     isReset = false
+                } else {
+                    liveData.setStartValue(
+                        FiltrationData.Filter(
+                            filter = filter
+                        )
+                    )
                 }
 
                 if (lastFilterReceived != filter) {
@@ -67,9 +76,11 @@ class FiltrationViewModel(
     fun getLiveData(): LiveData<FiltrationData> = liveData
 
     fun saveSalary(salary: Int?) {
+        val salaryValue = if (salary != null && salary > 0) salary else null
+        if (this.salary == salaryValue) return
         viewModelScope.launch {
             filterSetter.saveSalary(
-                salary = if (salary != null && salary > 0) salary else null
+                salary = salaryValue
             )
         }
     }
