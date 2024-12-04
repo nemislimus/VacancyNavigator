@@ -32,6 +32,7 @@ class VacancyRepositoryImpl(
                 checker.onStateChange().filter { it }.first()
                 // когда сеть появилась выполняем запрос и возвращаем результат
             }
+            emit(Resource.Loading(NO_INTERNET_ERROR_MESSAGE))
             val request = ApiRequest.Vacancy(searchOptions = searchOptions)
             val response = networkClient.doRequest(request)
             emit(
@@ -56,6 +57,7 @@ class VacancyRepositoryImpl(
                 emit(Resource.ConnectionError(NO_INTERNET_ERROR_MESSAGE))
                 checker.onStateChange().filter { it }.first()
             }
+            emit(Resource.Loading(NO_INTERNET_ERROR_MESSAGE))
             val response = networkClient.doRequest(ApiRequest.VacancyDetail(vacancyId = id))
             emit(
                 when (response.resultCode) {

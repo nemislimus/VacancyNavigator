@@ -44,8 +44,6 @@ class VacancyViewModel(
     }
 
     private fun getVacancyDetails() {
-        updateState(VacancyDetailsState.Loading)
-
         var dbVacancy: VacancyFull? = null
 
         viewModelScope.launch {
@@ -107,6 +105,12 @@ class VacancyViewModel(
                     }
                 }
             }
+
+            is Resource.Loading -> {
+                if (!vacancyIsFavorite) {
+                    manageDetailsResult(result)
+                }
+            }
         }
     }
 
@@ -133,6 +137,8 @@ class VacancyViewModel(
             is Resource.Success -> {
                 updateState(VacancyDetailsState.Content(result.data))
             }
+
+            is Resource.Loading -> updateState(VacancyDetailsState.Loading)
         }
     }
 

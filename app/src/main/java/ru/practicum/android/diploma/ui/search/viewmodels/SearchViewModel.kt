@@ -83,7 +83,6 @@ class SearchViewModel(
 
     private fun searchVacancies(searchQuery: String) {
         if (searchQuery.isNotEmpty() && currentPage < maxPages) {
-            renderLoadingState()
             searchJob?.cancel()
             searchJob = viewModelScope.launch {
                 runCatching {
@@ -125,6 +124,8 @@ class SearchViewModel(
                                         }
                                     }
                                 }
+
+                                is Resource.Loading -> renderLoadingState()
                             }
                         }
                     }
