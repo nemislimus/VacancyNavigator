@@ -70,7 +70,7 @@ class SearchViewModel(
     fun forceSearchLastRequest() {
         if (lastSearchRequest.isNotBlank()) {
             clearPagingHistory()
-            _searchState.clear()
+            clearLiveData()
             searchVacancies(lastSearchRequest)
         }
     }
@@ -148,15 +148,19 @@ class SearchViewModel(
         }
     }
 
+    private fun clearLiveData() {
+        _searchState.clear()
+        _searchState.setValue(
+            SearchState.QueryIsEmpty(
+                isEmpty = lastSearchRequest.isBlank()
+            )
+        )
+        _searchState.setStartValue(SearchState.SearchText(lastSearchRequest))
+    }
+
     private fun renderState(newState: SearchState, clearOtherStates: Boolean = false) {
         if (clearOtherStates) {
-            _searchState.clear()
-            _searchState.setValue(
-                SearchState.QueryIsEmpty(
-                    isEmpty = lastSearchRequest.isBlank()
-                )
-            )
-            _searchState.setStartValue(SearchState.SearchText(lastSearchRequest))
+            clearLiveData()
         }
         _searchState.setValue(newState)
     }
@@ -170,7 +174,7 @@ class SearchViewModel(
 
     fun cancelSearch() {
         searchJob?.cancel()
-        _searchState.clear()
+        clearLiveData()
     }
 
     companion object {
