@@ -148,7 +148,7 @@ class SearchViewModel(
         }
     }
 
-    private fun clearLiveData(){
+    private fun clearLiveData() {
         _searchState.clear()
         _searchState.setValue(
             SearchState.QueryIsEmpty(
