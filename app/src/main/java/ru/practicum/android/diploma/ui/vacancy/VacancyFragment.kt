@@ -77,7 +77,7 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
             tvVacancyNameValue.text = vacancy.name
             tvSalaryValue.text = Salary.getStringSalaryValue(vacancy.salary)
             tvEmployerNameValue.text = vacancy.employer
-            tvEmployerAreaValue.text = vacancy.address ?: vacancy.areaName
+            tvEmployerAreaValue.text = if (vacancy.address.isNullOrBlank()) vacancy.areaName else vacancy.address
             tvExperienceValue.text = vacancy.experience
             tvEmploymentValue.text = vacancy.employment
             tvVacancyDescriptionValue.text = Html.fromHtml(vacancy.description, Html.FROM_HTML_MODE_LEGACY)
@@ -117,7 +117,6 @@ class VacancyFragment : MenuBindingFragment<FragmentVacancyBinding>() {
                     clPlaceholder.ivPlaceholderPicture.setImageResource(
                         R.drawable.placeholder_vacancy_not_found_or_delete
                     )
-                    viewModel.removeCurrentVacancy()
                 }
 
                 requireContext().getString(R.string.no_internet) -> {

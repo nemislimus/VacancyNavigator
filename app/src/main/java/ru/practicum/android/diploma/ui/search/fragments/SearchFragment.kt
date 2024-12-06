@@ -10,7 +10,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -66,14 +65,8 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
                 clearQuery()
             }
 
-            llSearchFieldContainer.etSearchQueryText.addTextChangedListener { s ->
-                if (s.isNullOrBlank()) {
-                    clearScreen()
-                }
-                viewModel.searchDebounce(s.toString())
-                setSearchIcon(s.isNullOrBlank())
-                showIntro(s.isNullOrBlank())
-            }
+            llSearchFieldContainer.etSearchQueryText.addTextChangedListener(textWatcher)
+
             rvVacancyList.addOnScrollListener(object : OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -90,14 +83,26 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
             })
         }
 
-        viewModel.searchState.observe(viewLifecycleOwner) { searchResult ->
-            when (searchResult) {
+        viewModel.searchState.observe(viewLifecycleOwner) { state ->
+            when (state) {
                 SearchState.IsLoading -> showLoading()
                 SearchState.IsLoadingNextPage -> showLoadingNextPage()
-                is SearchState.Content -> showContent(searchResult.pageData, searchResult.listNeedsScrollTop)
-                is SearchState.ConnectionError -> showConnectionError(searchResult.replaceVacancyList)
-                SearchState.NotFoundError -> showNotFoundError()
-                is SearchState.VacanciesCount -> setResultInfo(searchResult.vacanciesCount, R.string.search_result_info)
+                is SearchState.Content -> showContent(state.pageData, state.listNeedsScrollTop)
+                is SearchState.ConnectionError -> showConnectionError(state.replaceVacancyList)
+                is SearchState.NotFoundError -> showNotFoundError(state.replaceVacancyList)
+                is SearchState.VacanciesCount -> setResultInfo(state.vacanciesCount, R.string.search_result_info)
+                is SearchState.ServerError500 -> showServerError500(state.replaceVacancyList)
+                is SearchState.QueryIsEmpty -> {
+                    if (state.isEmpty) {
+                        clearScreen()
+                    }
+                    showIntro(state.isEmpty)
+                    setSearchIcon(state.isEmpty)
+                }
+
+                is SearchState.SearchText -> {
+                    binding.llSearchFieldContainer.etSearchQueryText.setText(state.text)
+                }
             }
         }
 
@@ -109,6 +114,14 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
         binding.root.post {
             setFilterIcon(hasFilter)
         }
+    }
+
+    override fun onDestroyFragment() {
+        binding.llSearchFieldContainer.etSearchQueryText.removeTextChangedListener(textWatcher)
+    }
+
+    override fun onTextInput(text: String) {
+        viewModel.searchDebounce(text.trim())
     }
 
     private fun showLoadingNextPage() {
@@ -128,19 +141,38 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun showNotFoundError() {
-        setResultInfo(messageId = R.string.no_query_vacancies)
-        showErrorBase()
-        with(binding) {
-            clPlaceholder.tvPlaceholderText.text = getString(R.string.not_found_vacancies)
-            clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_not_found_picture)
+    private fun showNotFoundError(replaceVacancyList: Boolean) {
+        if (!replaceVacancyList) {
+            binding.pbNextPageProgress.isVisible = false
+            showToast(R.string.no_query_vacancies)
+        } else {
+            setResultInfo(messageId = R.string.no_query_vacancies)
+            showErrorBase()
+            with(binding) {
+                clPlaceholder.tvPlaceholderText.text = getString(R.string.not_found_vacancies)
+                clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_not_found_picture)
+            }
+        }
+    }
+
+    private fun showServerError500(replaceVacancyList: Boolean) {
+        if (!replaceVacancyList) {
+            binding.pbNextPageProgress.isVisible = false
+            showToast(R.string.server_error)
+        } else {
+            setResultInfo(messageId = R.string.server_error)
+            showErrorBase()
+            with(binding) {
+                clPlaceholder.tvPlaceholderText.text = getString(R.string.server_error)
+                clPlaceholder.ivPlaceholderPicture.setImageResource(R.drawable.placeholder_search_server_error)
+            }
         }
     }
 
     private fun showConnectionError(replaceVacancyList: Boolean) {
         if (!replaceVacancyList) {
             binding.pbNextPageProgress.isVisible = false
-            showToast(R.string.no_internet)
+            showToast(R.string.check_internet_connection)
         } else {
             showErrorBase()
             with(binding) {
@@ -173,7 +205,6 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
         }
         clearPlaceholders()
         closeKeyboard()
-
         showFoundVacancies(vacancies = searchData, scrollToTop = listNeedsScrollTop)
     }
 
@@ -198,28 +229,23 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
     }
 
     private fun clearScreen() {
-        showFoundVacancies()
-        binding.rvVacancyList.isVisible = false
-        binding.tvResultInfo.isVisible = false
+        with(binding) {
+            rvVacancyList.isVisible = false
+            tvResultInfo.isVisible = false
+        }
         clearPlaceholders()
-        viewModel.cancelSearch()
+        showFoundVacancies()
     }
 
     private fun clearQuery() {
-        with(binding) {
-            llSearchFieldContainer.etSearchQueryText.setText(EMPTY_STRING)
-            rvVacancyList.isVisible = false
-            pbSearchProgress.isVisible = false
-        }
-        showFoundVacancies()
+        binding.llSearchFieldContainer.etSearchQueryText.setText(EMPTY_STRING)
         closeKeyboard()
-        viewModel.cancelSearch()
     }
 
     private fun goToFilter() {
         setFragmentResultListener(FiltrationFragment.RESULT_IS_FILTER_APPLIED_KEY) { key, bundle ->
             bundle.getString(FiltrationFragment.RESULT_IS_FILTER_APPLIED_KEY)?.apply {
-                viewModel.searchAfterFilterApplied()
+                viewModel.forceSearchLastRequest()
             }
         }
         findNavController().navigate(
@@ -265,9 +291,5 @@ class SearchFragment : MenuBindingFragment<FragmentSearchBinding>(), NumDeclensi
         binding.tbSearchToolBar.menu.findItem(R.id.miSearchFilter).setIcon(
             if (hasFilter) R.drawable.filter_on else R.drawable.filter_off
         )
-    }
-
-    companion object {
-        const val RESULT_IS_FILTER_APPLIED_KEY = "IS_FILTER_APPLIED_KEY"
     }
 }

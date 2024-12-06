@@ -32,6 +32,7 @@
     <string name="enter_salary">Введите сумму</string>
     <string name="expected_salary">Ожидаемая ЗП</string>
     <string name="not_show_without_sallary">Не показывать без ЗП</string>
+    <string name="geolocation_enabled_checkbox">Показать вакансии рядом со мной</string>
     <string name="apply">Применить</string>
     <string name="reset">Сбросить</string>
     
@@ -45,7 +46,7 @@
     <string name="vacancy_key_skills">Ключевые навыки</string>
     <string name="vacancy_not_found_or_delete">Вакансия не найдена или удалена</string>
     <string name="server_error">Ошибка сервера</string>
-    <string name="not_found_regions">Не удалось получить список</string>
+    <string name="not_found_list">Не удалось получить список</string>
     <string name="favorite_list_empty">Список пуст</string>
     <string name="region_not_found">Такого региона нет</string>
     <string name="favourites">Избранное</string>
@@ -67,4 +68,10 @@
     <string name="element_cross">кнопка-крестик элемента</string>
     <string name="rub">руб</string>
     <string name="salary_to_high">Зарплата %s слишком высока! Уменьшите свои амбиции.</string>
+    <string name="industry_not_found">Такой отрасли нет</string>
+    <string name="enter_city_query">Введите город</string>
+    <string name="city_not_found">Такого города нет</string>
+    <string name="share_dialog_title">Выберите с кем поделиться этой вакансией</string>
+    <string name="check_internet_connection">Проверьте подключение к интернету</string>
+    <string name="error_happens">Произошла ошибка</string>
 </resources>

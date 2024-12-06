@@ -11,14 +11,14 @@
         android:layout_height="0dp"
         android:contentDescription="@string/placeholder_picture"
         android:scaleType="fitCenter"
+        android:src="@drawable/placeholder_not_found_picture"
         android:visibility="visible"
         app:layout_constrainedWidth="true"
         app:layout_constraintDimensionRatio="@string/pictures_ratio"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTag="phPicture"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/placeholder_not_found_picture" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvPlaceholderText"
@@ -27,13 +27,13 @@
         android:layout_marginHorizontal="@dimen/margin_30"
         android:layout_marginTop="@dimen/margin_16"
         android:gravity="center"
+        android:text="@string/not_found_vacancies"
         android:textAppearance="@style/TextMedium_22size_500weight"
         android:textColor="?attr/elementColor_black_white"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTag="phText"
-        app:layout_constraintTop_toBottomOf="@id/ivPlaceholderPicture"
-        android:text="@string/not_found_vacancies" />
+        app:layout_constraintTop_toBottomOf="@id/ivPlaceholderPicture" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

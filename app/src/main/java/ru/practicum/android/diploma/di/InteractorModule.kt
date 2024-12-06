@@ -13,15 +13,17 @@ import ru.practicum.android.diploma.domain.impl.IndustriesInteractorImpl
 import ru.practicum.android.diploma.domain.impl.NetworkConnectionCheckerInteractorImpl
 import ru.practicum.android.diploma.domain.impl.SetSearchFilterInteractorImpl
 import ru.practicum.android.diploma.domain.impl.SystemInteractorImpl
-import ru.practicum.android.diploma.domain.impl.UpdateDbOnAppStartUseCase
+import ru.practicum.android.diploma.domain.impl.UpdateDbOnAppStartInteractorImpl
 import ru.practicum.android.diploma.domain.repository.AreasInteractor
 import ru.practicum.android.diploma.domain.repository.FavoriteVacancyInteractor
 import ru.practicum.android.diploma.domain.repository.FirebaseInteractor
+import ru.practicum.android.diploma.domain.repository.GetDataLoadingStatusUseCase
 import ru.practicum.android.diploma.domain.repository.GetSearchFilterInteractor
 import ru.practicum.android.diploma.domain.repository.IndustriesInteractor
 import ru.practicum.android.diploma.domain.repository.NetworkConnectionCheckerInteractor
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterInteractor
 import ru.practicum.android.diploma.domain.repository.SystemInteractor
+import ru.practicum.android.diploma.domain.repository.UpdateDbOnAppStartInteractor
 import ru.practicum.android.diploma.domain.search.api.SearchInteractor
 import ru.practicum.android.diploma.domain.search.impl.SearchInteractorImpl
 import ru.practicum.android.diploma.domain.sharing.api.SharingInteractor
@@ -30,8 +32,14 @@ import ru.practicum.android.diploma.domain.sharing.impl.SharingInteractorImpl
 val interactorModule = module {
     single<SearchInteractor> { SearchInteractorImpl(vacancyRepository = get(), filterRepository = get()) }
 
-    factory<UpdateDbOnAppStartUseCase> {
-        UpdateDbOnAppStartUseCase(
+    factory<UpdateDbOnAppStartInteractor> {
+        UpdateDbOnAppStartInteractorImpl(
+            repository = get()
+        )
+    }
+
+    factory<GetDataLoadingStatusUseCase> {
+        GetDataLoadingStatusUseCase(
             repository = get()
         )
     }

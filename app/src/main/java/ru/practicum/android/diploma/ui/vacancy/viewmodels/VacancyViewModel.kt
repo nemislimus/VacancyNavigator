@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.vacancy.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,7 +23,7 @@ class VacancyViewModel(
     private var android: SystemInteractor,
     private val vacancyInteractor: VacancyDetailsInteractor,
     private val favoriteInteractor: FavoriteVacancyInteractor,
-    private val sharingInteractor: SharingInteractor,
+    private val sharingInteractor: SharingInteractor
 ) : ViewModel() {
     @Volatile
     private var currentVacancy: VacancyFull? = null
@@ -30,8 +31,7 @@ class VacancyViewModel(
     @Volatile
     private var vacancyIsFavorite = false
 
-    private val vacancyDetailsStateLiveData =
-        MutableLiveData<VacancyDetailsState>()
+    private val vacancyDetailsStateLiveData = MutableLiveData<VacancyDetailsState>()
 
     private val isFavoriteLiveData = MutableLiveData<Boolean>()
 
@@ -40,30 +40,34 @@ class VacancyViewModel(
     fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
 
     init {
-        getVacancyDetails(vacancyId)
+        getVacancyDetails()
     }
 
-    private fun getVacancyDetails(id: String) {
+    private fun getVacancyDetails() {
         updateState(VacancyDetailsState.Loading)
 
         var dbVacancy: VacancyFull? = null
 
         viewModelScope.launch {
-            favoriteInteractor.getById(id)?.let { vacancy ->
+            favoriteInteractor.getById(vacancyId)?.let { vacancy ->
                 vacancyIsFavorite = true
                 dbVacancy = vacancy
             }
 
             launch {
-                vacancyInteractor.searchVacancyById(id).collect { result ->
-                    preManageDetailsResult(result)
+                runCatching {
+                    vacancyInteractor.searchVacancyById(vacancyId).collect { result ->
+                        preManageDetailsResult(result)
+                    }
+                }.onFailure { er ->
+                    Log.d("WWW", "Vacancy load error: $er")
                 }
             }
 
             delay(RESPONSE_AWAIT_TIME)
 
             dbVacancy?.let { vacancy ->
-                if (currentVacancy == null) {
+                if (currentVacancy == null && vacancyIsFavorite) {
                     currentVacancy = vacancy
                     updateState(VacancyDetailsState.Content(vacancy))
                 }
@@ -81,7 +85,7 @@ class VacancyViewModel(
 
             is Resource.NotFoundError -> {
                 // прокидываем результат, отрабатываем удаление вакансии
-                vacancyIsFavorite = false
+                doOn404ErrorCode()
                 manageDetailsResult(result)
             }
 
@@ -104,6 +108,12 @@ class VacancyViewModel(
                 }
             }
         }
+    }
+
+    private fun doOn404ErrorCode() {
+        vacancyIsFavorite = false
+        currentVacancy = null
+        removeCurrentVacancy()
     }
 
     private fun manageDetailsResult(result: Resource<VacancyFull>) {
@@ -163,13 +173,15 @@ class VacancyViewModel(
 
     fun clickOnShareIcon() {
         currentVacancy?.let {
-            sharingInteractor.shareAppMessageOrLink(it.urlHh)
+            sharingInteractor.shareAppMessageOrLink(
+                text = it.urlHh, shareDialogTitle = android.getString(R.string.share_dialog_title)
+            )
         } ?: run {
             showDeny(SHARE_TOAST_MARKER)
         }
     }
 
-    fun removeCurrentVacancy() {
+    private fun removeCurrentVacancy() {
         viewModelScope.launch {
             favoriteInteractor.remove(vacancyId)
         }

@@ -4,6 +4,7 @@ import ru.practicum.android.diploma.data.db.converters.AreaRoomToAreaMapper
 import ru.practicum.android.diploma.data.db.converters.SearchFilterToSearchFilterRoomMapper
 import ru.practicum.android.diploma.data.db.dao.SearchFilterDao
 import ru.practicum.android.diploma.domain.models.Area
+import ru.practicum.android.diploma.domain.models.AreaType
 import ru.practicum.android.diploma.domain.models.Geolocation
 import ru.practicum.android.diploma.domain.models.Industry
 import ru.practicum.android.diploma.domain.models.SearchFilter
@@ -49,10 +50,16 @@ class SetSearchFilterRepositoryImpl(
         area?.let {
             val list: MutableList<Area> = mutableListOf(area)
             var parentId = area.parentId?.toInt() ?: 0
-            while (true) {
-                val areaItem = dao.getParentArea(parentId) ?: break
-                parentId = areaItem.parentId
-                list.add(0, AreaRoomToAreaMapper.map(areaItem))
+            var condition = true
+            while (condition) {
+                val areaRoom = dao.getParentArea(parentId) ?: break
+                parentId = areaRoom.parentId
+                val parentArea = AreaRoomToAreaMapper.map(areaRoom)
+                // добавляем только страну родителя. Другие типы регионов отбрасываем
+                if (parentArea.type == AreaType.COUNTRY) {
+                    list.add(0, parentArea)
+                    condition = false
+                }
             }
 
             list.forEachIndexed { index, areaItem ->

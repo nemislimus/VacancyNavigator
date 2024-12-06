@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -51,7 +50,7 @@ open class FiltrationFragment : DetektBindingFragment() {
                     showCountryValue()
                     showIndustryValue(filtrationData)
                     filtrationData.filter.salary?.let { salary ->
-                        etSalaryEditText.setText(rubFormat(salary.toString()))
+                        etSalaryEditText.setText(salary.toString())
                     } ?: run {
                         etSalaryEditText.text.clear()
                     }
@@ -85,6 +84,9 @@ open class FiltrationFragment : DetektBindingFragment() {
                 clCountryValue.tvValue.setTextColor(valuesThemeColor)
             } else {
                 clCountryValue.tvHint.isVisible = false
+                clCountryValue.tvValue.setTextColor(
+                    requireContext().getColor(R.color.gray)
+                )
             }
         }
     }
@@ -104,37 +106,40 @@ open class FiltrationFragment : DetektBindingFragment() {
     }
 
     private fun bindingNumberOne() {
-        with(binding) {
-            etSalaryEditText.addTextChangedListener { s ->
-                showClearSalaryIcon(s.isNullOrBlank())
+        binding.etSalaryEditText.addTextChangedListener(textWatcher)
+    }
 
-                try {
-                    val salary: Long = longFromString(s.toString())
+    override fun onTextInput(text: String) {
+        showClearSalaryIcon(text.isBlank())
 
-                    if (salary < Integer.MAX_VALUE) {
-                        lastNormalSalary = salary.toInt()
+        try {
+            val salary: Long = longFromString(text)
 
-                        vModel.saveSalary(
-                            salary = lastNormalSalary
-                        )
-                    } else {
-                        etSalaryEditText.setText(lastNormalSalary.toString())
+            if (salary < Integer.MAX_VALUE) {
+                lastNormalSalary = salary.toInt()
 
-                        vModel.showHighSalaryInfo(salary)
-                    }
-                } catch (er: NumberFormatException) {
-                    Log.d("WWW", "High salary $er")
-                    etSalaryEditText.setText("0")
-                }
+                vModel.saveSalary(
+                    salary = lastNormalSalary
+                )
+            } else {
+                binding.etSalaryEditText.setText(lastNormalSalary.toString())
+
+                vModel.showHighSalaryInfo(salary)
             }
+        } catch (er: NumberFormatException) {
+            Log.d("WWW", "High salary $er")
+            binding.etSalaryEditText.setText("0")
         }
+    }
+
+    override fun onDestroyFragment() {
+        binding.etSalaryEditText.removeTextChangedListener(textWatcher)
     }
 
     private fun bindingNumberTwo() {
         with(binding) {
             etSalaryEditText.setOnFocusChangeListener { _, hasFocus ->
                 detektHelper?.manageSalaryHintColor(hasFocus)
-                formatSalary(hasFocus)
                 manageSalaryHintColor(hasFocus)
             }
 
@@ -164,19 +169,11 @@ open class FiltrationFragment : DetektBindingFragment() {
 
     private fun manageFilterElementClick() {
         with(binding) {
-            clCountryValue.tvValue.setOnClickListener {
-                findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
-            }
-            clCountryValue.ivElementButton.setOnClickListener {
+            clCountryValue.wholeElement.setOnClickListener {
                 findNavController().navigate(R.id.action_filtrationFragment_to_filtrationPlaceOfWorkFragment)
             }
 
-            clIndustryValue.tvValue.setOnClickListener {
-                findNavController().navigate(
-                    R.id.action_filtrationFragment_to_filtrationIndustryFragment
-                )
-            }
-            clIndustryValue.ivElementButton.setOnClickListener {
+            clIndustryValue.wholeElement.setOnClickListener {
                 findNavController().navigate(
                     R.id.action_filtrationFragment_to_filtrationIndustryFragment
                 )

@@ -7,7 +7,6 @@ import android.util.Log
 import ru.practicum.android.diploma.data.db.DbHelper
 import ru.practicum.android.diploma.data.db.converters.AreaDtoToTempAreaItemMapper
 import ru.practicum.android.diploma.data.db.converters.IndustryDtoToTempIndustryMapper
-import ru.practicum.android.diploma.data.db.dao.CreateDbDao
 import ru.practicum.android.diploma.data.db.models.AreaRoomTemp
 import ru.practicum.android.diploma.data.db.models.IndustryRoomTemp
 import ru.practicum.android.diploma.data.network.ApiRequest
@@ -16,25 +15,25 @@ import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.search.dto.model.AreaDto
 import ru.practicum.android.diploma.data.search.dto.model.IndustryDto
 import ru.practicum.android.diploma.domain.models.AreaType
+import ru.practicum.android.diploma.domain.models.DataLoadingStatus
+import ru.practicum.android.diploma.domain.repository.DataLoadingStatusRepository
 import ru.practicum.android.diploma.domain.repository.UpdateDbOnAppStartRepository
 
 class UpdateDbOnAppStartRepositoryImpl(
     private val client: NetworkClient,
     private val sql: DbHelper,
-    private var roomDb: CreateDbDao?
+    private var roomDb: DataLoadingStatusRepository
 ) : UpdateDbOnAppStartRepository {
 
     private val db: SQLiteDatabase by lazy { sql.writableDatabase }
     private var time = System.currentTimeMillis()
     private val countriesIds: MutableMap<String, Boolean> = mutableMapOf()
+    private val areasInCountry: MutableMap<String, String?> = mutableMapOf()
     private var countryCounter = 1
     private var regionCounter = 1
-    private var cityCounter = 1
 
     override suspend fun update(): Boolean {
-        logTime("roomDb -> " + roomDb?.version())
-
-        roomDb = null
+        roomDb.setStatus(DataLoadingStatus.LOADING)
 
         clearTempTables()
         db.execSQL("CREATE TABLE IF NOT EXISTS $AREAS_NO_INDEXES AS SELECT * FROM areas_temp LIMIT 0")
@@ -67,10 +66,18 @@ class UpdateDbOnAppStartRepositoryImpl(
 
             sql.close()
 
+            roomDb.setStatus(DataLoadingStatus.SERVER_ERROR)
+
             return false
         }
 
+        roomDb.setStatus(DataLoadingStatus.COMPLETE)
+
         return true
+    }
+
+    override suspend fun setNoInternet() {
+        roomDb.setStatus(DataLoadingStatus.NO_INTERNET)
     }
 
     private suspend fun clearTempTables() {
@@ -143,23 +150,29 @@ class UpdateDbOnAppStartRepositoryImpl(
         areas.forEach { area ->
             val type: AreaType
             val hhPosition: Int
+            val areaItem: AreaDto
             if (countriesIds[area.id] != null) {
                 type = AreaType.COUNTRY
                 hhPosition = countryCounter++
+                areaItem = area
             } else if (countriesIds[area.parentId] != null) {
                 type = AreaType.REGION
                 hhPosition = regionCounter++
+                areasInCountry[area.id] = area.parentId
+                areaItem = area
             } else if (area.parentId != null) {
-                type = AreaType.CITY
-                hhPosition = cityCounter++
+                // города тоже запихиваем в регионы
+                type = AreaType.REGION
+                hhPosition = regionCounter++
+                areaItem = area.copy(parentId = areasInCountry[area.parentId])
             } else {
                 type = AreaType.COUNTRY // это другие регионы
                 hhPosition = -countryCounter
+                areaItem = area
             }
 
             insertArea(
-                area = AreaDtoToTempAreaItemMapper.map(area, type = type, nestingLevel = level),
-                addAlsoAsCity = type == AreaType.REGION && area.areas.isNullOrEmpty(),
+                area = AreaDtoToTempAreaItemMapper.map(areaItem, type = type, nestingLevel = level),
                 hhPosition = hhPosition
             )
 
@@ -178,7 +191,7 @@ class UpdateDbOnAppStartRepositoryImpl(
         }
     }
 
-    private fun insertArea(area: AreaRoomTemp, addAlsoAsCity: Boolean = false, hhPosition: Int = 0) {
+    private fun insertArea(area: AreaRoomTemp, hhPosition: Int = 0) {
         val contentValues = ContentValues()
         contentValues.put(ID, area.id)
         contentValues.put(NAME, SPACE + area.name)
@@ -187,24 +200,6 @@ class UpdateDbOnAppStartRepositoryImpl(
         contentValues.put(NESTING_LEVEL, area.nestingLevel)
         contentValues.put(HH_POSITION, hhPosition)
         db.insertWithOnConflict(AREAS_NO_INDEXES, null, contentValues, CONFLICT_IGNORE)
-
-        if (addAlsoAsCity) {
-            // добавим Москву и другие федеральные города тоже в города
-            val parentId = if (area.nestingLevel < 2) {
-                area.id
-            } else {
-                area.parentId
-            }
-            val nestingLevel = area.nestingLevel + if (area.nestingLevel < 2) 1 else 0
-            val contentValues = ContentValues()
-            contentValues.put(ID, -1 * area.id)
-            contentValues.put(NAME, SPACE + area.name)
-            contentValues.put(TYPE, AreaType.CITY.type)
-            contentValues.put(PARENT_ID, parentId)
-            contentValues.put(NESTING_LEVEL, nestingLevel)
-            contentValues.put(HH_POSITION, hhPosition)
-            db.insertWithOnConflict(AREAS_NO_INDEXES, null, contentValues, CONFLICT_IGNORE)
-        }
     }
 
     private fun insertIndustry(industry: IndustryRoomTemp) {

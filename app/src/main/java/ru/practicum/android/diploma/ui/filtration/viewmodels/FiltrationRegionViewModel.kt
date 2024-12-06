@@ -3,43 +3,96 @@ package ru.practicum.android.diploma.ui.filtration.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.domain.models.Area
+import ru.practicum.android.diploma.domain.models.DataLoadingStatus
 import ru.practicum.android.diploma.domain.repository.AreasInteractor
+import ru.practicum.android.diploma.domain.repository.GetDataLoadingStatusUseCase
 import ru.practicum.android.diploma.domain.repository.SetSearchFilterInteractor
 import ru.practicum.android.diploma.ui.utils.XxxLiveData
 
 open class FiltrationRegionViewModel(
     val regionsGetter: AreasInteractor,
     private val filterSetter: SetSearchFilterInteractor,
-    private val parentId: String?
+    private val parentId: String?,
+    private val loadingStatus: GetDataLoadingStatusUseCase
 ) : ViewModel() {
     val xxxLiveData = XxxLiveData<FiltrationRegionData>()
     var parentArea: Area? = null
+    var isRegionsLoaded: Boolean = false
+    var isNextPageLoading = false
     val liveData: LiveData<FiltrationRegionData> get() = xxxLiveData
+    var lastSearchQuery: String? = null
+    var maxPages = Integer.MAX_VALUE
+    var currentPage = 0
+    val areasList: MutableList<Area> = mutableListOf()
+    private var job: Job? = null
 
     init {
         viewModelScope.launch {
+
+            job = launch {
+                loadingStatus().collect { status ->
+                    when (status) {
+                        DataLoadingStatus.APP_FIRST_START -> Unit
+
+                        DataLoadingStatus.NO_INTERNET -> {
+                            renderState(FiltrationRegionData.NoInternet)
+                        }
+
+                        DataLoadingStatus.LOADING -> {
+                            renderState(FiltrationRegionData.Loading)
+                        }
+
+                        DataLoadingStatus.SERVER_ERROR -> {
+                            renderState(FiltrationRegionData.NotFoundRegion)
+                        }
+
+                        DataLoadingStatus.COMPLETE -> {
+                            isRegionsLoaded = true
+                            job?.cancel()
+                        }
+                    }
+                }
+            }
+            job?.join()
+
+            // получить регионы можно только после того как они были загружены в БД
             parentId?.let {
                 parentArea = regionsGetter.getAreaById(parentId)
             }
-            getRegions()
+            getRegions(lastSearchQuery)
         }
     }
 
     open fun getRegions(search: String? = null) {
+        if (search != lastSearchQuery) {
+            clearPagingHistory()
+            lastSearchQuery = search
+        }
+
+        if (!(isRegionsLoaded && currentPage < maxPages)) return
+
         viewModelScope.launch {
             val regions = if (parentId.isNullOrBlank()) {
-                regionsGetter.getAllRegions(search)
+                regionsGetter.getAllRegions(search, currentPage)
             } else {
-                regionsGetter.getRegionsInCountry(parentId, search)
+                regionsGetter.getRegionsInCountry(parentId, search, currentPage)
             }
 
             if (regions.isEmpty()) {
-                xxxLiveData.postValue(FiltrationRegionData.NotFound)
+                if (currentPage == 0) {
+                    renderState(FiltrationRegionData.IncorrectRegion, true)
+                } else {
+                    maxPages = currentPage
+                }
             } else {
-                xxxLiveData.postValue(FiltrationRegionData.Regions(regions))
+                areasList.addAll(regions)
+                renderState(FiltrationRegionData.Regions(areasList, currentPage == 0), true)
             }
+            currentPage++
+            isNextPageLoading = false
         }
     }
 
@@ -48,5 +101,29 @@ open class FiltrationRegionViewModel(
             filterSetter.saveAreaTempValue(region)
             xxxLiveData.setSingleEventValue(FiltrationRegionData.GoBack(region))
         }
+    }
+
+    fun clearPagingHistory() {
+        areasList.clear()
+        maxPages = Integer.MAX_VALUE
+        currentPage = 0
+    }
+
+    fun setNoScrollOnViewCreated() {
+        xxxLiveData.setStartValue(FiltrationRegionData.Regions(areasList, false))
+    }
+
+    fun onLastItemReached() {
+        if (!isNextPageLoading) {
+            isNextPageLoading = true
+            getRegions(lastSearchQuery)
+        }
+    }
+
+    private fun renderState(newState: FiltrationRegionData, clearOtherStates: Boolean = false) {
+        if (clearOtherStates) {
+            xxxLiveData.clear()
+        }
+        xxxLiveData.setValue(newState)
     }
 }

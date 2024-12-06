@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.ui.search.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -51,17 +52,26 @@ class SearchViewModel(
         if (searchQuery == lastSearchRequest) {
             return
         }
+        if (searchQuery.isBlank()) {
+            cancelSearch()
+            _searchState.setValue(SearchState.QueryIsEmpty(isEmpty = true))
+        } else {
+            searchJob?.cancel()
+            if (lastSearchRequest.isBlank()) {
+                _searchState.setValue(SearchState.QueryIsEmpty(isEmpty = false))
+            }
+        }
         clearPagingHistory()
         lastSearchRequest = searchQuery
-
         _searchDebounce(searchQuery)
+        _searchState.setStartValue(SearchState.SearchText(searchQuery))
     }
 
-    fun searchAfterFilterApplied() {
+    fun forceSearchLastRequest() {
         if (lastSearchRequest.isNotBlank()) {
             clearPagingHistory()
             _searchState.clear()
-            _searchDebounce(lastSearchRequest)
+            searchVacancies(lastSearchRequest)
         }
     }
 
@@ -76,37 +86,50 @@ class SearchViewModel(
             renderLoadingState()
             searchJob?.cancel()
             searchJob = viewModelScope.launch {
-                searchInteractor.searchVacancy(searchQuery, currentPage).collect { result ->
-                    withContext(Dispatchers.Main) {
-                        when (result) {
-                            is Resource.ConnectionError -> {
-                                if (currentPage == 0) {
-                                    renderState(SearchState.ConnectionError(true), true)
-                                } else {
-                                    _searchState.setSingleEventValue(SearchState.ConnectionError(false))
-                                }
-                            }
-
-                            is Resource.NotFoundError -> renderState(SearchState.NotFoundError, true)
-                            is Resource.ServerError -> renderState(SearchState.NotFoundError, true)
-                            is Resource.Success -> {
-                                with(result.data) {
-                                    isNextPageLoading = false
-                                    maxPages = pages
-                                    if (found > 0) {
-                                        vacanciesList.addAll(items)
-                                        renderState(SearchState.Content(vacanciesList, currentPage == 0), true)
-                                        renderState(SearchState.VacanciesCount(found))
-                                        ++currentPage
-                                    } else if (currentPage == 0) {
-                                        renderState(SearchState.NotFoundError, true)
+                runCatching {
+                    searchInteractor.searchVacancy(searchQuery, currentPage).collect { result ->
+                        withContext(Dispatchers.Main) {
+                            val replaceVacancyList = currentPage == 0
+                            when (result) {
+                                is Resource.ConnectionError -> {
+                                    if (currentPage == 0) {
+                                        renderState(SearchState.ConnectionError(true), true)
                                     } else {
-                                        Unit
+                                        _searchState.setSingleEventValue(SearchState.ConnectionError(false))
+                                    }
+                                }
+
+                                is Resource.NotFoundError -> renderState(
+                                    SearchState.NotFoundError(replaceVacancyList),
+                                    replaceVacancyList
+                                )
+
+                                is Resource.ServerError -> renderState(
+                                    SearchState.ServerError500(replaceVacancyList),
+                                    replaceVacancyList
+                                )
+
+                                is Resource.Success -> {
+                                    with(result.data) {
+                                        isNextPageLoading = false
+                                        maxPages = pages
+                                        if (found > 0) {
+                                            vacanciesList.addAll(items)
+                                            renderState(SearchState.Content(vacanciesList, currentPage == 0), true)
+                                            renderState(SearchState.VacanciesCount(found))
+                                            ++currentPage
+                                        } else if (currentPage == 0) {
+                                            renderState(SearchState.NotFoundError(true), true)
+                                        } else {
+                                            Unit
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                }.onFailure { er ->
+                    Log.d("WWW", "Vacancy search error: $er")
                 }
             }
         }
@@ -127,6 +150,12 @@ class SearchViewModel(
     private fun renderState(newState: SearchState, clearOtherStates: Boolean = false) {
         if (clearOtherStates) {
             _searchState.clear()
+            _searchState.setValue(
+                SearchState.QueryIsEmpty(
+                    isEmpty = lastSearchRequest.isBlank()
+                )
+            )
+            _searchState.setStartValue(SearchState.SearchText(lastSearchRequest))
         }
         _searchState.setValue(newState)
     }

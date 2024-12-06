@@ -2,16 +2,18 @@ package ru.practicum.android.diploma.ui.filtration.fragments
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -23,6 +25,7 @@ import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationRegionDat
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationRegionViewModel
 import ru.practicum.android.diploma.ui.utils.BindingFragment
 import ru.practicum.android.diploma.util.EMPTY_STRING
+import ru.practicum.android.diploma.util.debounce
 
 open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBinding>() {
 
@@ -30,6 +33,14 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
         val countryId: String? = arguments?.getString(COUNTRY_ID_KEY)
         parametersOf(countryId)
     }
+
+    private var lastSearchRequest: String = EMPTY_STRING
+
+    private val _searchDebounce: (String) -> Unit =
+        debounce(true, lifecycleScope, SEARCH_DEBOUNCE_DELAY) { searchText ->
+            lastSearchRequest = searchText
+            viewModel.getRegions(searchText)
+        }
 
     private val listAdapter = RegionAdapter {
         viewModel.saveRegion(it)
@@ -51,45 +62,93 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
                 clearQuery()
             }
 
-            llSearchRegionField.etSearchRegionQuery.addTextChangedListener { s ->
-                setSearchIcon(s.isNullOrBlank())
-                viewModel.getRegions(s.toString())
-            }
+            llSearchRegionField.etSearchRegionQuery.addTextChangedListener(textWatcher)
+
+            rvRegionList.addOnScrollListener(object : OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    if (dy > 0) {
+                        val manager = binding.rvRegionList.layoutManager as LinearLayoutManager
+                        val first = manager.findFirstVisibleItemPosition()
+                        val last = manager.findLastVisibleItemPosition()
+                        val elementsPerPage = last - first
+                        if (last >= listAdapter.itemCount - elementsPerPage) {
+                            viewModel.onLastItemReached()
+                        }
+                        viewModel.setNoScrollOnViewCreated()
+                    }
+                }
+            })
         }
 
         viewModel.liveData.observe(viewLifecycleOwner) {
             when (it) {
+                is FiltrationRegionData.Regions -> showRegions(it.regions, it.listNeedsScrollTop)
                 is FiltrationRegionData.GoBack -> {
                     it.region?.let { region -> regionSelected(region) }
                     goBack()
                 }
 
-                FiltrationRegionData.NotFound -> showNotFound()
-                FiltrationRegionData.NotSuchRegion -> {}
-                is FiltrationRegionData.Regions -> showRegions(it.regions)
+                FiltrationRegionData.NotFoundRegion -> showPlaceholder(NOT_FOUND_TYPE)
+                FiltrationRegionData.IncorrectRegion -> showPlaceholder(INCORRECT_TYPE)
+                FiltrationRegionData.NoInternet -> showPlaceholder(NO_INTERNET_TYPE)
+                FiltrationRegionData.Loading -> showLoading()
             }
         }
     }
 
-    private fun showRegions(regions: List<Area>) {
-        setPlaceholdersVisibility(false)
+    override fun onTextInput(text: String) {
+        setSearchIcon(text.isBlank())
+        searchRegion(text.trim())
+    }
+
+    override fun onDestroyFragment() {
+        binding.llSearchRegionField.etSearchRegionQuery.removeTextChangedListener(textWatcher)
+    }
+
+    private fun searchRegion(searchQuery: String) {
+        if (searchQuery == lastSearchRequest) {
+            return
+        }
+        _searchDebounce(searchQuery)
+    }
+
+    private fun showRegions(regions: List<Area>, listNeedsScrollTop: Boolean) {
+        binding.pbRegionProgress.isVisible = false
+        binding.clPlaceholderRegion.root.isVisible = false
         binding.rvRegionList.isVisible = true
-        showNewList(regions)
+        showNewList(regions, listNeedsScrollTop)
     }
 
-    private fun setPlaceholdersVisibility(isVisible: Boolean) {
-        binding.clPlaceholderRegion.root.isVisible = isVisible
-    }
-
-    private fun showNotFound() {
-        showNewList()
-        setPlaceholdersVisibility(true)
-        with(binding) {
-            rvRegionList.isVisible = false
-            clPlaceholderRegion.ivPlaceholderPicture.setImageResource(
-                R.drawable.placeholder_filter_region_list_not_found
+    open fun showPlaceholder(placeholderType: Int, usingForCities: Boolean = false) {
+        binding.pbRegionProgress.isVisible = false
+        binding.rvRegionList.isVisible = false
+        val placeholderTextIncorrect = if (usingForCities) R.string.city_not_found else R.string.region_not_found
+        with(binding.clPlaceholderRegion) {
+            tvPlaceholderText.text = requireContext().getString(
+                when (placeholderType) {
+                    NO_INTERNET_TYPE -> R.string.no_internet
+                    NOT_FOUND_TYPE -> R.string.not_found_list
+                    else -> placeholderTextIncorrect
+                }
             )
-            clPlaceholderRegion.tvPlaceholderText.text = requireContext().getText(R.string.not_found_regions)
+            ivPlaceholderPicture.setImageResource(
+                when (placeholderType) {
+                    NO_INTERNET_TYPE -> R.drawable.placeholder_no_internet_picture
+                    NOT_FOUND_TYPE -> R.drawable.placeholder_filter_region_list_not_found
+                    else -> R.drawable.placeholder_not_found_picture
+                }
+            )
+            root.isVisible = true
+        }
+    }
+
+    private fun showLoading() {
+        with(binding) {
+            clPlaceholderRegion.root.isVisible = false
+            rvRegionList.isVisible = false
+            pbRegionProgress.isVisible = true
         }
     }
 
@@ -125,10 +184,22 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
         findNavController().popBackStack()
     }
 
-    private fun showNewList(areas: List<Area>? = null) {
-        listAdapter.areas.clear()
-        areas?.let { list -> listAdapter.areas.addAll(list) }
-        listAdapter.notifyDataSetChanged()
+    private fun showNewList(newList: List<Area>, listNeedsScrollTop: Boolean) {
+        if (listNeedsScrollTop) {
+            with(listAdapter) {
+                areas.clear()
+                areas.addAll(newList)
+                notifyDataSetChanged()
+            }
+            binding.rvRegionList.scrollToPosition(0)
+        } else {
+            val oldListSize = listAdapter.areas.size
+            with(listAdapter) {
+                areas.clear()
+                areas.addAll(newList)
+                notifyItemRangeChanged(oldListSize, areas.size - oldListSize)
+            }
+        }
     }
 
     private fun regionSelected(region: Area) {
@@ -136,13 +207,15 @@ open class FiltrationRegionFragment : BindingFragment<FragmentFiltrationRegionBi
     }
 
     companion object {
-
+        const val SEARCH_DEBOUNCE_DELAY = 200L
         const val RESULT_REGION_KEY = "selected_region_key"
-
         const val COUNTRY_ID_KEY = "country_id_key"
 
+        const val NO_INTERNET_TYPE = 0
+        const val NOT_FOUND_TYPE = 1
+        const val INCORRECT_TYPE = 2
+
         fun createArgs(country: Area): Bundle {
-            Log.d("WWW", country.toString())
             return bundleOf(COUNTRY_ID_KEY to country.id)
         }
     }

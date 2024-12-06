@@ -5,9 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/appBackgroundColor"
-    android:clickable="true"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
     tools:context="ru.practicum.android.diploma.ui.filtration.fragments.FiltrationFragment">
 
     <androidx.constraintlayout.widget.Guideline
@@ -75,6 +72,7 @@
         android:background="@drawable/field_for_search_edit_text"
         android:hint="@string/enter_salary"
         android:inputType="number"
+        android:maxLength="9"
         android:maxLines="1"
         android:singleLine="true"
         android:textAppearance="@style/TextRegular_16size_400weight"
@@ -116,8 +114,8 @@
         android:text="@string/not_show_without_sallary"
         android:textAppearance="@style/TextRegular_16size_400weight"
         android:textColor="?attr/elementColor_black_white"
-        app:layout_constraintStart_toStartOf="@+id/left_border"
-        app:layout_constraintTop_toBottomOf="@+id/etSalaryEditText" />
+        app:layout_constraintStart_toStartOf="@id/left_border"
+        app:layout_constraintTop_toBottomOf="@id/etSalaryEditText" />
 
     <CheckBox
         android:id="@+id/ckbSalaryCheckbox"
@@ -127,7 +125,7 @@
         android:buttonTint="@color/blue"
         app:layout_constraintBottom_toBottomOf="@+id/tvWithoutSalary"
         app:layout_constraintEnd_toStartOf="@id/right_border"
-        app:layout_constraintTop_toTopOf="@+id/tvWithoutSalary" />
+        app:layout_constraintTop_toTopOf="@id/tvWithoutSalary" />
 
     <TextView
         android:id="@+id/btnApplyFilter"

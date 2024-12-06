@@ -14,10 +14,10 @@ import ru.practicum.android.diploma.di.interactorModule
 import ru.practicum.android.diploma.di.repositoryModule
 import ru.practicum.android.diploma.di.uiModule
 import ru.practicum.android.diploma.di.viewModelModule
-import ru.practicum.android.diploma.domain.impl.UpdateDbOnAppStartUseCase
 import ru.practicum.android.diploma.domain.models.FirebaseEvent
 import ru.practicum.android.diploma.domain.repository.FirebaseInteractor
 import ru.practicum.android.diploma.domain.repository.NetworkConnectionCheckerInteractor
+import ru.practicum.android.diploma.domain.repository.UpdateDbOnAppStartInteractor
 
 class App : Application() {
 
@@ -31,7 +31,7 @@ class App : Application() {
             modules(repositoryModule, interactorModule, viewModelModule, dataModule, uiModule)
         }
 
-        val dataUpdater: UpdateDbOnAppStartUseCase by inject()
+        val dataUpdater: UpdateDbOnAppStartInteractor by inject()
 
         val firebaseLog: FirebaseInteractor by inject()
 
@@ -49,7 +49,7 @@ class App : Application() {
                     if (isConnected && !isUpdating && !isUpdateSuccess) {
                         isUpdating = true
                         runCatching {
-                            isUpdateSuccess = dataUpdater()
+                            isUpdateSuccess = dataUpdater.update()
                             firebaseLog.logEvent(FirebaseEvent.Log("Areas updated. DB is ok"))
                             Log.d("WWW", "DB updated")
                             childScope.cancel()
@@ -58,6 +58,8 @@ class App : Application() {
                             Log.d("WWW", "DB update failed: $er")
                         }
                         isUpdating = false
+                    } else if (!isConnected) {
+                        dataUpdater.setNoInternet()
                     }
                 }
             }

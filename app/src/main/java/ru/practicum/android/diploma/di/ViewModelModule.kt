@@ -3,7 +3,6 @@ package ru.practicum.android.diploma.di
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import ru.practicum.android.diploma.ui.favorites.viewmodels.FavoritesViewModel
-import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationCityViewModel
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationCountriesViewModel
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationIndustryViewModel
 import ru.practicum.android.diploma.ui.filtration.viewmodels.FiltrationPlaceOfWorkViewModel
@@ -38,7 +37,8 @@ val viewModelModule = module {
         FiltrationIndustryViewModel(
             industriesGetter = get(),
             filterGetter = get(),
-            filterSetter = get()
+            filterSetter = get(),
+            loadingStatus = get()
         )
     }
 
@@ -46,7 +46,8 @@ val viewModelModule = module {
         FiltrationRegionViewModel(
             regionsGetter = get(),
             filterSetter = get(),
-            parentId = countryId
+            parentId = countryId,
+            loadingStatus = get()
         )
     }
 
@@ -60,7 +61,8 @@ val viewModelModule = module {
     viewModel {
         FiltrationCountriesViewModel(
             countryGetter = get(),
-            filterSetter = get()
+            filterSetter = get(),
+            loadingStatus = get()
         )
     }
 
@@ -69,14 +71,6 @@ val viewModelModule = module {
             filterSetter = get(),
             filterGetter = get(),
             systemInt = get()
-        )
-    }
-
-    viewModel { (countryId: String) ->
-        FiltrationCityViewModel(
-            regionsGetter = get(),
-            filterSetter = get(),
-            parentId = countryId
         )
     }
 }

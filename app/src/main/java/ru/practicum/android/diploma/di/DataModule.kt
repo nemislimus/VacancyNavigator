@@ -7,33 +7,21 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import okhttp3.Cache
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import ru.practicum.android.diploma.BuildConfig
-import ru.practicum.android.diploma.data.CACHE_SIZE_BYTES
 import ru.practicum.android.diploma.data.DB_NAME
 import ru.practicum.android.diploma.data.DB_VERSION
 import ru.practicum.android.diploma.data.db.DbHelper
 import ru.practicum.android.diploma.data.db.XxxDataBase
 import ru.practicum.android.diploma.data.db.dao.AreasDao
-import ru.practicum.android.diploma.data.db.dao.CreateDbDao
+import ru.practicum.android.diploma.data.db.dao.DataLoadingStatusDao
 import ru.practicum.android.diploma.data.db.dao.FavoriteVacancyDao
 import ru.practicum.android.diploma.data.db.dao.IndustriesDao
 import ru.practicum.android.diploma.data.db.dao.SearchFilterDao
 import ru.practicum.android.diploma.data.network.HhSearchApiProvider
-import ru.practicum.android.diploma.data.network.api.HhSearchApi
 import ru.practicum.android.diploma.data.network.api.NetworkClient
 import ru.practicum.android.diploma.data.network.impl.RetrofitNetworkClient
 import ru.practicum.android.diploma.data.network.mapper.NetworkMapper
-import ru.practicum.android.diploma.data.sharing.ExternalNavigatorImpl
-import ru.practicum.android.diploma.domain.sharing.api.ExternalNavigator
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 val dataModule = module {
 
@@ -41,7 +29,7 @@ val dataModule = module {
         Room.databaseBuilder(androidContext(), XxxDataBase::class.java, DB_NAME).build()
     }
 
-    factory<CreateDbDao> {
+    single<DataLoadingStatusDao> {
         get<XxxDataBase>().createDb()
     }
 
@@ -93,44 +81,7 @@ val dataModule = module {
         HhSearchApiProvider(scope = get(), checker = get(), context = androidContext())
     }
 
-    single<HhSearchApi> {
-        val interceptor = Interceptor { chain ->
-
-            val token = BuildConfig.HH_ACCESS_TOKEN
-            val appname = "Навигатор Вакансий XXX"
-
-            val appNameUrl = URLEncoder.encode(appname, StandardCharsets.UTF_8.toString())
-            val mail = "amdoit.com@gmail.com"
-
-            val originalRequest = chain.request()
-            val builder = originalRequest
-                .newBuilder()
-                .header("Authorization", "Bearer $token")
-                .header("HH-User-Agent", "$appNameUrl ($mail)")
-            val newRequest = builder.build()
-            chain.proceed(newRequest)
-        }
-
-        val okHttpClient = OkHttpClient()
-            .newBuilder()
-            .cache(Cache(androidContext().cacheDir, CACHE_SIZE_BYTES))
-            .addInterceptor(interceptor)
-            .build()
-
-        Retrofit
-            .Builder()
-            .baseUrl("https://api.hh.ru/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
-            .build()
-            .create(HhSearchApi::class.java)
-    }
-
     factory<FirebaseAnalytics> {
         FirebaseAnalytics.getInstance(androidContext())
-    }
-
-    factory<ExternalNavigator> {
-        ExternalNavigatorImpl(get())
     }
 }
